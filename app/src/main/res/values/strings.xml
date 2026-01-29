@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">MealMate</string>
+    <string name="splash_subtitle">From inspiration to plate</string>
+    <string name="hello_blank_fragment">Test blank fragment</string>
+    <string name="welcome">Welcome! 👋</string>
+    <string name="login_subtitle">Login to continue planning your meals</string>
+    <string name="email">Email</string>
+    <string name="emailHint">name@example.com</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="have_acc">Don\'t have account?</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="or">Or</string>
+    <string name="guest">Continue as Guest</string>
 </resources>
