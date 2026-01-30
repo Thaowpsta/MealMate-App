@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,5 +39,12 @@ public class LoginFragment extends Fragment {
 
         sign_up = view.findViewById(R.id.sign_up);
         sign_up.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG);
+
+        sign_up.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Navigation.findNavController(view).navigate(R.id.action_loginFragment_to_signUpFragment);
+            }
+        });
     }
 }

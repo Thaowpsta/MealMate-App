@@ -12,4 +12,8 @@
     <string name="sign_up">Sign Up</string>
     <string name="or">Or</string>
     <string name="guest">Continue as Guest</string>
+    <string name="create_acc">Create Account</string>
+    <string name="sign_up_subtitle">Join us and start planning your meals</string>
+    <string name="name">Full Name</string>
+    <string name="name_hint">Thaowpsta Saiid</string>
 </resources>

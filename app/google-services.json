@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1059358869778",
+    "project_id": "mealmate-app-d250b",
+    "storage_bucket": "mealmate-app-d250b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1059358869778:android:343d49583595de542b8bcb",
+        "android_client_info": {
+          "package_name": "com.example.mealmate"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyANjTYJIPbKevsoTriKlNAHS6PlunKwkLQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

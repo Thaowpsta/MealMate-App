@@ -58,9 +58,6 @@ public class SplashFragment extends Fragment {
             @Override
             public void onAnimationEnd(Animator animation) {
                 Navigation.findNavController(view).navigate(R.id.action_splashFragment_to_loginFragment);
-
-//                Intent intent = new Intent(getActivity(), MainActivity.class);
-//                startActivity(intent);
             }
         });
     }
