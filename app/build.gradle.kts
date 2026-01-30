@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.navigation.safeargs)
     id("com.google.gms.google-services")
+
 }
 
 android {
@@ -45,6 +47,9 @@ dependencies {
     implementation(libs.navigation.ui)
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
+    implementation(libs.firebase.auth)
+    implementation(libs.play.services.auth)
+    implementation(libs.facebook.login)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

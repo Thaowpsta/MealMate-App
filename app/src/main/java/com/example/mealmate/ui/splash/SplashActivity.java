@@ -1,12 +1,6 @@
-package com.example.mealmate;
+package com.example.mealmate.ui.splash;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.content.Intent;
 import android.os.Bundle;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,10 +9,10 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
-import androidx.navigation.ui.NavigationUI;
+import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
 
-import com.airbnb.lottie.LottieAnimationView;
-import com.google.android.material.navigation.NavigationView;
+import com.example.mealmate.R;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -31,13 +25,13 @@ public class SplashActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_splash);
 
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        AppEventsLogger.activateApp(this.getApplication());
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
-        navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.fragmentContainerView);
-        navController = navHostFragment.getNavController();
     }
 }

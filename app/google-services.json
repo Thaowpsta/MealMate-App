@@ -12,7 +12,20 @@
           "package_name": "com.example.mealmate"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "1059358869778-tll5htfvpi8btvcnd9l1a8vnj734404j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.mealmate",
+            "certificate_hash": "676dc3238885fe2255aca946ee53003b325cae9d"
+          }
+        },
+        {
+          "client_id": "1059358869778-h94k0abgf8028pqpga0bvsnuv1dmep0o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyANjTYJIPbKevsoTriKlNAHS6PlunKwkLQ"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1059358869778-h94k0abgf8028pqpga0bvsnuv1dmep0o.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

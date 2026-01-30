@@ -8,7 +8,8 @@
     <string name="emailHint">name@example.com</string>
     <string name="password">Password</string>
     <string name="login">Login</string>
-    <string name="have_acc">Don\'t have account?</string>
+    <string name="dont_have_acc">Don\'t have account?</string>
+    <string name="have_acc">Have account?</string>
     <string name="sign_up">Sign Up</string>
     <string name="or">Or</string>
     <string name="guest">Continue as Guest</string>
@@ -16,4 +17,8 @@
     <string name="sign_up_subtitle">Join us and start planning your meals</string>
     <string name="name">Full Name</string>
     <string name="name_hint">Thaowpsta Saiid</string>
+    <string name="default_web_client_id">1059358869778-h94k0abgf8028pqpga0bvsnuv1dmep0o.apps.googleusercontent.com</string>
+    <string name="facebook_app_id">772485545295397</string>
+    <string name="facebook_client_token">83871079694584cb3b86b30f5ec873a9</string>
+    <string name="fb_login_protocol_scheme">fb772485545295397</string>
 </resources>
