@@ -1,4 +1,4 @@
-package com.example.mealmate.ui.sign_up;
+package com.example.mealmate.ui.auth.sign_up;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -104,11 +104,15 @@ public class SignUpFragment extends Fragment implements SignUpContract.View {
             presenter.signup(name, email, password);
         });
 
-        googleBtn.setOnClickListener(v -> presenter.onGoogleSignInClicked(requireActivity()));
+        if (googleBtn != null) {
+            googleBtn.setOnClickListener(v -> presenter.onGoogleSignInClicked(requireActivity()));
+        }
 
-        facebookBtn.setOnClickListener(v -> {
-            LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("email", "public_profile"));
-        });
+        if (facebookBtn != null) {
+            facebookBtn.setOnClickListener(v -> {
+                LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("email", "public_profile"));
+            });
+        }
 
         LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override

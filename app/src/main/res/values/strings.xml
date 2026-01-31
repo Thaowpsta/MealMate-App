@@ -21,4 +21,21 @@
     <string name="facebook_app_id">772485545295397</string>
     <string name="facebook_client_token">83871079694584cb3b86b30f5ec873a9</string>
     <string name="fb_login_protocol_scheme">fb772485545295397</string>
+    <string name="home">Home</string>
+    <string name="planner">Planner</string>
+    <string name="search">Search</string>
+    <string name="favs">Favorites</string>
+    <string name="date_txt">Monday, Oct. 24</string>
+    <string name="greeting">Good Morning,</string>
+    <string name="username">Thaowpsta</string>
+    <string name="meal_day">meal of the day</string>
+    <string name="meal_title">Spaghetti Carbonara</string>
+    <string name="area">Italian</string>
+    <string name="category">Pasta</string>
+    <string name="cook_now">Cook Now</string>
+    <string name="cook_later">Cook Later</string>
+    <string name="loading">Loading...</string>
+    <string name="ingredients">Ingredients</string>
+    <string name="item_num">0 items</string>
+    <string name="instructions">Instructions</string>
 </resources>

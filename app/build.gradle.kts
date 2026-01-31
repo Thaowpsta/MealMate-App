@@ -50,6 +50,12 @@ dependencies {
     implementation(libs.firebase.auth)
     implementation(libs.play.services.auth)
     implementation(libs.facebook.login)
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.adapter.rxjava3)
+    implementation(libs.rxjava)
+    implementation(libs.rxandroid)
+    implementation(libs.glide)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

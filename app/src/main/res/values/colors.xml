@@ -8,5 +8,7 @@
     <color name="primary_button_start">#7F3AF8</color>
     <color name="primary_button_end">#C675FD</color>
     <color name="secondary_color">#077FF7</color>
-
+    <color name="secondary_color_start">#0560C4</color>
+    <color name="secondary_color_end">#077FF7</color>
+    <color name="chip_txt">#F5F5F5</color>
 </resources>

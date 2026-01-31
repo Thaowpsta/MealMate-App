@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/meal_fragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/splash_subtitle_color"
+    android:padding="@dimen/padding_margin_16"
+    tools:context=".ui.home.HomeFragment">
+
+    <ImageView
+        android:id="@+id/user_img"
+        android:layout_width="@dimen/padding_margin_38"
+        android:layout_height="@dimen/padding_margin_38"
+        android:src="@drawable/user"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/padding_margin_8"
+        android:fontFamily="@font/fredoka_bold"
+        android:text="@string/date_txt"
+        android:textAllCaps="true"
+        android:textColor="@color/secondary_color_end"
+        app:layout_constraintBottom_toBottomOf="@+id/user_img"
+        app:layout_constraintStart_toEndOf="@+id/user_img"
+        app:layout_constraintTop_toTopOf="@+id/user_img" />
+
+    <TextView
+        android:id="@+id/greeting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/padding_margin_16"
+        android:inputType="textCapWords"
+        android:text="@string/greeting"
+        app:layout_constraintStart_toStartOf="@+id/user_img"
+        app:layout_constraintTop_toBottomOf="@+id/user_img" />
+
+    <TextView
+        android:id="@+id/username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/fredoka_bold"
+        android:inputType="textCapWords"
+        android:text="@string/username"
+        app:layout_constraintStart_toStartOf="@+id/greeting"
+        app:layout_constraintTop_toBottomOf="@+id/greeting" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/mod_card"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:clickable="true"
+        app:layout_constraintDimensionRatio="1:0.75"
+        android:layout_marginTop="@dimen/padding_margin_8"
+        app:cardCornerRadius="@dimen/padding_margin_16"
+        app:cardElevation="@dimen/padding_margin_3"
+        app:layout_constraintTop_toBottomOf="@+id/username">
+
+        <ImageView
+            android:id="@+id/meal_bg_img"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#32000000" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_marginHorizontal="@dimen/padding_margin_16"
+            android:paddingBottom="@dimen/padding_margin_16">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding_margin_16">
+
+                <com.google.android.material.chip.Chip
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/stroke_txt_field"
+                    android:fontFamily="@font/fredoka_bold"
+                    android:paddingHorizontal="@dimen/padding_margin_8"
+                    android:paddingVertical="@dimen/padding_margin_3"
+                    android:text="@string/meal_day"
+                    android:textColor="@color/txt_dark"
+                    android:inputType="textCapWords"
+                    android:alpha="0.8"
+                    app:chipCornerRadius="@dimen/padding_margin_16" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <ImageButton
+                    android:id="@+id/mod_refresh"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/transparent_rounded_btn"
+                    android:padding="8dp"
+                    android:src="@drawable/refresh"
+                    android:layout_gravity="end" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <TextView
+                android:id="@+id/meal_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/meal_title"
+                android:textColor="@color/splash_subtitle_color"
+                android:fontFamily="@font/fredoka_bold"
+                android:textSize="@dimen/txt_size_25"
+                android:inputType="textCapWords"
+                android:layout_marginVertical="@dimen/padding_margin_8"/>
+
+            <com.google.android.material.chip.ChipGroup
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/meal_country"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/stroke_txt_field"
+                    app:chipCornerRadius="@dimen/padding_margin_16"
+                    android:text="@string/area"
+                    android:alpha="0.8"
+                    android:textColor="@color/txt_light" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/meal_category"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/stroke_txt_field"
+                    app:chipCornerRadius="@dimen/padding_margin_16"
+                    android:text="@string/category"
+                    android:alpha="0.8"
+                    android:textColor="@color/txt_light" />
+
+            </com.google.android.material.chip.ChipGroup>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/cook_now"
+                    android:layout_width="match_parent"
+                    android:layout_weight="1"
+                    android:layout_height="@dimen/txt_field_h"
+                    android:background="@drawable/primary_button_filled"
+                    android:text="@string/cook_now"
+                    android:textAllCaps="false"
+                    android:textColor="@color/splash_subtitle_color"
+                    android:textSize="@dimen/txt_size_16"
+                    android:textStyle="bold"
+                    android:layout_marginVertical="@dimen/padding_margin_8"
+                    android:layout_marginEnd="@dimen/padding_margin_3"
+                    android:drawableStart="@drawable/cook_now"
+                    android:paddingHorizontal="@dimen/padding_margin_19"/>
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/cook_later"
+                    android:layout_width="match_parent"
+                    android:layout_weight="1"
+                    android:layout_height="@dimen/txt_field_h"
+                    android:background="@drawable/secondary_button_filled"
+                    android:text="@string/cook_later"
+                    android:textAllCaps="false"
+                    android:textColor="@color/splash_subtitle_color"
+                    android:textSize="@dimen/txt_size_16"
+                    android:textStyle="bold"
+                    android:layout_marginVertical="@dimen/padding_margin_8"
+                    android:layout_marginStart="@dimen/padding_margin_3"
+                    android:drawableStart="@drawable/time"
+                    android:paddingHorizontal="@dimen/padding_margin_19"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+</androidx.constraintlayout.widget.ConstraintLayout>

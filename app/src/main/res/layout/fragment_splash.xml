@@ -27,7 +27,7 @@
         android:fontFamily="@font/fredoka_bold"
         android:text="@string/app_name"
         android:textColor="@color/splash_subtitle_color"
-        android:textSize="@dimen/padding_margin_38"
+        android:textSize="@dimen/txt_size_38"
         app:layout_constraintBottom_toBottomOf="@+id/splash_subtitle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -39,7 +39,7 @@
         android:layout_marginBottom="@dimen/padding_margin_150"
         android:text="@string/splash_subtitle"
         android:textColor="@color/splash_subtitle_color"
-        android:textSize="@dimen/padding_margin_19"
+        android:textSize="@dimen/txt_size_19"
         app:layout_constraintBottom_toBottomOf="@+id/lottieAnimationView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

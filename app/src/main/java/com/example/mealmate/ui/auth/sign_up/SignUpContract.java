@@ -1,4 +1,4 @@
-package com.example.mealmate.ui.sign_up;
+package com.example.mealmate.ui.auth.sign_up;
 
 import android.app.Activity;
 import android.content.Intent;

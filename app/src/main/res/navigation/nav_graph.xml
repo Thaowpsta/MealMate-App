@@ -34,7 +34,7 @@
 
     <fragment
         android:id="@+id/signUpFragment"
-        android:name="com.example.mealmate.ui.sign_up.SignUpFragment"
+        android:name="com.example.mealmate.ui.auth.sign_up.SignUpFragment"
         android:label="SignUpFragment" >
         <action
             android:id="@+id/action_signUpFragment_to_loginFragment"
