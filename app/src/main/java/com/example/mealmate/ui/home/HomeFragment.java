@@ -1,5 +1,7 @@
 package com.example.mealmate.ui.home;
 
+import android.content.Intent;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,11 +17,23 @@ import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.mealmate.R;
+import com.example.mealmate.data.models.Category;
 import com.example.mealmate.data.models.Meal;
+import com.example.mealmate.data.repositories.UserRepository;
+import com.example.mealmate.ui.categories.CategoriesAdapter;
+import com.example.mealmate.ui.splash.SplashActivity;
 import com.google.android.material.chip.Chip;
+import com.google.firebase.auth.FirebaseUser;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 public class HomeFragment extends Fragment implements HomeContract.View {
 
@@ -29,7 +43,9 @@ public class HomeFragment extends Fragment implements HomeContract.View {
     private ImageView mealImage;
     private Chip areaChip, categoryChip;
     private ImageButton refreshButton;
+    private UserRepository userRepository;
     private Meal currentMeal;
+    private RecyclerView rvCategories;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -38,7 +54,7 @@ public class HomeFragment extends Fragment implements HomeContract.View {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        userRepository = new UserRepository(requireContext());
         presenter = new HomePresenter(this);
     }
 
@@ -55,10 +71,45 @@ public class HomeFragment extends Fragment implements HomeContract.View {
         mealTitle = view.findViewById(R.id.meal_title);
         mealImage = view.findViewById(R.id.meal_bg_img);
         refreshButton = view.findViewById(R.id.mod_refresh);
+        ImageButton logoutButton = view.findViewById(R.id.logout);
         CardView modCard = view.findViewById(R.id.mod_card);
+        areaChip = view.findViewById(R.id.meal_country);
+        categoryChip = view.findViewById(R.id.meal_category);
+        TextView usernameTxt = view.findViewById(R.id.username);
+        ImageView userImg = view.findViewById(R.id.user_img);
+        TextView date = view.findViewById(R.id.date);
+        rvCategories = view.findViewById(R.id.rv_categories);
+        TextView seeAll = view.findViewById(R.id.see_all);
 
-         areaChip = view.findViewById(R.id.meal_country);
-         categoryChip = view.findViewById(R.id.meal_category);
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMM. d", Locale.getDefault());
+        String currentDate = dateFormat.format(new Date());
+        date.setText(currentDate);
+
+        FirebaseUser currentUser = userRepository.getCurrentUser();
+        if (currentUser != null) {
+            userRepository.saveUserToPrefs(currentUser);
+
+            String name = currentUser.getDisplayName();
+            String email = currentUser.getEmail();
+
+            if (name == null || name.isEmpty()) {
+                if (email != null && email.contains("@")) {
+                    name = email.split("@")[0];
+                } else {
+                    name = "Guest";
+                }
+            }
+            usernameTxt.setText(name);
+
+            if (currentUser.getPhotoUrl() != null) {
+                Glide.with(this)
+                        .load(currentUser.getPhotoUrl())
+                        .placeholder(R.drawable.user)
+                        .circleCrop()
+                        .into(userImg);
+            }
+        }
 
         if (currentMeal == null) {
             presenter.getRandomMeal();
@@ -66,9 +117,31 @@ public class HomeFragment extends Fragment implements HomeContract.View {
             showMeal(currentMeal);
         }
 
+        presenter.getCategories();
+
         refreshButton.setOnClickListener(v -> presenter.getRandomMeal());
 
-        modCard.setOnClickListener(v -> presenter.onMealClicked(currentMeal));
+        logoutButton.setOnClickListener(v -> {
+            userRepository.logout();
+            Intent intent = new Intent(requireContext(), SplashActivity.class);
+            intent.putExtra("IS_LOGOUT", true);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+        });
+
+        modCard.setOnClickListener(v -> {
+            if (currentMeal != null) {
+                presenter.onMealClicked(currentMeal);
+            }
+        });
+
+        seeAll.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG);
+        seeAll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Navigation.findNavController(view).navigate(R.id.action_homeFragment_to_categoriesFragment);
+            }
+        });
     }
 
     @Override
@@ -84,9 +157,7 @@ public class HomeFragment extends Fragment implements HomeContract.View {
 
     @Override
     public void showMeal(Meal meal) {
-
         currentMeal = meal;
-
         mealTitle.setText(meal.strMeal);
         categoryChip.setText(meal.strCategory);
         areaChip.setText(meal.strArea);
@@ -101,6 +172,14 @@ public class HomeFragment extends Fragment implements HomeContract.View {
     public void navigateToMealDetails(Meal meal) {
         NavDirections action = HomeFragmentDirections.actionHomeFragmentToMealDetailsFragment(meal);
         Navigation.findNavController(requireView()).navigate(action);
+    }
+
+    @Override
+    public void showCategories(List<Category> categories) {
+        CategoriesAdapter categoriesAdapter = new CategoriesAdapter(categories, CategoriesAdapter.VIEW_TYPE_CHIP);
+
+        rvCategories.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        rvCategories.setAdapter(categoriesAdapter);
     }
 
     @Override

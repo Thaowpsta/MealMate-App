@@ -9,15 +9,15 @@
 
     <ImageButton
         android:id="@+id/btn_back"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="@dimen/padding_margin_38"
+        android:layout_height="@dimen/padding_margin_38"
         android:background="@drawable/transparent_rounded_btn"
         android:src="@drawable/outline_arrow_back_24"
         app:tint="@color/primary_button_start"
         android:layout_margin="@dimen/padding_margin_16"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:elevation="10dp"/>
+        android:elevation="@dimen/padding_margin_8"/>
 
 
     <androidx.core.widget.NestedScrollView
@@ -42,8 +42,8 @@
 
             <ImageButton
                 android:id="@+id/btn_favorite"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="@dimen/padding_margin_38"
+                android:layout_height="@dimen/padding_margin_38"
                 android:background="@drawable/transparent_rounded_btn"
                 android:contentDescription="Add to Favorites"
                 android:src="@drawable/favorite"
@@ -51,7 +51,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:tint="@color/primary_button_end"
-                android:elevation="10dp"/>
+                android:elevation="@dimen/padding_margin_8"/>
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/card"
@@ -77,7 +77,7 @@
                         android:id="@+id/meal_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
+                        android:layout_marginBottom="@dimen/padding_margin_8"
                         android:fontFamily="@font/fredoka_bold"
                         android:inputType="textCapWords"
                         android:text="@string/meal_title"
@@ -120,7 +120,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/padding_margin_16"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="@dimen/primary_button_corners"
                 android:fontFamily="@font/fredoka_bold"
                 android:text="@string/ingredients"
                 android:textColor="@color/txt_dark"
@@ -207,12 +207,12 @@
                         android:id="@+id/see_more_steps"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/see_all_steps"
+                        android:text="@string/see_all"
                         android:textColor="@color/primary_button_start"
                         android:fontFamily="@font/fredoka_bold"
                         android:layout_gravity="center"
-                        android:padding="8dp"
-                        android:layout_marginTop="4dp" />
+                        android:padding="@dimen/padding_margin_8"
+                        android:layout_marginTop="@dimen/padding_margin_3" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
@@ -232,7 +232,7 @@
             <androidx.cardview.widget.CardView
                 android:id="@+id/video_card"
                 android:layout_width="match_parent"
-                android:layout_height="220dp"
+                android:layout_height="@dimen/padding_margin_230"
                 android:layout_marginHorizontal="@dimen/padding_margin_16"
                 app:cardCornerRadius="@dimen/padding_margin_16"
                 app:cardElevation="@dimen/padding_margin_3"

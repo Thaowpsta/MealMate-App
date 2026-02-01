@@ -1,8 +1,13 @@
 package com.example.mealmate.ui.home;
 
+import com.example.mealmate.data.models.Category;
 import com.example.mealmate.data.models.Meal;
 import com.example.mealmate.data.remote.MealService;
 import com.example.mealmate.data.remote.RetrofitClient;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
@@ -43,6 +48,35 @@ public class HomePresenter implements HomeContract.Presenter {
         );
     }
 
+    @Override
+    public void getCategories() {
+        // view.showLoading();
+        compositeDisposable.add(
+                mealService.getCategories()
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                response -> {
+                                    // view.hideLoading();
+                                    if (response.categories != null && !response.categories.isEmpty()) {
+
+                                        List<Category> allCategories = response.categories;
+
+                                        int limit = Math.min(allCategories.size(), 5);
+                                        List<Category> firstFive = new ArrayList<>(allCategories.subList(0, limit));
+
+                                        view.showCategories(firstFive);
+
+                                    } else {
+                                        view.showError("No categories found");
+                                    }
+                                },
+                                error -> {
+                                    view.showError(error.getMessage());
+                                }
+                        )
+        );
+    }
     @Override
     public void onMealClicked(Meal meal) {
         if (view != null) {

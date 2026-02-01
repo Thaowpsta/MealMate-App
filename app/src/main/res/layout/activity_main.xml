@@ -29,7 +29,7 @@
             style="@style/BottomNavStyle"
             android:background="@color/splash_subtitle_color"
             android:id="@+id/bottom_navigation"
-            android:layout_height="88dp"
+            android:layout_height="@dimen/padding_margin_95"
             android:layout_width="match_parent"
             app:itemIconTint="@color/bottom_nav_selector"
             app:itemTextColor="@color/bottom_nav_selector"

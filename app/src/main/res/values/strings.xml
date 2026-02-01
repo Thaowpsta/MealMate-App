@@ -22,7 +22,7 @@
     <string name="facebook_client_token">83871079694584cb3b86b30f5ec873a9</string>
     <string name="fb_login_protocol_scheme">fb772485545295397</string>
     <string name="home">Home</string>
-    <string name="planner">Planner</string>
+    <string name="planner">Plans</string>
     <string name="search">Search</string>
     <string name="favs">Favorites</string>
     <string name="date_txt">Monday, Oct. 24</string>
@@ -38,7 +38,17 @@
     <string name="ingredients">Ingredients</string>
     <string name="item_num">0 items</string>
     <string name="instructions">Instructions</string>
-    <string name="see_all_steps">See All Steps</string>
     <string name="video_tutorial">Video Tutorial</string>
     <string name="add_to_plan">Add to plan</string>
+    <string name="q_cat">Quick Categories</string>
+    <string name="see_all">See all</string>
+    <string name="countries">Countries</string>
+    <string name="today_plan">Today\'s Plan</string>
+    <string name="new_recipe">Explore New Recipes</string>
+    <string name="favorite">Favorite</string>
+    <string name="categories">Categories</string>
+    <string name="categories_subtitle">Browse meals by category</string>
+    <string name="mix_the_flour">Mix the flour...</string>
+    <string name="show_more">Show more</string>
+    <string name="show_less">Show less</string>
 </resources>

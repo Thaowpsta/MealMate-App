@@ -17,6 +17,9 @@
             app:exitAnim="@anim/fade_out"
             app:popEnterAnim="@anim/fade_in"
             app:popExitAnim="@anim/fade_out"/>
+        <action
+            android:id="@+id/action_homeFragment_to_categoriesFragment"
+            app:destination="@id/categoriesFragment" />
     </fragment>
 
     <fragment
@@ -28,4 +31,8 @@
             android:name="meal"
             app:argType="com.example.mealmate.data.models.Meal" />
     </fragment>
+    <fragment
+        android:id="@+id/categoriesFragment"
+        android:name="com.example.mealmate.ui.categories.CategoriesFragment"
+        android:label="CategoriesFragment" />
 </navigation>

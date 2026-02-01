@@ -156,9 +156,9 @@ public class MealDetailsFragment extends Fragment implements MealDetailsContract
                 instructionsAdapter.setExpanded(!isCurrentlyExpanded);
 
                 if (!isCurrentlyExpanded) {
-                    seeMoreSteps.setText("Show Less");
+                    seeMoreSteps.setText(R.string.show_less);
                 } else {
-                    seeMoreSteps.setText("See All Steps");
+                    seeMoreSteps.setText(R.string.show_more);
                     rvInstructions.scrollToPosition(0);
                 }
             });

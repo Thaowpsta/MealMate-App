@@ -35,16 +35,5 @@ public class MainActivity extends AppCompatActivity {
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
         NavigationUI.setupWithNavController(bottomNav, navController);
 
-//        Button logoutButton = findViewById(R.id.btn_logout);
-//        logoutButton.setOnClickListener(v -> {
-//            userRepository.logout();
-//
-//            Intent intent = new Intent(MainActivity.this, SplashActivity.class);
-//            intent.putExtra("IS_LOGOUT", true);
-//
-//            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//            startActivity(intent);
-//            finish();
-//        });
     }
 }

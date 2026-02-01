@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:paddingVertical="8dp">
+    android:paddingVertical="8dp"
+    android:layout_gravity="center_vertical">
 
     <TextView
         android:id="@+id/tv_step_number"
@@ -15,16 +16,16 @@
         android:background="@drawable/transparent_rounded_btn"
         android:backgroundTint="@color/primary_button_end"
         android:textStyle="bold"
-        android:textSize="14sp"
-        android:layout_marginEnd="12dp"/>
+        android:textSize="@dimen/txt_size_16"
+        android:layout_marginEnd="@dimen/padding_margin_16"/>
 
     <TextView
         android:id="@+id/tv_step_content"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="Mix the flour..."
+        android:text="@string/mix_the_flour"
         android:textColor="@color/txt_dark"
-        android:textSize="14sp"
-        android:lineSpacingExtra="4dp"
-        android:paddingBottom="4dp" /> </LinearLayout>
+        android:textSize="@dimen/txt_size_12"
+        android:lineSpacingExtra="@dimen/padding_margin_3"
+        android:paddingBottom="@dimen/padding_margin_3" /> </LinearLayout>

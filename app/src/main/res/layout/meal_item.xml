@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    android:id="@+id/detailed_item"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/padding_margin_16"
+    android:background="@color/txt_light"
+    app:cardCornerRadius="@dimen/padding_margin_16"
+    android:clickable="true"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/mealImage1"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/padding_margin_150"
+            android:layout_gravity="center"
+            android:scaleType="centerCrop"
+            android:src="@drawable/medium" />
+
+        <TextView
+            android:id="@+id/mealTitle1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/padding_margin_8"
+            android:text="@string/meal_title"
+            android:textColor="@color/txt_dark"
+            android:textStyle="bold" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/meal_country"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/stroke_txt_field"
+                app:chipCornerRadius="@dimen/padding_margin_16"
+                android:text="@string/area"
+                android:textColor="@color/txt_light" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/meal_category"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/stroke_txt_field"
+                app:chipCornerRadius="@dimen/padding_margin_16"
+                android:text="@string/category"
+                android:textColor="@color/txt_light" />
+
+        </com.google.android.material.chip.ChipGroup>
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/favoriteIcon1"
+        android:layout_width="@dimen/padding_margin_38"
+        android:layout_height="@dimen/padding_margin_38"
+        android:layout_gravity="top|end"
+        android:background="@drawable/transparent_rounded_btn"
+        android:layout_margin="@dimen/padding_margin_8"
+        android:padding="@dimen/padding_margin_8"
+        app:srcCompat="@drawable/favorite"
+        app:tint="@color/primary_button_end" />
+
+</androidx.cardview.widget.CardView>

@@ -151,7 +151,7 @@ public class UserRepository {
 
     }
 
-    private void saveUserToPrefs(FirebaseUser user) {
+    public void saveUserToPrefs(FirebaseUser user) {
         if (user != null) {
             sharedPreferencesManager.saveUserProfile(
                     user.getUid(),
@@ -161,7 +161,6 @@ public class UserRepository {
             );
         }
     }
-
 
     public interface LoginCallback {
         void onSuccess(FirebaseUser user);

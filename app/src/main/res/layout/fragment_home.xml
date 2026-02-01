@@ -30,13 +30,27 @@
         app:layout_constraintStart_toEndOf="@+id/user_img"
         app:layout_constraintTop_toTopOf="@+id/user_img" />
 
+    <ImageButton
+        android:id="@+id/logout"
+        android:layout_width="@dimen/padding_margin_38"
+        android:layout_height="@dimen/padding_margin_38"
+        android:layout_gravity="end"
+        android:background="@drawable/transparent_rounded_btn"
+        android:backgroundTint="@color/primary_button_end"
+        android:padding="@dimen/padding_margin_8"
+        android:src="@drawable/logout"
+        app:layout_constraintBottom_toBottomOf="@+id/user_img"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/user_img" />
+
     <TextView
         android:id="@+id/greeting"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/padding_margin_16"
+        android:layout_marginTop="@dimen/padding_margin_8"
         android:inputType="textCapWords"
         android:text="@string/greeting"
+        android:textSize="@dimen/txt_size_19"
         app:layout_constraintStart_toStartOf="@+id/user_img"
         app:layout_constraintTop_toBottomOf="@+id/user_img" />
 
@@ -47,152 +61,357 @@
         android:fontFamily="@font/fredoka_bold"
         android:inputType="textCapWords"
         android:text="@string/username"
+        android:textSize="@dimen/txt_size_19"
         app:layout_constraintStart_toStartOf="@+id/greeting"
         app:layout_constraintTop_toBottomOf="@+id/greeting" />
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/mod_card"
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:clickable="true"
-        app:layout_constraintDimensionRatio="1:0.75"
+        android:fillViewport="true"
         android:layout_marginTop="@dimen/padding_margin_8"
-        app:cardCornerRadius="@dimen/padding_margin_16"
-        app:cardElevation="@dimen/padding_margin_3"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/username">
 
-        <ImageView
-            android:id="@+id/meal_bg_img"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#32000000" />
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:layout_marginHorizontal="@dimen/padding_margin_16"
+            android:layout_height="wrap_content"
             android:paddingBottom="@dimen/padding_margin_16">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/padding_margin_16">
-
-                <com.google.android.material.chip.Chip
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="@color/stroke_txt_field"
-                    android:fontFamily="@font/fredoka_bold"
-                    android:paddingHorizontal="@dimen/padding_margin_8"
-                    android:paddingVertical="@dimen/padding_margin_3"
-                    android:text="@string/meal_day"
-                    android:textColor="@color/txt_dark"
-                    android:inputType="textCapWords"
-                    android:alpha="0.8"
-                    app:chipCornerRadius="@dimen/padding_margin_16" />
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_weight="1" />
-
-                <ImageButton
-                    android:id="@+id/mod_refresh"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:background="@drawable/transparent_rounded_btn"
-                    android:padding="8dp"
-                    android:src="@drawable/refresh"
-                    android:layout_gravity="end" />
-
-            </LinearLayout>
-
-            <View
+            <androidx.cardview.widget.CardView
+                android:id="@+id/mod_card"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1" />
+                android:clickable="true"
+                app:layout_constraintDimensionRatio="1:0.75"
+                app:cardCornerRadius="@dimen/padding_margin_16"
+                app:cardElevation="@dimen/padding_margin_3"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
 
+                <ImageView
+                    android:id="@+id/meal_bg_img"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#32000000" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:layout_marginHorizontal="@dimen/padding_margin_16"
+                    android:paddingBottom="@dimen/padding_margin_16">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/padding_margin_16">
+
+                        <com.google.android.material.chip.Chip
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:backgroundTint="@color/stroke_txt_field"
+                            android:fontFamily="@font/fredoka_bold"
+                            android:paddingHorizontal="@dimen/padding_margin_8"
+                            android:paddingVertical="@dimen/padding_margin_3"
+                            android:text="@string/meal_day"
+                            android:textColor="@color/txt_dark"
+                            android:inputType="textCapWords"
+                            android:alpha="0.8"
+                            app:chipCornerRadius="@dimen/padding_margin_16" />
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_weight="1" />
+
+                        <ImageButton
+                            android:id="@+id/mod_refresh"
+                            android:layout_width="@dimen/padding_margin_38"
+                            android:layout_height="@dimen/padding_margin_38"
+                            android:background="@drawable/transparent_rounded_btn"
+                            android:padding="@dimen/padding_margin_8"
+                            android:src="@drawable/refresh"
+                            android:layout_gravity="end" />
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <TextView
+                        android:id="@+id/meal_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/meal_title"
+                        android:textColor="@color/splash_subtitle_color"
+                        android:fontFamily="@font/fredoka_bold"
+                        android:textSize="@dimen/txt_size_25"
+                        android:inputType="textCapWords"
+                        android:layout_marginVertical="@dimen/padding_margin_8"/>
+
+                    <com.google.android.material.chip.ChipGroup
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/meal_country"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:backgroundTint="@color/stroke_txt_field"
+                            app:chipCornerRadius="@dimen/padding_margin_16"
+                            android:text="@string/area"
+                            android:alpha="0.8"
+                            android:textColor="@color/txt_light" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/meal_category"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:backgroundTint="@color/stroke_txt_field"
+                            app:chipCornerRadius="@dimen/padding_margin_16"
+                            android:text="@string/category"
+                            android:alpha="0.8"
+                            android:textColor="@color/txt_light" />
+
+                    </com.google.android.material.chip.ChipGroup>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <androidx.appcompat.widget.AppCompatButton
+                            android:id="@+id/cook_now"
+                            android:layout_width="match_parent"
+                            android:layout_weight="1"
+                            android:layout_height="@dimen/txt_field_h"
+                            android:background="@drawable/primary_button_filled"
+                            android:text="@string/cook_now"
+                            android:textAllCaps="false"
+                            android:textColor="@color/splash_subtitle_color"
+                            android:textSize="@dimen/txt_size_16"
+                            android:textStyle="bold"
+                            android:layout_marginVertical="@dimen/padding_margin_8"
+                            android:layout_marginEnd="@dimen/padding_margin_3"
+                            android:drawableStart="@drawable/cook_now"
+                            android:paddingHorizontal="@dimen/padding_margin_19"/>
+                        <androidx.appcompat.widget.AppCompatButton
+                            android:id="@+id/cook_later"
+                            android:layout_width="match_parent"
+                            android:layout_weight="1"
+                            android:layout_height="@dimen/txt_field_h"
+                            android:background="@drawable/secondary_button_filled"
+                            android:text="@string/cook_later"
+                            android:textAllCaps="false"
+                            android:textColor="@color/splash_subtitle_color"
+                            android:textSize="@dimen/txt_size_16"
+                            android:textStyle="bold"
+                            android:layout_marginVertical="@dimen/padding_margin_8"
+                            android:layout_marginStart="@dimen/padding_margin_3"
+                            android:drawableStart="@drawable/time"
+                            android:paddingHorizontal="@dimen/padding_margin_19"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/fav_card"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding_margin_16"
+                android:layout_marginEnd="@dimen/padding_margin_8"
+                app:cardCornerRadius="@dimen/padding_margin_16"
+                app:cardElevation="@dimen/padding_margin_3"
+                app:layout_constraintTop_toBottomOf="@+id/mod_card"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/planner_card"> <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/padding_margin_16"
+                android:background="@color/secondary_color_end"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/fav"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:src="@drawable/favorite"
+                    app:tint="@color/splash_subtitle_color"/>
+
+                <TextView
+                    android:id="@+id/fav_num"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2"
+                    android:textSize="@dimen/txt_size_38"
+                    android:textColor="@color/splash_subtitle_color"
+                    app:fontFamily="@font/fredoka_bold"/>
+
+                <TextView
+                    android:id="@+id/tv_fav"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/favorite"
+                    android:textSize="@dimen/txt_size_16"
+                    android:textColor="@color/splash_subtitle_color"
+                    app:fontFamily="@font/fredoka_bold"/>
+            </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/planner_card"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding_margin_16"
+                android:layout_marginStart="@dimen/padding_margin_8"
+                app:cardCornerRadius="@dimen/padding_margin_16"
+                app:cardElevation="@dimen/padding_margin_3"
+                app:layout_constraintTop_toBottomOf="@+id/mod_card"
+                app:layout_constraintStart_toEndOf="@+id/fav_card"
+                app:layout_constraintEnd_toEndOf="parent"> <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/padding_margin_16"
+                android:background="@color/primary_button_end"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/planed"
+                    android:layout_gravity="start"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/calendar"
+                    app:tint="@color/splash_subtitle_color"/>
+
+                <TextView
+                    android:id="@+id/planed_num"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2"
+                    android:textSize="@dimen/txt_size_38"
+                    android:textColor="@color/splash_subtitle_color"
+                    app:fontFamily="@font/fredoka_bold"/>
+
+                <TextView
+                    android:id="@+id/tv_plan"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/planner"
+                    android:textSize="@dimen/txt_size_16"
+                    android:textColor="@color/splash_subtitle_color"
+                    app:fontFamily="@font/fredoka_bold"/>
+            </LinearLayout>
+            </androidx.cardview.widget.CardView>
             <TextView
-                android:id="@+id/meal_title"
+                android:id="@+id/quick_cat"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/meal_title"
-                android:textColor="@color/splash_subtitle_color"
                 android:fontFamily="@font/fredoka_bold"
-                android:textSize="@dimen/txt_size_25"
-                android:inputType="textCapWords"
-                android:layout_marginVertical="@dimen/padding_margin_8"/>
+                android:paddingTop="@dimen/padding_margin_8"
+                android:text="@string/q_cat"
+                android:textSize="@dimen/txt_size_16"
+                app:layout_constraintStart_toStartOf="@+id/mod_card"
+                app:layout_constraintTop_toBottomOf="@+id/fav_card" />
 
-            <com.google.android.material.chip.ChipGroup
+            <TextView
+                android:id="@+id/see_all"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/fredoka_bold"
+                android:paddingTop="@dimen/padding_margin_19"
+                android:text="@string/see_all"
+                android:textColor="@color/primary_button_end"
+                android:textSize="@dimen/txt_size_16"
+                app:layout_constraintBottom_toBottomOf="@+id/quick_cat"
+                app:layout_constraintEnd_toEndOf="@+id/mod_card"
+                app:layout_constraintTop_toTopOf="@+id/quick_cat" />
 
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/meal_country"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="@color/stroke_txt_field"
-                    app:chipCornerRadius="@dimen/padding_margin_16"
-                    android:text="@string/area"
-                    android:alpha="0.8"
-                    android:textColor="@color/txt_light" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/meal_category"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="@color/stroke_txt_field"
-                    app:chipCornerRadius="@dimen/padding_margin_16"
-                    android:text="@string/category"
-                    android:alpha="0.8"
-                    android:textColor="@color/txt_light" />
-
-            </com.google.android.material.chip.ChipGroup>
-
-            <LinearLayout
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_categories"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding_margin_16"
+                app:layout_constraintTop_toBottomOf="@+id/quick_cat"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
 
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/cook_now"
+            <TextView
+                android:id="@+id/today_plan"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/fredoka_bold"
+                android:paddingTop="@dimen/padding_margin_8"
+                android:text="@string/today_plan"
+                android:textSize="@dimen/txt_size_16"
+                app:layout_constraintStart_toStartOf="@+id/mod_card"
+                app:layout_constraintTop_toBottomOf="@+id/rv_categories" />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/plan_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardBackgroundColor="@color/splash_subtitle_color"
+                app:cardCornerRadius="@dimen/primary_button_corners"
+                app:cardElevation="@dimen/padding_margin_8"
+                android:layout_marginTop="@dimen/padding_margin_8"
+                app:layout_constraintTop_toBottomOf="@+id/today_plan"
+                app:layout_constraintEnd_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_weight="1"
-                    android:layout_height="@dimen/txt_field_h"
-                    android:background="@drawable/primary_button_filled"
-                    android:text="@string/cook_now"
-                    android:textAllCaps="false"
-                    android:textColor="@color/splash_subtitle_color"
-                    android:textSize="@dimen/txt_size_16"
-                    android:textStyle="bold"
-                    android:layout_marginVertical="@dimen/padding_margin_8"
-                    android:layout_marginEnd="@dimen/padding_margin_3"
-                    android:drawableStart="@drawable/cook_now"
-                    android:paddingHorizontal="@dimen/padding_margin_19"/>
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/cook_later"
-                    android:layout_width="match_parent"
-                    android:layout_weight="1"
-                    android:layout_height="@dimen/txt_field_h"
-                    android:background="@drawable/secondary_button_filled"
-                    android:text="@string/cook_later"
-                    android:textAllCaps="false"
-                    android:textColor="@color/splash_subtitle_color"
-                    android:textSize="@dimen/txt_size_16"
-                    android:textStyle="bold"
-                    android:layout_marginVertical="@dimen/padding_margin_8"
-                    android:layout_marginStart="@dimen/padding_margin_3"
-                    android:drawableStart="@drawable/time"
-                    android:paddingHorizontal="@dimen/padding_margin_19"/>
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
-            </LinearLayout>
+                    <View
+                        android:id="@+id/accent_bar"
+                        android:layout_width="@dimen/padding_margin_8"
+                        android:layout_height="match_parent"
+                        android:background="@color/secondary_color_start" />
 
-        </LinearLayout>
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="@dimen/medium_img"
+                        android:layout_height="@dimen/medium_img"
+                        android:layout_marginVertical="@dimen/padding_margin_16"
+                        android:layout_marginStart="@dimen/padding_margin_16"
+                        app:cardCornerRadius="@dimen/padding_margin_38">
 
-    </androidx.cardview.widget.CardView>
+                        <ImageView
+                            android:id="@+id/plan_meal_image"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/medium" />
+                    </androidx.cardview.widget.CardView>
+
+
+                    <TextView
+                        android:id="@+id/plan_meal_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/padding_margin_16"
+                        android:text="Quinoa Salad"
+                        android:textColor="@color/txt_dark"
+                        android:fontFamily="@font/fredoka_bold"
+                        android:textSize="@dimen/txt_size_19"
+                        android:layout_gravity="center_vertical"/>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
