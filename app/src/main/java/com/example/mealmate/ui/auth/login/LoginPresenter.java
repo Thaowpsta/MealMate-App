@@ -16,7 +16,7 @@ import com.google.firebase.auth.FirebaseUser;
 public class LoginPresenter implements LoginContract.Presenter {
 
     private LoginContract.View view;
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
     private GoogleSignInClient googleSignInClient;
 
     public LoginPresenter(LoginContract.View view, UserRepository userRepository) {

@@ -19,14 +19,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.mealmate.R;
 import com.example.mealmate.data.repositories.UserRepository;
 import com.example.mealmate.ui.main.MainActivity;
-import com.example.mealmate.ui.splash.SplashActivity;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -41,10 +39,7 @@ public class LoginFragment extends Fragment implements LoginContract.View {
     private EditText passwordInput;
     private Button loginButton;
     private Button guestButton;
-    private TextView signUpText;
-    private ImageView googleBtn;
-    private ImageView facebookBtn;
-    private ProgressBar progressBar;
+//    private ProgressBar progressBar;
     private CallbackManager callbackManager; // Facebook
     private ActivityResultLauncher<Intent> googleSignInLauncher;
 
@@ -86,10 +81,10 @@ public class LoginFragment extends Fragment implements LoginContract.View {
         passwordInput = view.findViewById(R.id.password);
         loginButton = view.findViewById(R.id.login);
         guestButton = view.findViewById(R.id.guest);
-        signUpText = view.findViewById(R.id.sign_up);
+        TextView signUpText = view.findViewById(R.id.sign_up);
 //        progressBar = view.findViewById(R.id.progress_bar);
-        googleBtn = view.findViewById(R.id.btn_google);
-        facebookBtn = view.findViewById(R.id.btn_facebook);
+        ImageView googleBtn = view.findViewById(R.id.btn_google);
+        ImageView facebookBtn = view.findViewById(R.id.btn_facebook);
 
         signUpText.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG);
         signUpText.setOnClickListener(v ->
@@ -107,21 +102,21 @@ public class LoginFragment extends Fragment implements LoginContract.View {
 
         googleBtn.setOnClickListener(v -> presenter.onGoogleSignInClicked(requireActivity()));
 
-        facebookBtn.setOnClickListener(v -> {
-            LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("email", "public_profile"));
-        });
+        facebookBtn.setOnClickListener(v -> LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("email", "public_profile")));
 
-        LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+        LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 presenter.onFacebookTokenReceived(loginResult.getAccessToken().getToken());
             }
+
             @Override
             public void onCancel() {
                 Toast.makeText(getContext(), "Facebook Login Cancelled", Toast.LENGTH_SHORT).show();
             }
+
             @Override
-            public void onError(FacebookException error) {
+            public void onError(@NonNull FacebookException error) {
                 onLoginError(error.getMessage());
             }
         });
@@ -140,14 +135,14 @@ public class LoginFragment extends Fragment implements LoginContract.View {
 
     @Override
     public void showProgress() {
-        if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
+//        if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
         if (loginButton != null) loginButton.setEnabled(false);
         if (guestButton != null) guestButton.setEnabled(false);
     }
 
     @Override
     public void hideProgress() {
-        if (progressBar != null) progressBar.setVisibility(View.GONE);
+//        if (progressBar != null) progressBar.setVisibility(View.GONE);
         if (loginButton != null) loginButton.setEnabled(true);
         if (guestButton != null) guestButton.setEnabled(true);
     }

@@ -7,17 +7,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.navigation.NavController;
-import androidx.navigation.fragment.NavHostFragment;
+
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 
 import com.example.mealmate.R;
 
 public class SplashActivity extends AppCompatActivity {
-
-    NavHostFragment navHostFragment;
-    NavController navController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

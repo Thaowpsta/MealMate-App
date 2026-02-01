@@ -19,7 +19,7 @@ import com.google.firebase.auth.UserProfileChangeRequest;
 public class SignUpPresenter implements SignUpContract.Presenter {
 
     private SignUpContract.View view;
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
     private GoogleSignInClient googleSignInClient;
 
     public SignUpPresenter(SignUpContract.View view, UserRepository userRepository) {

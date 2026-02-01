@@ -7,8 +7,8 @@ public class SharedPreferencesManager {
 
     private static final String PREF_NAME = "MealMatePrefs";
     private static SharedPreferencesManager instance;
-    private SharedPreferences sharedPreferences;
-    private SharedPreferences.Editor editor;
+    private final SharedPreferences sharedPreferences;
+    private final SharedPreferences.Editor editor;
 
     private static final String KEY_PENDING_EMAIL = "pending_email";
     private static final String KEY_USER_ID = "user_id";
@@ -17,8 +17,7 @@ public class SharedPreferencesManager {
     private static final String KEY_IS_LOGGED_IN = "is_logged_in";
     private static final String KEY_PROFILE_IMAGE_URL = "profile_image_url";
     private static final String KEY_ONBOARDING_COMPLETED = "onboarding_completed";
-    private static final String KEY_NOTIFICATION_ENABLED = "notification_enabled";
-    private static final String KEY_THEME_MODE = "theme_mode"; // light/dark/auto
+    private static final String KEY_THEME_MODE = "theme_mode";
 
     private SharedPreferencesManager(Context context) {
         sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);

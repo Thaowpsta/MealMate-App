@@ -9,9 +9,9 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class HomePresenter implements HomeContract.Presenter {
 
-    private HomeContract.View view;
-    private MealService mealService;
-    private CompositeDisposable compositeDisposable;
+    private final HomeContract.View view;
+    private final MealService mealService;
+    private final CompositeDisposable compositeDisposable;
 
     public HomePresenter(HomeContract.View view) {
         this.view = view;

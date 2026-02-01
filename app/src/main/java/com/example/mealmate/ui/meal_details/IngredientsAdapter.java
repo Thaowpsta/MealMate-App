@@ -14,7 +14,7 @@ import androidx.core.util.Pair;
 
 public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.ViewHolder> {
 
-    private List<Pair<String, String>> ingredients; // Pair of Name and Measure
+    private final List<Pair<String, String>> ingredients; // Pair of Name and Measure
 
     public IngredientsAdapter(List<Pair<String, String>> ingredients) {
         this.ingredients = ingredients;

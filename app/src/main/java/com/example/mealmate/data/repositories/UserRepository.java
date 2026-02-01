@@ -12,8 +12,8 @@ import com.google.firebase.auth.GoogleAuthProvider;
 
 public class UserRepository {
 
-    private FirebaseAuth firebaseAuth;
-    private SharedPreferencesManager sharedPreferencesManager;
+    private final FirebaseAuth firebaseAuth;
+    private final SharedPreferencesManager sharedPreferencesManager;
 
     public UserRepository(Context context) {
         this.firebaseAuth = FirebaseAuth.getInstance();
@@ -24,7 +24,6 @@ public class UserRepository {
         firebaseAuth.signInAnonymously().addOnSuccessListener(authResult -> {
             FirebaseUser user = authResult.getUser();
             if(user != null) {
-                // Save simplified guest info
                 sharedPreferencesManager.saveUserProfile(
                         user.getUid(),
                         "Guest",

@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -26,7 +25,6 @@ public class HomeFragment extends Fragment implements HomeContract.View {
 
     private HomeContract.Presenter presenter;
 
-    private CardView modCard;
     private TextView mealTitle;
     private ImageView mealImage;
     private Chip areaChip, categoryChip;
@@ -57,18 +55,20 @@ public class HomeFragment extends Fragment implements HomeContract.View {
         mealTitle = view.findViewById(R.id.meal_title);
         mealImage = view.findViewById(R.id.meal_bg_img);
         refreshButton = view.findViewById(R.id.mod_refresh);
-        modCard = view.findViewById(R.id.mod_card);
+        CardView modCard = view.findViewById(R.id.mod_card);
 
          areaChip = view.findViewById(R.id.meal_country);
          categoryChip = view.findViewById(R.id.meal_category);
 
-        presenter.getRandomMeal();
+        if (currentMeal == null) {
+            presenter.getRandomMeal();
+        } else {
+            showMeal(currentMeal);
+        }
 
         refreshButton.setOnClickListener(v -> presenter.getRandomMeal());
 
-        modCard.setOnClickListener(v -> {
-            presenter.onMealClicked(currentMeal);
-        });
+        modCard.setOnClickListener(v -> presenter.onMealClicked(currentMeal));
     }
 
     @Override
