@@ -77,8 +77,8 @@ public class CategoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     });
         } else if (holder instanceof CardViewHolder) {
             CardViewHolder cardHolder = (CardViewHolder) holder;
-            cardHolder.mealTitle.setText(category.strCategory);
-            
+
+            cardHolder.title.setText(category.strCategory);
             cardHolder.chipArea.setVisibility(View.GONE);
             cardHolder.chipCategory.setVisibility(View.GONE);
             cardHolder.favoriteIcon.setVisibility(View.GONE);
@@ -86,7 +86,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             Glide.with(cardHolder.itemView.getContext())
                     .load(category.strCategoryThumb)
                     .placeholder(R.drawable.medium)
-                    .into(cardHolder.mealImage);
+                    .into(cardHolder.image);
         }
     }
 
@@ -105,16 +105,16 @@ public class CategoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
     public static class CardViewHolder extends RecyclerView.ViewHolder {
-        ImageView mealImage;
-        TextView mealTitle;
-        Chip chipArea;
-        Chip chipCategory;
-        ImageView favoriteIcon;
+        public ImageView image;
+        public TextView title;
+        public Chip chipArea;
+        public Chip chipCategory;
+        public ImageView favoriteIcon;
 
         public CardViewHolder(@NonNull View itemView) {
             super(itemView);
-            mealImage = itemView.findViewById(R.id.mealImage1);
-            mealTitle = itemView.findViewById(R.id.mealTitle1);
+            image = itemView.findViewById(R.id.mealImage1);
+            title = itemView.findViewById(R.id.mealTitle1);
             chipArea = itemView.findViewById(R.id.meal_country);
             chipCategory = itemView.findViewById(R.id.meal_category);
             favoriteIcon = itemView.findViewById(R.id.favoriteIcon1);

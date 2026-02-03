@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/splash_subtitle_color">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_plans"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:paddingTop="140dp"
+        android:paddingBottom="8dp"
+        android:clipToPadding="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/appbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rounded_appbar"
+        android:gravity="center_vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <ImageButton
+            android:id="@+id/btn_back"
+            android:layout_width="@dimen/back_size"
+            android:layout_height="@dimen/back_size"
+            android:layout_margin="@dimen/padding_margin_16"
+            android:background="@drawable/transparent_rounded_btn"
+            android:contentDescription="@string/back"
+            android:src="@drawable/outline_arrow_back_24"
+            app:layout_constraintBottom_toTopOf="@+id/imageView"
+            app:layout_constraintEnd_toStartOf="@+id/title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/primary_button_start" />
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/padding_margin_16"
+            android:fontFamily="@font/fredoka_bold"
+            android:text="@string/weekly_plans"
+            android:textColor="@color/splash_subtitle_color"
+            android:textSize="@dimen/txt_size_25"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_back"
+            app:layout_constraintStart_toEndOf="@+id/btn_back"
+            app:layout_constraintTop_toTopOf="@+id/btn_back" />
+
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/date_txt"
+            android:src="@drawable/outline_arrow_back_ios_24"
+            app:layout_constraintBottom_toBottomOf="@+id/date_plan"
+            app:layout_constraintEnd_toStartOf="@+id/date_plan"
+            app:layout_constraintTop_toTopOf="@+id/date_plan" />
+
+        <TextView
+            android:id="@+id/date_plan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/date_txt"
+            android:layout_marginBottom="@dimen/padding_margin_16"
+            android:textColor="@color/splash_subtitle_color"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            android:textStyle="bold"/>
+
+        <ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/date_txt"
+            android:src="@drawable/outline_arrow_forward_ios_24"
+            app:layout_constraintBottom_toBottomOf="@+id/date_plan"
+            app:layout_constraintStart_toEndOf="@+id/date_plan"
+            app:layout_constraintTop_toTopOf="@+id/date_plan"
+            app:tint="@color/splash_subtitle_color" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

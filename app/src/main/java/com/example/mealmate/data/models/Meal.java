@@ -1,6 +1,9 @@
 package com.example.mealmate.data.models;
 
+import androidx.core.util.Pair;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Meal implements Serializable {
     public String strMeal;
@@ -51,4 +54,55 @@ public class Meal implements Serializable {
     public String strMeasure18;
     public String strMeasure19;
     public String strMeasure20;
+
+    public String getStrMeal() {
+        return strMeal;
+    }
+
+    public String getStrCategory() {
+        return strCategory;
+    }
+
+    public String getStrArea() {
+        return strArea;
+    }
+
+    public String getStrMealThumb() {
+        return strMealThumb;
+    }
+
+    public String getStrInstructions() {
+        return strInstructions;
+    }
+
+    public List<Pair<String, String>> getIngredientsAndMeasures() {
+        List<Pair<String, String>> ingredients = new ArrayList<>();
+        addIngredientIfNotNull(ingredients, strIngredient1, strMeasure1);
+        addIngredientIfNotNull(ingredients, strIngredient2, strMeasure2);
+        addIngredientIfNotNull(ingredients, strIngredient3, strMeasure3);
+        addIngredientIfNotNull(ingredients, strIngredient4, strMeasure4);
+        addIngredientIfNotNull(ingredients, strIngredient5, strMeasure5);
+        addIngredientIfNotNull(ingredients, strIngredient6, strMeasure6);
+        addIngredientIfNotNull(ingredients, strIngredient7, strMeasure7);
+        addIngredientIfNotNull(ingredients, strIngredient8, strMeasure8);
+        addIngredientIfNotNull(ingredients, strIngredient9, strMeasure9);
+        addIngredientIfNotNull(ingredients, strIngredient10, strMeasure10);
+        addIngredientIfNotNull(ingredients, strIngredient11, strMeasure11);
+        addIngredientIfNotNull(ingredients, strIngredient12, strMeasure12);
+        addIngredientIfNotNull(ingredients, strIngredient13, strMeasure13);
+        addIngredientIfNotNull(ingredients, strIngredient14, strMeasure14);
+        addIngredientIfNotNull(ingredients, strIngredient15, strMeasure15);
+        addIngredientIfNotNull(ingredients, strIngredient16, strMeasure16);
+        addIngredientIfNotNull(ingredients, strIngredient17, strMeasure17);
+        addIngredientIfNotNull(ingredients, strIngredient18, strMeasure18);
+        addIngredientIfNotNull(ingredients, strIngredient19, strMeasure19);
+        addIngredientIfNotNull(ingredients, strIngredient20, strMeasure20);
+        return ingredients;
+    }
+
+    private void addIngredientIfNotNull(List<Pair<String, String>> list, String ingredient, String measure) {
+        if (ingredient != null && !ingredient.trim().isEmpty()) {
+            list.add(new Pair<>(ingredient, measure));
+        }
+    }
 }

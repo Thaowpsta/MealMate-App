@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingHorizontal="@dimen/padding_margin_19"
+    android:paddingVertical="@dimen/padding_margin_16">
+
+    <TextView
+        android:id="@+id/dateText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/date_txt"
+        android:textColor="@color/txt_dark"
+        android:textSize="@dimen/txt_size_19"
+        android:fontFamily="@font/fredoka_bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/mealCountText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/meals_num"
+        android:textColor="@color/txt_light"
+        android:textSize="@dimen/txt_size_12"
+        android:paddingHorizontal="@dimen/txt_size_12"
+        android:paddingVertical="@dimen/padding_margin_3"
+        android:background="@drawable/rounded_txt_field"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

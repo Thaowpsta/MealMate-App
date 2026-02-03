@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="@dimen/padding_margin_19"
+    android:paddingVertical="@dimen/padding_margin_8"
+    app:cardCornerRadius="@dimen/padding_margin_16"
+    android:background="@color/splash_subtitle_color">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/padding_margin_19"
+        android:minHeight="@dimen/txt_field_h">
+
+        <View
+            android:id="@+id/plusCircle"
+            android:layout_width="@dimen/back_size"
+            android:layout_height="@dimen/back_size"
+            android:background="@drawable/transparent_rounded_btn"
+            android:backgroundTint="@color/primary_button_end"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <ImageView
+            android:id="@+id/plusIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/add_to_plan"
+            android:src="@drawable/outline_add_2_24"
+            app:layout_constraintStart_toStartOf="@id/plusCircle"
+            app:layout_constraintEnd_toEndOf="@id/plusCircle"
+            app:layout_constraintTop_toTopOf="@id/plusCircle"
+            app:layout_constraintBottom_toBottomOf="@id/plusCircle"
+            app:tint="@color/primary_button_start" />
+
+        <TextView
+            android:id="@+id/addMealText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/add_meal"
+            android:textColor="@color/txt_dark"
+            android:textSize="@dimen/txt_size_16"
+            android:fontFamily="@font/fredoka_bold"
+            android:layout_marginStart="@dimen/padding_margin_16"
+            app:layout_constraintStart_toEndOf="@id/plusCircle"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/promptText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/quick_add"
+            android:textColor="@color/txt_light"
+            android:textSize="@dimen/txt_size_16"
+            android:fontFamily="@font/fredoka_light"
+            android:layout_marginTop="@dimen/padding_margin_3"
+            app:layout_constraintStart_toStartOf="@id/addMealText"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/addMealText"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>

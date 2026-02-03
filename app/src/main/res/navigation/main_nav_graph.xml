@@ -35,4 +35,12 @@
         android:id="@+id/categoriesFragment"
         android:name="com.example.mealmate.ui.categories.CategoriesFragment"
         android:label="CategoriesFragment" />
+    <fragment
+        android:id="@+id/favoritesFragment"
+        android:name="com.example.mealmate.ui.favorites.FavoritesFragment"
+        android:label="FavoritesFragment" />
+    <fragment
+        android:id="@+id/plannerFragment"
+        android:name="com.example.mealmate.ui.plans.PlannerFragment"
+        android:label="PlannerFragment" />
 </navigation>

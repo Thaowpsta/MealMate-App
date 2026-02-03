@@ -5,7 +5,7 @@
         android:title="@string/home"
         android:icon="@drawable/home" />
 
-    <item android:id="@+id/cart_fragment"
+    <item android:id="@+id/plannerFragment"
         android:title="@string/planner"
         android:icon="@drawable/calendar"/>
 
@@ -13,7 +13,7 @@
         android:title="@string/search"
         android:icon="@drawable/search"/>
 
-    <item android:id="@+id/favs_fragment"
+    <item android:id="@+id/favoritesFragment"
         android:title="@string/favs"
         android:icon="@drawable/favorite"/>
 </menu>
