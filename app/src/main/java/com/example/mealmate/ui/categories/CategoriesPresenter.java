@@ -23,8 +23,8 @@ public class CategoriesPresenter  implements CategoriesContract.Presenter{
 
     public CategoriesPresenter(CategoriesContract.View view) {
         this.view = view;
-        this.mealService = RetrofitClient.getClient().create(MealService.class);
-        this.compositeDisposable = new CompositeDisposable();
+        mealService = RetrofitClient.getClient().create(MealService.class);
+        compositeDisposable = new CompositeDisposable();
     }
 
 
@@ -39,9 +39,7 @@ public class CategoriesPresenter  implements CategoriesContract.Presenter{
                                         view.showCategories(response.categories);
                                     }
                                 },
-                                error -> {
-                                    view.showError("No categories found");
-                                }
+                                error -> view.showError("No categories found")
                         )
         );
     }

@@ -28,7 +28,6 @@
     <string name="date_txt">Monday, Oct. 24</string>
     <string name="greeting">Good Morning,</string>
     <string name="username">Thaowpsta</string>
-    <string name="meal_day">meal of the day</string>
     <string name="meal_title">Spaghetti Carbonara</string>
     <string name="area">Italian</string>
     <string name="category">Pasta</string>
@@ -51,4 +50,26 @@
     <string name="mix_the_flour">Mix the flour...</string>
     <string name="show_more">Show more</string>
     <string name="show_less">Show less</string>
+    <string name="favs_subtitle">24 saved recipes</string>
+    <string name="weekly_plans">Weekly Plans</string>
+    <string name="plans_subtitle">Your meals for this week</string>
+    <string name="back">Back</string>
+    <string name="profile_img">Profile Img</string>
+    <string name="logout">Logout</string>
+    <string name="mod">Meal of day</string>
+    <string name="refresh">Refresh</string>
+    <string name="count_num">0</string>
+    <string name="google_login">Sign in with Google</string>
+    <string name="facebook_login">Sign in with Facebook</string>
+    <string name="x_login">Sign in with X</string>
+    <string name="add_to_favorites">Add to Favorites</string>
+    <string name="add_meal">Add Lunch</string>
+    <string name="quick_add">Find a recipe or quick add</string>
+    <string name="meals_num">0 Meals</string>
+    <string name="plan_next_day">Tap to plan Wednesday</string>
+    <string name="ingredient_name">Ingredient Name</string>
+    <string name="measure">Measure</string>
+    <string name="instruction_num">1</string>
+    <string name="meal_type">BREAKFAST</string>
+    <string name="planed_desc">350 kcal • High Protein</string>
 </resources>

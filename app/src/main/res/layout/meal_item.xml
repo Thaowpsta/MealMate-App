@@ -5,6 +5,7 @@
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/padding_margin_16"
     android:background="@color/txt_light"
+    android:focusable="true"
     app:cardCornerRadius="@dimen/padding_margin_16"
     android:clickable="true"
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -17,9 +18,10 @@
 
         <ImageView
             android:id="@+id/mealImage1"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="@dimen/padding_margin_150"
             android:layout_gravity="center"
+            android:contentDescription="@string/meal_title"
             android:scaleType="centerCrop"
             android:src="@drawable/medium" />
 
@@ -65,6 +67,7 @@
         android:layout_gravity="top|end"
         android:background="@drawable/transparent_rounded_btn"
         android:layout_margin="@dimen/padding_margin_8"
+        android:contentDescription="@string/add_to_favorites"
         android:padding="@dimen/padding_margin_8"
         app:srcCompat="@drawable/favorite"
         app:tint="@color/primary_button_end" />

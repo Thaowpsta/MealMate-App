@@ -24,7 +24,6 @@ import com.example.mealmate.R;
 import com.example.mealmate.data.models.Meal;
 import com.google.android.material.chip.Chip;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -104,32 +103,8 @@ public class MealDetailsFragment extends Fragment implements MealDetailsContract
                 .error(R.drawable.medium)
                 .into(mealImage);
 
-        List<Pair<String, String>> ingredientList = new ArrayList<>();
-
-
-        try {
-            for (int i = 1; i <= 20; i++) {
-
-                String ingredientFieldName = "strIngredient" + i;
-                String measureFieldName = "strMeasure" + i;
-
-                Field ingredientField = Meal.class.getDeclaredField(ingredientFieldName);
-                Field measureField = Meal.class.getDeclaredField(measureFieldName);
-
-                ingredientField.setAccessible(true);
-                measureField.setAccessible(true);
-
-                String ingredient = (String) ingredientField.get(meal);
-                String measure = (String) measureField.get(meal);
-
-                if (ingredient != null && !ingredient.trim().isEmpty()) {
-                    counter++;
-                    ingredientList.add(new Pair<>(ingredient, measure));
-                }
-            }
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+        List<Pair<String, String>> ingredientList = meal.getIngredientsAndMeasures();
+        counter = ingredientList.size();
 
         itemNumber.setText(counter + " item");
         IngredientsAdapter adapter = new IngredientsAdapter(ingredientList);

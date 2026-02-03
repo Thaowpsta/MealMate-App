@@ -1,4 +1,4 @@
-package com.example.mealmate.utils;
+package com.example.mealmate.data;
 
 import android.content.Context;
 import android.content.SharedPreferences;

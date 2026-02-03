@@ -2,7 +2,7 @@ package com.example.mealmate.data.repositories;
 
 import android.content.Context;
 
-import com.example.mealmate.utils.SharedPreferencesManager;
+import com.example.mealmate.data.SharedPreferencesManager;
 import com.google.firebase.auth.ActionCodeSettings;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FacebookAuthProvider;

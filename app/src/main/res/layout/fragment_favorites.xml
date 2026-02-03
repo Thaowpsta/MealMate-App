@@ -6,7 +6,7 @@
     android:background="@color/splash_subtitle_color">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_all_categories"
+        android:id="@+id/rv_favorites"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:paddingTop="@dimen/padding_margin_120"
@@ -47,7 +47,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/fredoka_bold"
-                android:text="@string/categories"
+                android:text="@string/favs"
                 android:textColor="@color/splash_subtitle_color"
                 android:textSize="@dimen/txt_size_25" />
 
@@ -57,7 +57,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/padding_margin_150"
-            android:text="@string/categories_subtitle"
+            android:text="@string/favs_subtitle"
             android:textColor="@color/splash_subtitle_color" />
     </LinearLayout>
 
