@@ -1,6 +1,6 @@
 package com.example.mealmate.data.meals.datasource.remote;
 
-import com.example.mealmate.data.meals.model.MealResponse;
+import com.example.mealmate.data.meals.models.MealResponse;
 import com.example.mealmate.data.network.MealService;
 import com.example.mealmate.data.network.RetrofitClient;
 

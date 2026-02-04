@@ -23,7 +23,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.mealmate.R;
 import com.example.mealmate.data.categories.model.Category;
-import com.example.mealmate.data.meals.model.Meal;
+import com.example.mealmate.data.meals.models.Meal;
+import com.example.mealmate.data.repositories.MealRepository;
 import com.example.mealmate.data.repositories.UserRepository;
 import com.example.mealmate.ui.categories.view.CategoriesAdapter;
 import com.example.mealmate.ui.home.presenter.HomePresenter;
@@ -57,7 +58,7 @@ public class HomeFragment extends Fragment implements HomeView {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         userRepository = new UserRepository(requireContext());
-        presenter = new HomePresenterImp(this);
+        presenter = new HomePresenterImp(this, new MealRepository(), userRepository);
     }
 
     @Override
@@ -119,18 +120,12 @@ public class HomeFragment extends Fragment implements HomeView {
             showMeal(currentMeal);
         }
 
-        presenter = new HomePresenterImp(this);
-
         presenter.getCategories();
 
         refreshButton.setOnClickListener(v -> presenter.getRandomMeal());
 
         logoutButton.setOnClickListener(v -> {
-            userRepository.logout();
-            Intent intent = new Intent(requireContext(), SplashActivity.class);
-            intent.putExtra("IS_LOGOUT", true);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
+            presenter.logout();
         });
 
         modCard.setOnClickListener(v -> {
@@ -189,6 +184,14 @@ public class HomeFragment extends Fragment implements HomeView {
     @Override
     public void showError(String message) {
         Toast.makeText(getContext(), "Error: " + message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void navigateToLogin() {
+        Intent intent = new Intent(requireContext(), SplashActivity.class);
+        intent.putExtra("IS_LOGOUT", true);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
     }
 
     @Override

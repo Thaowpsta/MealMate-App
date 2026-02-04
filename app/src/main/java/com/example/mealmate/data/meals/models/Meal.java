@@ -1,4 +1,4 @@
-package com.example.mealmate.data.meals.model;
+package com.example.mealmate.data.meals.models;
 
 import androidx.core.util.Pair;
 import java.io.Serializable;

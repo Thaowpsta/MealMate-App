@@ -1,18 +1,11 @@
 package com.example.mealmate.ui.favorites.presenter;
 
-import com.example.mealmate.data.meals.datasource.remote.MealRemoteDataSource;
 import com.example.mealmate.data.meals.datasource.remote.NetworkMealResponse;
-import com.example.mealmate.data.meals.model.Meal;
-import com.example.mealmate.data.network.MealService;
-import com.example.mealmate.data.network.RetrofitClient;
+import com.example.mealmate.data.meals.models.Meal;
 import com.example.mealmate.data.repositories.MealRepository;
 import com.example.mealmate.ui.favorites.view.FavoriteView;
 
 import java.util.List;
-
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.disposables.CompositeDisposable;
-import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class FavoritesPresenterImp implements FavoritePresenter {
 

@@ -1,6 +1,6 @@
 package com.example.mealmate.ui.meal_details.presenter;
 
-import com.example.mealmate.data.meals.model.Meal;
+import com.example.mealmate.data.meals.models.Meal;
 import com.example.mealmate.ui.meal_details.view.MealDetailsView;
 
 public class MealDetailsPresenterImp implements MealDetailsPresenter {

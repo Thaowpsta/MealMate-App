@@ -16,7 +16,7 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.example.mealmate.R;
-import com.example.mealmate.data.meals.model.Meal;
+import com.example.mealmate.data.meals.models.Meal;
 import com.example.mealmate.ui.favorites.presenter.FavoritesPresenterImp;
 
 import java.util.List;

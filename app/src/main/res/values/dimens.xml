@@ -7,6 +7,7 @@
     <dimen name="padding_margin_8">8dp</dimen>
     <dimen name="padding_margin_3">3dp</dimen>
     <dimen name="padding_margin_1">1dp</dimen>
+    <dimen name="padding_margin_0.8">0.8dp</dimen>
     <dimen name="padding_margin_16">16dp</dimen>
     <dimen name="corner_radius">12dp</dimen>
     <dimen name="txt_field_h">52dp</dimen>

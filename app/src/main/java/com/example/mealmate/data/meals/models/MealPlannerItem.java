@@ -1,6 +1,4 @@
-package com.example.mealmate.data.models;
-
-import com.example.mealmate.data.meals.model.Meal;
+package com.example.mealmate.data.meals.models;
 
 import java.util.Objects;
 
@@ -67,7 +65,7 @@ public abstract class MealPlannerItem {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             MealItem mealItem = (MealItem) o;
-            return mealType == mealItem.mealType && Objects.equals(meal, mealItem.meal) && Objects.equals(meal.strInstructions, mealItem.meal.strInstructions) && Objects.equals(meal.strMealThumb, mealItem.meal.strMealThumb);
+            return mealType == mealItem.mealType && Objects.equals(meal, mealItem.meal);
         }
 
         @Override

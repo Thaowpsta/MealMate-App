@@ -21,7 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.mealmate.R;
-import com.example.mealmate.data.meals.model.Meal;
+import com.example.mealmate.data.meals.models.Meal;
 import com.example.mealmate.ui.meal_details.presenter.MealDetailsPresenter;
 import com.example.mealmate.ui.meal_details.presenter.MealDetailsPresenterImp;
 import com.google.android.material.chip.Chip;

@@ -17,7 +17,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class LoginPresenterImp implements LoginPresenter{
 
-    private final LoginView loginView;
+    private LoginView loginView;
     private final UserRepository repository;
     private GoogleSignInClient googleSignInClient;
 
@@ -143,6 +143,6 @@ public class LoginPresenterImp implements LoginPresenter{
 
     @Override
     public void onDestroy() {
-        repository.logout();
+       loginView = null;
     }
 }

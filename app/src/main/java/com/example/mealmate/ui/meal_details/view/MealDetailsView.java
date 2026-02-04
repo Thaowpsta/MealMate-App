@@ -1,6 +1,6 @@
 package com.example.mealmate.ui.meal_details.view;
 
-import com.example.mealmate.data.meals.model.Meal;
+import com.example.mealmate.data.meals.models.Meal;
 
 public interface MealDetailsView {
         void showLoading();

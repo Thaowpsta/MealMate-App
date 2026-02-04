@@ -29,7 +29,7 @@
         tools:layout="@layout/fragment_meal_details" >
         <argument
             android:name="meal"
-            app:argType="com.example.mealmate.data.meals.model.Meal" />
+            app:argType="com.example.mealmate.data.meals.models.Meal" />
     </fragment>
     <fragment
         android:id="@+id/categoriesFragment"

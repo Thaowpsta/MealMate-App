@@ -39,12 +39,24 @@
             android:layout_marginTop="@dimen/padding_margin_16"/>
 
         <TextView
+            android:id="@+id/meal_category"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/meal_category"
+            android:textColor="@color/txt_light"
+            android:textSize="@dimen/txt_size_12"
+            app:layout_constraintBottom_toBottomOf="@id/mealTypeText"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/mealTypeText"
+            android:layout_marginEnd="@dimen/padding_margin_8"/>
+
+        <TextView
             android:id="@+id/mealNameText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/meal_title"
             android:textColor="@color/txt_dark"
-            android:textSize="@dimen/txt_size_19"
+            android:textSize="@dimen/txt_size_16"
             android:fontFamily="@font/fredoka_bold"
             android:layout_marginStart="@dimen/padding_margin_16"
             android:paddingVertical="@dimen/padding_margin_8"
@@ -57,7 +69,7 @@
             android:layout_height="wrap_content"
             android:text="@string/planed_desc"
             android:textColor="@color/txt_light"
-            android:textSize="@dimen/txt_size_16"
+            android:textSize="@dimen/txt_size_12"
             android:paddingBottom="@dimen/padding_margin_16"
             app:layout_constraintStart_toStartOf="@id/mealNameText"
             app:layout_constraintTop_toBottomOf="@id/mealNameText" />

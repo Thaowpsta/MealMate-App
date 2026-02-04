@@ -1,4 +1,4 @@
-package com.example.mealmate.data.meals.model;
+package com.example.mealmate.data.meals.models;
 
 import java.util.List;
 

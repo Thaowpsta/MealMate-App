@@ -1,6 +1,6 @@
 package com.example.mealmate.ui.favorites.view;
 
-import com.example.mealmate.data.meals.model.Meal;
+import com.example.mealmate.data.meals.models.Meal;
 
 import java.util.List;
 

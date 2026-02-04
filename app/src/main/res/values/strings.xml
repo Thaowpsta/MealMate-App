@@ -72,4 +72,7 @@
     <string name="instruction_num">1</string>
     <string name="meal_type">BREAKFAST</string>
     <string name="planed_desc">350 kcal • High Protein</string>
+    <string name="meal_category">Meal Category</string>
+    <string name="current_date">12</string>
+    <string name="current_day">Mon</string>
 </resources>

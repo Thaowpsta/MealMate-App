@@ -5,14 +5,15 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="@dimen/padding_margin_19"
-    android:paddingVertical="@dimen/padding_margin_8"
+    android:layout_marginVertical="@dimen/padding_margin_8"
     app:cardCornerRadius="@dimen/padding_margin_16"
-    android:background="@color/splash_subtitle_color">
+    app:cardElevation="0dp"
+    android:foreground="@drawable/dotted_border">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/padding_margin_19"
+        android:padding="@dimen/padding_margin_16"
         android:minHeight="@dimen/txt_field_h">
 
         <View

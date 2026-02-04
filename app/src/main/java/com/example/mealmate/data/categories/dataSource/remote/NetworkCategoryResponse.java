@@ -1,7 +1,6 @@
 package com.example.mealmate.data.categories.dataSource.remote;
 
 import com.example.mealmate.data.categories.model.Category;
-import com.example.mealmate.data.meals.model.Meal;
 
 import java.util.List;
 
