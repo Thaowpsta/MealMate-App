@@ -7,6 +7,7 @@ import com.example.mealmate.data.meals.models.Meal;
 import com.example.mealmate.data.repositories.MealRepository;
 import com.example.mealmate.data.repositories.UserRepository;
 import com.example.mealmate.ui.home.view.HomeView;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +26,7 @@ public class HomePresenterImp implements HomePresenter {
 
     @Override
     public void getRandomMeal() {
+        if (view != null) view.showLoading();
         mealRepository.getRandomMeal(new NetworkMealResponse() {
             @Override
             public void onSuccess(List<Meal> meals) {
@@ -44,6 +46,21 @@ public class HomePresenterImp implements HomePresenter {
                 }
             }
         });
+    }
+
+    @Override
+    public void getCachedMeal(String currentDate) {
+        String cachedMealJson = userRepository.getCachedMeal();
+        String lastDate = userRepository.getLastMealDate();
+
+        if (cachedMealJson != null && lastDate.equals(currentDate)) {
+            Meal cachedMeal = new Gson().fromJson(cachedMealJson, Meal.class);
+            if (view != null) {
+                view.showMeal(cachedMeal);
+            }
+        } else {
+            getRandomMeal();
+        }
     }
 
     @Override

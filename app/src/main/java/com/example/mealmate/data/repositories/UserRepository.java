@@ -174,6 +174,18 @@ public class UserRepository {
         return sharedPreferencesManager.getProfileImageUrl();
     }
 
+    public void saveCachedMeal(String mealJson, String date) {
+        sharedPreferencesManager.saveCachedMeal(mealJson, date);
+    }
+
+    public String getCachedMeal() {
+        return sharedPreferencesManager.getCachedMeal();
+    }
+
+    public String getLastMealDate() {
+        return sharedPreferencesManager.getLastMealDate();
+    }
+
     public interface LoginCallback {
         void onSuccess(FirebaseUser user);
         void onError(String error);

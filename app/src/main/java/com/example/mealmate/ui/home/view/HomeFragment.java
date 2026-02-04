@@ -32,6 +32,7 @@ import com.example.mealmate.ui.home.presenter.HomePresenterImp;
 import com.example.mealmate.ui.splash.view.SplashActivity;
 import com.google.android.material.chip.Chip;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.gson.Gson;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -49,6 +50,7 @@ public class HomeFragment extends Fragment implements HomeView {
     private UserRepository userRepository;
     private Meal currentMeal;
     private RecyclerView rvCategories;
+    private String currentDate;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -86,7 +88,7 @@ public class HomeFragment extends Fragment implements HomeView {
 
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMM. d", Locale.getDefault());
-        String currentDate = dateFormat.format(new Date());
+        currentDate = dateFormat.format(new Date());
         date.setText(currentDate);
 
         if (userRepository.isUserLoggedIn()) {
@@ -114,10 +116,14 @@ public class HomeFragment extends Fragment implements HomeView {
             usernameTxt.setText("Guest");
         }
 
-        if (currentMeal == null) {
-            presenter.getRandomMeal();
+        String cachedMealJson = userRepository.getCachedMeal();
+        String lastDate = userRepository.getLastMealDate();
+
+        if (cachedMealJson != null && lastDate.equals(currentDate)) {
+            Meal cachedMeal = new Gson().fromJson(cachedMealJson, Meal.class);
+            showMeal(cachedMeal);
         } else {
-            showMeal(currentMeal);
+            presenter.getRandomMeal();
         }
 
         presenter.getCategories();
@@ -160,6 +166,9 @@ public class HomeFragment extends Fragment implements HomeView {
         mealTitle.setText(meal.strMeal);
         categoryChip.setText(meal.strCategory);
         areaChip.setText(meal.strArea);
+
+        String mealJson = new Gson().toJson(meal);
+        userRepository.saveCachedMeal(mealJson, currentDate);
 
         Glide.with(this)
                 .load(meal.strMealThumb)
