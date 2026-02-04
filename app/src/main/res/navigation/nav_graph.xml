@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/splashFragment"
-        android:name="com.example.mealmate.ui.splash.SplashFragment"
+        android:name="com.example.mealmate.ui.splash.view.SplashFragment"
         android:label="SplashFragment" >
         <action
             android:id="@+id/action_splashFragment_to_loginFragment"
@@ -20,7 +20,7 @@
 
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.example.mealmate.ui.auth.login.LoginFragment"
+        android:name="com.example.mealmate.ui.auth.login.view.LoginFragment"
         android:label="fragment_login"
         tools:layout="@layout/fragment_login" >
         <action
@@ -34,7 +34,7 @@
 
     <fragment
         android:id="@+id/signUpFragment"
-        android:name="com.example.mealmate.ui.auth.sign_up.SignUpFragment"
+        android:name="com.example.mealmate.ui.auth.sign_up.view.SignUpFragment"
         android:label="SignUpFragment" >
         <action
             android:id="@+id/action_signUpFragment_to_loginFragment"

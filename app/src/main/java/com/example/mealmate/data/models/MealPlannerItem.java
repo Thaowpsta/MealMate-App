@@ -1,6 +1,6 @@
 package com.example.mealmate.data.models;
 
-import com.example.mealmate.ui.plans.MealType;
+import com.example.mealmate.data.meals.model.Meal;
 
 import java.util.Objects;
 

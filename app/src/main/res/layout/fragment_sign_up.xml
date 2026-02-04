@@ -15,7 +15,7 @@
         android:layout_marginHorizontal="@dimen/primary_button_corners"
         android:paddingHorizontal="@dimen/primary_button_corners"
         android:paddingTop="@dimen/padding_margin_38"
-        tools:context=".ui.auth.sign_up.SignUpFragment">
+        tools:context=".ui.auth.sign_up.view.SignUpFragment">
 
         <ImageView
             android:id="@+id/logo"

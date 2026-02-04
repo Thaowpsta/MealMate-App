@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.example.mealmate.ui.home.HomeFragment"
+        android:name="com.example.mealmate.ui.home.view.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" >
         <action
@@ -24,23 +24,23 @@
 
     <fragment
         android:id="@+id/mealDetailsFragment"
-        android:name="com.example.mealmate.ui.meal_details.MealDetailsFragment"
+        android:name="com.example.mealmate.ui.meal_details.view.MealDetailsFragment"
         android:label="fragment_meal_details"
         tools:layout="@layout/fragment_meal_details" >
         <argument
             android:name="meal"
-            app:argType="com.example.mealmate.data.models.Meal" />
+            app:argType="com.example.mealmate.data.meals.model.Meal" />
     </fragment>
     <fragment
         android:id="@+id/categoriesFragment"
-        android:name="com.example.mealmate.ui.categories.CategoriesFragment"
+        android:name="com.example.mealmate.ui.categories.view.CategoriesFragment"
         android:label="CategoriesFragment" />
     <fragment
         android:id="@+id/favoritesFragment"
-        android:name="com.example.mealmate.ui.favorites.FavoritesFragment"
+        android:name="com.example.mealmate.ui.favorites.view.FavoritesFragment"
         android:label="FavoritesFragment" />
     <fragment
         android:id="@+id/plannerFragment"
-        android:name="com.example.mealmate.ui.plans.PlannerFragment"
+        android:name="com.example.mealmate.ui.plans.view.PlannerFragment"
         android:label="PlannerFragment" />
 </navigation>

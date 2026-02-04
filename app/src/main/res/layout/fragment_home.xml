@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/splash_subtitle_color"
     android:padding="@dimen/padding_margin_16"
-    tools:context=".ui.home.HomeFragment">
+    tools:context=".ui.home.view.HomeFragment">
 
     <ImageView
         android:id="@+id/user_img"
