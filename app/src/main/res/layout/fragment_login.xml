@@ -178,17 +178,6 @@
                 android:padding="@dimen/padding_margin_3"
                 android:layout_marginHorizontal="@dimen/padding_margin_16"/>
 
-            <ImageView
-                android:id="@+id/btn_x"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:contentDescription="@string/x_login"
-                android:src="@drawable/ic_x"
-                android:background="@drawable/outlined_card"
-                android:padding="@dimen/padding_margin_3"
-                android:layout_marginHorizontal="@dimen/padding_margin_16"/>
-
     </LinearLayout>
 
     <androidx.appcompat.widget.AppCompatButton
