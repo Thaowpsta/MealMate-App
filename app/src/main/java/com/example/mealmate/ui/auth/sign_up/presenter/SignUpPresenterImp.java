@@ -98,6 +98,7 @@ public class SignUpPresenterImp implements SignUpPresenter {
 
         user.updateProfile(profileUpdates)
                 .addOnSuccessListener(aVoid -> {
+                    userRepository.saveUserToPrefs(user);
                     view.hideProgress();
                     view.onSignUpSuccess();
                 })

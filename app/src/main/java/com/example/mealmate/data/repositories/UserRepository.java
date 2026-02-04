@@ -44,11 +44,11 @@ public class UserRepository {
         firebaseAuth.signInWithEmailAndPassword(email, password).addOnSuccessListener(authResult -> {
             FirebaseUser user = authResult.getUser();
 
-            if(callback != null)
-                callback.onSuccess(authResult.getUser());
-
             if(user != null)
                 saveUserToPrefs(user);
+
+            if(callback != null)
+                callback.onSuccess(authResult.getUser());
 
         }).addOnFailureListener(error -> {
             if (callback != null)
@@ -160,6 +160,18 @@ public class UserRepository {
                     user.getPhotoUrl() != null ? user.getPhotoUrl().toString() : ""
             );
         }
+    }
+
+    public String getUserDisplayName() {
+        return sharedPreferencesManager.getUserName();
+    }
+
+    public String getUserEmail() {
+        return sharedPreferencesManager.getUserEmail();
+    }
+
+    public String getUserPhotoUrl() {
+        return sharedPreferencesManager.getProfileImageUrl();
     }
 
     public interface LoginCallback {

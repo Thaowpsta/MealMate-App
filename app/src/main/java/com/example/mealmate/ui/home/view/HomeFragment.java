@@ -89,12 +89,9 @@ public class HomeFragment extends Fragment implements HomeView {
         String currentDate = dateFormat.format(new Date());
         date.setText(currentDate);
 
-        FirebaseUser currentUser = userRepository.getCurrentUser();
-        if (currentUser != null) {
-            userRepository.saveUserToPrefs(currentUser);
-
-            String name = currentUser.getDisplayName();
-            String email = currentUser.getEmail();
+        if (userRepository.isUserLoggedIn()) {
+            String name = userRepository.getUserDisplayName();
+            String email = userRepository.getUserEmail();
 
             if (name == null || name.isEmpty()) {
                 if (email != null && email.contains("@")) {
@@ -105,13 +102,16 @@ public class HomeFragment extends Fragment implements HomeView {
             }
             usernameTxt.setText(name);
 
-            if (currentUser.getPhotoUrl() != null) {
+            String photoUrl = userRepository.getUserPhotoUrl();
+            if (photoUrl != null && !photoUrl.isEmpty()) {
                 Glide.with(this)
-                        .load(currentUser.getPhotoUrl())
+                        .load(photoUrl)
                         .placeholder(R.drawable.user)
                         .circleCrop()
                         .into(userImg);
             }
+        } else {
+            usernameTxt.setText("Guest");
         }
 
         if (currentMeal == null) {
