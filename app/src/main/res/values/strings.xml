@@ -75,4 +75,7 @@
     <string name="meal_category">Meal Category</string>
     <string name="current_date">12</string>
     <string name="current_day">Mon</string>
+    <string name="select_date">Select Date</string>
+    <string name="october_2025">October 2025</string>
+    <string name="select">Select</string>
 </resources>
