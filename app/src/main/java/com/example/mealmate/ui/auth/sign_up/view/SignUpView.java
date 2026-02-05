@@ -9,6 +9,8 @@ public interface SignUpView {
 
         void onSignUpSuccess();
 
+        void onGuestLoginSuccess();
+
         void onSignUpError(String message);
 
         void showNameError(String error);

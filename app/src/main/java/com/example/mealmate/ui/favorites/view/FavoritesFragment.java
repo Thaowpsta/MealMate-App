@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.mealmate.R;
@@ -21,10 +22,11 @@ import com.example.mealmate.ui.favorites.presenter.FavoritesPresenterImp;
 
 import java.util.List;
 
-public class FavoritesFragment extends Fragment implements FavoriteView {
+public class FavoritesFragment extends Fragment implements FavoriteView, OnFavoriteClickListener {
 
     private RecyclerView recyclerView;
     private FavoritesPresenterImp presenter;
+    private TextView favorites;
 
     public FavoritesFragment() {
         // Required empty public constructor
@@ -33,7 +35,7 @@ public class FavoritesFragment extends Fragment implements FavoriteView {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        presenter = new FavoritesPresenterImp(this);
+        presenter = new FavoritesPresenterImp(this, requireContext());
     }
 
     @Override
@@ -48,33 +50,29 @@ public class FavoritesFragment extends Fragment implements FavoriteView {
         super.onViewCreated(view, savedInstanceState);
 
         recyclerView = view.findViewById(R.id.rv_favorites);
+        favorites = view.findViewById(R.id.fav_num);
         ImageButton btnBack = view.findViewById(R.id.btn_back);
 
         presenter.getFavorites();
 
-        btnBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Navigation.findNavController(view).navigateUp();
-            }
-        });
+        btnBack.setOnClickListener(v -> Navigation.findNavController(v).navigateUp());
     }
 
     @Override
     public void showLoading() {
-
     }
 
     @Override
     public void hideLoading() {
-
     }
 
     @Override
     public void showFavorites(List<Meal> meals) {
-        FavoritesAdapter adapter = new FavoritesAdapter(meals);
+        FavoritesAdapter adapter = new FavoritesAdapter(meals, this);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
+        String favText = meals.size() + " " + getString(R.string.favs_subtitle);
+        favorites.setText(favText);
     }
 
     @Override
@@ -90,5 +88,16 @@ public class FavoritesFragment extends Fragment implements FavoriteView {
         if (presenter != null) {
             presenter.onDestroy();
         }
+    }
+
+    @Override
+    public void onRemoveFavorite(Meal meal) {
+        presenter.removeFavorite(meal);
+    }
+
+    @Override
+    public void onMealClick(Meal meal) {
+        FavoritesFragmentDirections.ActionFavoritesFragmentToMealDetailsFragment action = FavoritesFragmentDirections.actionFavoritesFragmentToMealDetailsFragment(meal);
+        Navigation.findNavController(requireView()).navigate(action);
     }
 }

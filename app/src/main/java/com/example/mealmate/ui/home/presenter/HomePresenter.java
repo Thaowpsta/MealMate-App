@@ -7,6 +7,7 @@ public interface HomePresenter {
     void getCachedMeal(String currentDate);
     void onMealClicked(Meal meal);
     void getCategories();
+    void getFavoritesCount();
     void logout();
     void onDestroy();
 }

@@ -11,6 +11,7 @@ public interface HomeView {
         void showMeal(Meal meal);
         void navigateToMealDetails(Meal meal);
         void showCategories(List<Category> categories);
+        void showFavoritesCount(int count);
         void showError(String message);
         void navigateToLogin();
     }

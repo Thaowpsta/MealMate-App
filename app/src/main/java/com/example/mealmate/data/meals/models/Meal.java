@@ -1,17 +1,22 @@
 package com.example.mealmate.data.meals.models;
 
 import androidx.core.util.Pair;
+import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Meal implements Serializable {
+
+    @SerializedName("idMeal")
+    public String idMeal;
     public String strMeal;
     public String strCategory;
     public String strArea;
     public String strMealThumb;
     public String strInstructions;
     public String strYoutube;
+    public boolean isFavorite;
 
     public String strIngredient1;
     public String strIngredient2;
@@ -54,6 +59,10 @@ public class Meal implements Serializable {
     public String strMeasure18;
     public String strMeasure19;
     public String strMeasure20;
+
+    public String getId() {
+        return idMeal;
+    }
 
     public String getStrMeal() {
         return strMeal;

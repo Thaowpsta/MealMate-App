@@ -15,7 +15,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,14 +23,12 @@ import com.bumptech.glide.Glide;
 import com.example.mealmate.R;
 import com.example.mealmate.data.categories.model.Category;
 import com.example.mealmate.data.meals.models.Meal;
-import com.example.mealmate.data.repositories.MealRepository;
 import com.example.mealmate.data.repositories.UserRepository;
 import com.example.mealmate.ui.categories.view.CategoriesAdapter;
 import com.example.mealmate.ui.home.presenter.HomePresenter;
 import com.example.mealmate.ui.home.presenter.HomePresenterImp;
 import com.example.mealmate.ui.splash.view.SplashActivity;
 import com.google.android.material.chip.Chip;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.gson.Gson;
 
 import java.text.SimpleDateFormat;
@@ -51,6 +48,7 @@ public class HomeFragment extends Fragment implements HomeView {
     private Meal currentMeal;
     private RecyclerView rvCategories;
     private String currentDate;
+    private TextView favNum;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -60,7 +58,7 @@ public class HomeFragment extends Fragment implements HomeView {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         userRepository = new UserRepository(requireContext());
-        presenter = new HomePresenterImp(this, new MealRepository(), userRepository);
+        presenter = new HomePresenterImp(this, requireContext());
     }
 
     @Override
@@ -85,6 +83,7 @@ public class HomeFragment extends Fragment implements HomeView {
         TextView date = view.findViewById(R.id.date);
         rvCategories = view.findViewById(R.id.rv_categories);
         TextView seeAll = view.findViewById(R.id.see_all);
+        favNum = view.findViewById(R.id.fav_num);
 
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMM. d", Locale.getDefault());
@@ -116,17 +115,9 @@ public class HomeFragment extends Fragment implements HomeView {
             usernameTxt.setText("Guest");
         }
 
-        String cachedMealJson = userRepository.getCachedMeal();
-        String lastDate = userRepository.getLastMealDate();
-
-        if (cachedMealJson != null && lastDate.equals(currentDate)) {
-            Meal cachedMeal = new Gson().fromJson(cachedMealJson, Meal.class);
-            showMeal(cachedMeal);
-        } else {
-            presenter.getRandomMeal();
-        }
-
+        presenter.getCachedMeal(currentDate);
         presenter.getCategories();
+        presenter.getFavoritesCount();
 
         refreshButton.setOnClickListener(v -> presenter.getRandomMeal());
 
@@ -178,8 +169,9 @@ public class HomeFragment extends Fragment implements HomeView {
 
     @Override
     public void navigateToMealDetails(Meal meal) {
-        NavDirections action = HomeFragmentDirections.actionHomeFragmentToMealDetailsFragment(meal);
-        Navigation.findNavController(requireView()).navigate(action);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("meal", meal);
+        Navigation.findNavController(requireView()).navigate(R.id.action_homeFragment_to_mealDetailsFragment, bundle);
     }
 
     @Override
@@ -188,6 +180,11 @@ public class HomeFragment extends Fragment implements HomeView {
 
         rvCategories.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         rvCategories.setAdapter(categoriesAdapter);
+    }
+
+    @Override
+    public void showFavoritesCount(int count) {
+        favNum.setText(String.valueOf(count));
     }
 
     @Override

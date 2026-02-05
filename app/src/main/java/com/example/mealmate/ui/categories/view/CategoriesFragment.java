@@ -33,7 +33,7 @@ public class CategoriesFragment extends Fragment implements CategoriesView {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        presenter = new CategoriesPresenterImp(this);
+        presenter = new CategoriesPresenterImp(this, requireContext());
     }
 
     @Override

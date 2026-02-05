@@ -16,9 +16,11 @@ import java.util.List;
 
 public class FavoritesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final List<Meal> meals;
+    private final OnFavoriteClickListener favoriteClickListener;
 
-    public FavoritesAdapter(List<Meal> meals) {
+    public FavoritesAdapter(List<Meal> meals, OnFavoriteClickListener listener) {
         this.meals = meals;
+        favoriteClickListener = listener;
     }
 
     @NonNull
@@ -38,7 +40,12 @@ public class FavoritesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         cardViewHolder.chipArea.setText(meal.strArea);
         cardViewHolder.chipCategory.setText(meal.strCategory);
 
+        cardViewHolder.favoriteIcon.setImageResource(R.drawable.favorite);
+
         Glide.with(holder.itemView.getContext()).load(meal.strMealThumb).placeholder(R.drawable.medium).into(((CategoriesAdapter.CardViewHolder) holder).image);
+
+        cardViewHolder.favoriteIcon.setOnClickListener(v -> favoriteClickListener.onRemoveFavorite(meal));
+        cardViewHolder.itemView.setOnClickListener(v -> favoriteClickListener.onMealClick(meal));
     }
 
     @Override

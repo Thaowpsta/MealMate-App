@@ -38,7 +38,11 @@
     <fragment
         android:id="@+id/favoritesFragment"
         android:name="com.example.mealmate.ui.favorites.view.FavoritesFragment"
-        android:label="FavoritesFragment" />
+        android:label="FavoritesFragment" >
+        <action
+            android:id="@+id/action_favoritesFragment_to_mealDetailsFragment"
+            app:destination="@id/mealDetailsFragment" />
+    </fragment>
     <fragment
         android:id="@+id/plannerFragment"
         android:name="com.example.mealmate.ui.plans.view.PlannerFragment"

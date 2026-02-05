@@ -109,6 +109,28 @@ public class SignUpPresenterImp implements SignUpPresenter {
     }
 
     @Override
+    public void loginGuest() {
+        view.showProgress();
+        userRepository.loginGuest(new UserRepository.LoginCallback() {
+            @Override
+            public void onSuccess(FirebaseUser user) {
+                if (view != null) {
+                    view.hideProgress();
+                    view.onGuestLoginSuccess();
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+                if (view != null) {
+                    view.hideProgress();
+                    view.onSignUpError(error);
+                }
+            }
+        });
+    }
+
+    @Override
     public void onGoogleSignInClicked(Activity activity) {
         if (googleSignInClient == null) {
             GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)

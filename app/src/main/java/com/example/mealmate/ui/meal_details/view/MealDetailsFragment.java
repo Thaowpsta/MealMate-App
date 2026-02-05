@@ -41,6 +41,8 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
     private TextView seeMoreSteps;
     private InstructionsAdapter instructionsAdapter;
     private WebView videoWebView;
+    private ImageButton btnFavorite;
+    private Meal currentMeal;
 
     public MealDetailsFragment() {
         // Required empty public constructor
@@ -49,7 +51,7 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        presenter = new MealDetailsPresenterImp(this);
+        presenter = new MealDetailsPresenterImp(this, requireContext());
     }
 
     @Override
@@ -67,7 +69,7 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
         categoryChip = view.findViewById(R.id.meal_category);
         mealTitle = view.findViewById(R.id.meal_title);
         ImageButton btnBack = view.findViewById(R.id.btn_back);
-        ImageButton btnFavorite = view.findViewById(R.id.btn_favorite);
+        btnFavorite = view.findViewById(R.id.btn_favorite);
         rvIngredients = view.findViewById(R.id.rv_ingredients);
         itemNumber = view.findViewById(R.id.item_num);
         rvInstructions = view.findViewById(R.id.rv_instructions);
@@ -76,7 +78,7 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
 
         if (getArguments() != null) {
             MealDetailsFragmentArgs args = MealDetailsFragmentArgs.fromBundle(getArguments());
-            Meal currentMeal = args.getMeal();
+            currentMeal = args.getMeal();
 
             presenter.getMealDetails(currentMeal);
         }
@@ -89,15 +91,29 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
 
         btnBack.setOnClickListener(v -> Navigation.findNavController(view).navigateUp());
 
-        btnFavorite.setOnClickListener(v -> Toast.makeText(getContext(), "Added to Favorites", Toast.LENGTH_SHORT).show());
+        btnFavorite.setOnClickListener(v -> {
+            if (currentMeal != null) {
+                if (currentMeal.isFavorite) {
+                    presenter.removeFromFavorites(currentMeal);
+                } else {
+                    presenter.addToFavorites(currentMeal);
+                }
+            }
+        });
     }
 
     @Override
     public void showMeal(Meal meal) {
-
+        this.currentMeal = meal;
         mealTitle.setText(meal.strMeal);
         categoryChip.setText(meal.strCategory);
         areaChip.setText(meal.strArea);
+
+        if (meal.isFavorite) {
+            btnFavorite.setImageResource(R.drawable.favorite);
+        } else {
+            btnFavorite.setImageResource(R.drawable.unfavorite);
+        }
 
         Glide.with(this)
                 .load(meal.strMealThumb)

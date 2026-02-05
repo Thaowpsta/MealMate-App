@@ -1,14 +1,9 @@
 package com.example.mealmate.ui.categories.presenter;
 
-import com.example.mealmate.data.categories.dataSource.remote.CategoryRemoteDataSource;
-import com.example.mealmate.data.categories.dataSource.remote.NetworkCategoryResponse;
-import com.example.mealmate.data.categories.model.Category;
-import com.example.mealmate.data.network.MealService;
-import com.example.mealmate.data.network.RetrofitClient;
+import android.content.Context;
+
 import com.example.mealmate.data.repositories.MealRepository;
 import com.example.mealmate.ui.categories.view.CategoriesView;
-
-import java.util.List;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
@@ -18,31 +13,37 @@ public class CategoriesPresenterImp implements CategoriesPresenter {
 
     private final CategoriesView view;
     private final MealRepository repository;
+    private final CompositeDisposable compositeDisposable = new CompositeDisposable();
 
-    public CategoriesPresenterImp(CategoriesView view) {
+    public CategoriesPresenterImp(CategoriesView view, Context context) {
         this.view = view;
-        repository = new MealRepository();
+        this.repository = new MealRepository(context);
     }
 
-
+    @Override
     public void getCategories() {
-        repository.getCategories(new NetworkCategoryResponse() {
-            @Override
-            public void onSuccess(List<Category> categories) {
-                view.hideLoading();
-                view.showCategories(categories);
-            }
-
-            @Override
-            public void onFailure(String msg) {
-                view.hideLoading();
-                view.showError(msg);
-            }
-        });
+        if (view != null) view.showLoading();
+        compositeDisposable.add(repository.getCategories()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        categories -> {
+                            if (view != null) {
+                                view.hideLoading();
+                                view.showCategories(categories);
+                            }
+                        },
+                        error -> {
+                            if (view != null) {
+                                view.hideLoading();
+                                view.showError(error.getMessage());
+                            }
+                        }
+                ));
     }
 
     @Override
     public void onDestroy() {
+        compositeDisposable.clear();
     }
-
 }

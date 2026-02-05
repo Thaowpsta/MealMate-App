@@ -9,15 +9,22 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class UserRepository {
 
     private final FirebaseAuth firebaseAuth;
     private final SharedPreferencesManager sharedPreferencesManager;
+    private final FirebaseFirestore firestore;
 
     public UserRepository(Context context) {
         this.firebaseAuth = FirebaseAuth.getInstance();
         sharedPreferencesManager = SharedPreferencesManager.getInstance(context);
+        this.firestore = FirebaseFirestore.getInstance();
     }
 
     public void loginGuest(LoginCallback callback) {
@@ -184,6 +191,39 @@ public class UserRepository {
 
     public String getLastMealDate() {
         return sharedPreferencesManager.getLastMealDate();
+    }
+
+    public void saveProfileSettings(String themeMode, String languageCode) {
+        // 1. Save Locally
+        sharedPreferencesManager.setThemeMode(themeMode);
+         sharedPreferencesManager.setLanguage(languageCode); // You need to add this to PrefsManager
+
+        // 2. Sync to Firestore if logged in
+        FirebaseUser user = firebaseAuth.getCurrentUser();
+        if (user != null) {
+            Map<String, Object> settings = new HashMap<>();
+            settings.put("theme", themeMode);
+            settings.put("language", languageCode);
+
+            firestore.collection("users").document(user.getUid())
+                    .set(settings, SetOptions.merge());
+        }
+    }
+
+    public void loadProfileSettings() {
+        FirebaseUser user = firebaseAuth.getCurrentUser();
+        if (user != null) {
+            firestore.collection("users").document(user.getUid())
+                    .get()
+                    .addOnSuccessListener(documentSnapshot -> {
+                        if (documentSnapshot.exists()) {
+                            String theme = documentSnapshot.getString("theme");
+                            // String lang = documentSnapshot.getString("language");
+                            if (theme != null) sharedPreferencesManager.setThemeMode(theme);
+                            // applyTheme(theme); // Call a helper to apply immediately
+                        }
+                    });
+        }
     }
 
     public interface LoginCallback {

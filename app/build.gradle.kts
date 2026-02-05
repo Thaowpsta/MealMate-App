@@ -56,7 +56,10 @@ dependencies {
     implementation(libs.rxjava)
     implementation(libs.rxandroid)
     implementation(libs.glide)
-
+    implementation (libs.room.runtime)
+    annotationProcessor (libs.room.compiler)
+    implementation (libs.room.rxjava3)
+    implementation (libs.firebase.firestore)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

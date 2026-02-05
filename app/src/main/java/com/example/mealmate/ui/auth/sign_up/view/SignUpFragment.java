@@ -24,6 +24,7 @@ import androidx.navigation.Navigation;
 import com.example.mealmate.R;
 import com.example.mealmate.data.repositories.UserRepository;
 import com.example.mealmate.ui.auth.sign_up.presenter.SignUpPresenterImp;
+import com.example.mealmate.ui.main.MainActivity;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -40,6 +41,7 @@ public class SignUpFragment extends Fragment implements SignUpView{
     private EditText confirmPasswordInput;
     private Button signUpButton;
     private ProgressBar progressBar;
+    private Button guestButton;
 
     private SignUpPresenterImp presenter;
     private CallbackManager callbackManager; // Facebook
@@ -83,6 +85,7 @@ public class SignUpFragment extends Fragment implements SignUpView{
         emailInput = view.findViewById(R.id.email);
         passwordInput = view.findViewById(R.id.password);
 //        confirmPasswordInput = view.findViewById(R.id.confirm_password_input);
+        guestButton = view.findViewById(R.id.guest);
         signUpButton = view.findViewById(R.id.sign_up);
         TextView loginText = view.findViewById(R.id.login);
 //        progressBar = view.findViewById(R.id.progress_bar);
@@ -129,6 +132,9 @@ public class SignUpFragment extends Fragment implements SignUpView{
                 onSignUpError(error.getMessage());
             }
         });
+
+        guestButton.setOnClickListener(v -> presenter.loginGuest());
+
     }
 
     @Override
@@ -145,38 +151,50 @@ public class SignUpFragment extends Fragment implements SignUpView{
 
     @Override
     public void onSignUpSuccess() {
-        Toast.makeText(getContext(), "Account created successfully!", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "Sign up successful! Please login.", Toast.LENGTH_SHORT).show();
         Navigation.findNavController(requireView()).navigate(R.id.action_signUpFragment_to_loginFragment);
     }
 
-@Override
-public void onSignUpError(String message) {
-    Toast.makeText(getContext(), "Sign up failed: " + message, Toast.LENGTH_LONG).show();
-}
+    @Override
+    public void onGuestLoginSuccess() {
+        Toast.makeText(getContext(), "Login Successful", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(requireContext(), MainActivity.class);
+        startActivity(intent);
 
-@Override
-public void showNameError(String error) {
-    nameInput.setError(error);
-    nameInput.requestFocus();
-}
+        if (getActivity() != null) {
+            getActivity().finish();
+        }
+    }
 
-@Override
-public void showEmailError(String error) {
-    emailInput.setError(error);
-    emailInput.requestFocus();
-}
 
-@Override
-public void showPasswordError(String error) {
-    passwordInput.setError(error);
-    passwordInput.requestFocus();
-}
+    @Override
+    public void onSignUpError(String message) {
+        Toast.makeText(getContext(), "Sign up failed: " + message, Toast.LENGTH_LONG).show();
+    }
 
-@Override
-public void showConfirmPasswordError(String error) {
-    confirmPasswordInput.setError(error);
-    confirmPasswordInput.requestFocus();
-}
+    @Override
+    public void showNameError(String error) {
+        nameInput.setError(error);
+        nameInput.requestFocus();
+    }
+
+    @Override
+    public void showEmailError(String error) {
+        emailInput.setError(error);
+        emailInput.requestFocus();
+    }
+
+    @Override
+    public void showPasswordError(String error) {
+        passwordInput.setError(error);
+        passwordInput.requestFocus();
+    }
+
+    @Override
+    public void showConfirmPasswordError(String error) {
+        confirmPasswordInput.setError(error);
+        confirmPasswordInput.requestFocus();
+    }
 
     @Override
     public void launchGoogleSignIn(Intent intent) {
@@ -184,8 +202,8 @@ public void showConfirmPasswordError(String error) {
     }
 
     @Override
-public void onDestroy() {
-    super.onDestroy();
-    presenter.onDestroy();
-}
+    public void onDestroy() {
+        super.onDestroy();
+        presenter.onDestroy();
+    }
 }

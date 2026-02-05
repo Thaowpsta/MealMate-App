@@ -18,6 +18,7 @@ public class SharedPreferencesManager {
     private static final String KEY_PROFILE_IMAGE_URL = "profile_image_url";
     private static final String KEY_ONBOARDING_COMPLETED = "onboarding_completed";
     private static final String KEY_THEME_MODE = "theme_mode";
+    private static final String KEY_LANGUAGE = "language_code";
     private static final String KEY_LAST_MEAL_DATE = "last_meal_date";
     private static final String KEY_CACHED_MEAL = "cached_meal";
 
@@ -115,6 +116,15 @@ public class SharedPreferencesManager {
         return sharedPreferences.getString(KEY_THEME_MODE, "auto");
     }
 
+    public void setLanguage(String languageCode) {
+        editor.putString(KEY_LANGUAGE, languageCode);
+        editor.apply();
+    }
+
+    public String getLanguage() {
+        return sharedPreferences.getString(KEY_LANGUAGE, "en");
+    }
+
     // ==================== Random Meal Caching ====================
     public void saveCachedMeal(String mealJson, String date) {
         editor.putString(KEY_CACHED_MEAL, mealJson);
@@ -148,11 +158,11 @@ public class SharedPreferencesManager {
         editor.remove(KEY_PROFILE_IMAGE_URL);
         editor.remove(KEY_IS_LOGGED_IN);
         editor.remove(KEY_PENDING_EMAIL);
+
         editor.remove(KEY_CACHED_MEAL);
         editor.remove(KEY_LAST_MEAL_DATE);
         editor.apply();
     }
-
     public void clearAll() {
         editor.clear();
         editor.apply();

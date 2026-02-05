@@ -69,7 +69,7 @@
         android:layout_margin="@dimen/padding_margin_8"
         android:contentDescription="@string/add_to_favorites"
         android:padding="@dimen/padding_margin_8"
-        app:srcCompat="@drawable/favorite"
+        app:srcCompat="@drawable/unfavorite"
         app:tint="@color/primary_button_end" />
 
 </androidx.cardview.widget.CardView>
