@@ -104,7 +104,7 @@ public class HomeFragment extends Fragment implements HomeView {
         Button btnCookNow = view.findViewById(R.id.cook_now);
         Button btnCookLater = view.findViewById(R.id.cook_later);
         CardView favoritesCard = view.findViewById(R.id.fav_card);
-        plansCard = view.findViewById(R.id.plan_card);
+        plansCard = view.findViewById(R.id.planner_card);
 
         planImage = view.findViewById(R.id.plan_meal_image);
         planTitle = view.findViewById(R.id.plan_meal_title);
@@ -134,6 +134,10 @@ public class HomeFragment extends Fragment implements HomeView {
             if (currentMeal != null) {
                 presenter.addToPlan(currentMeal, new Date());
                 presenter.onMealClicked(currentMeal);
+                if (getView() != null) {
+                    Snackbar.make(getView(), R.string.success_added_to_plan, Snackbar.LENGTH_SHORT).show();
+                } else
+                    Toast.makeText(getContext(), R.string.success_added_to_plan, Toast.LENGTH_SHORT).show();
             } else {
                 showError(getString(R.string.no_meal_loaded));
             }
@@ -148,6 +152,7 @@ public class HomeFragment extends Fragment implements HomeView {
         });
 
         favoritesCard.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_favoritesFragment));
+
         plansCard.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_plannerFragment));
     }
 
@@ -203,27 +208,10 @@ public class HomeFragment extends Fragment implements HomeView {
                         .centerCrop()
                         .into(planImage);
             }
-
-            if (plansCard != null) {
-                plansCard.setOnClickListener(v ->
-                        Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_plannerFragment)
-                );
-            }
-
         } else {
             if (planTitle != null) planTitle.setText(R.string.add_to_plan);
             if (planType != null) planType.setVisibility(View.GONE);
             if (planImage != null) planImage.setImageResource(R.drawable.medium);
-
-            if (plansCard != null) {
-                plansCard.setOnClickListener(v -> {
-                    if (currentMeal != null) {
-                        showWeekCalendarDialog();
-                    } else {
-                        showError(getString(R.string.no_meal_loaded));
-                    }
-                });
-            }
         }
     }
 
@@ -334,15 +322,15 @@ public class HomeFragment extends Fragment implements HomeView {
 
             String type = "";
             if (checkedId == R.id.chip_breakfast) {
-                type = String.valueOf((R.string.breakfast));
+                type = getString(R.string.breakfast);
                 updateChipVisuals(chipBreakfast, true);
             }
             else if (checkedId == R.id.chip_lunch) {
-                type = String.valueOf((R.string.lunch));
+                type = getString(R.string.lunch);
                 updateChipVisuals(chipLunch, true);
             }
             else if (checkedId == R.id.chip_dinner) {
-                type = String.valueOf((R.string.dinner));
+                type = getString(R.string.dinner);
                 updateChipVisuals(chipDinner, true);
             }
 
@@ -357,9 +345,9 @@ public class HomeFragment extends Fragment implements HomeView {
             int selectedId = chipGroup.getCheckedChipId();
             String type = null;
 
-            if (selectedId == R.id.chip_breakfast) type = String.valueOf((R.string.breakfast));
-            else if (selectedId == R.id.chip_lunch) type = String.valueOf((R.string.lunch));
-            else if (selectedId == R.id.chip_dinner) type = String.valueOf((R.string.dinner));
+            if (selectedId == R.id.chip_breakfast) type = "BREAKFAST";
+            else if (selectedId == R.id.chip_lunch) type = "LUNCH";
+            else if (selectedId == R.id.chip_dinner) type = "DINNER";
 
             if (type != null) {
                 presenter.addToPlan(currentMeal, selectedDateForPlan, type);

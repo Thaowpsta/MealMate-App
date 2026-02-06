@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/frameLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.search.view.SearchFragment">
+
+    <LinearLayout
+        android:id="@+id/appbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rounded_appbar"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/padding_margin_16"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/padding_margin_8">
+
+            <ImageButton
+                android:id="@+id/btn_back"
+                android:layout_width="@dimen/back_size"
+                android:layout_height="@dimen/back_size"
+                android:layout_marginStart="@dimen/padding_margin_16"
+                android:background="@drawable/transparent_rounded_btn"
+                android:contentDescription="@string/back"
+                android:src="@drawable/outline_arrow_back_24"
+                app:layout_constraintBottom_toBottomOf="@id/title"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/title"
+                app:tint="@color/primary_button_start" />
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/padding_margin_16"
+                android:layout_marginTop="@dimen/padding_margin_8"
+                android:fontFamily="@font/fredoka_bold"
+                android:text="@string/search"
+                android:textColor="@color/splash_subtitle_color"
+                android:textSize="@dimen/txt_size_25"
+                app:layout_constraintStart_toEndOf="@id/btn_back"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/fav_num"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/padding_margin_16"
+                android:layout_marginTop="@dimen/padding_margin_3"
+                android:background="@android:color/transparent"
+                android:drawableStart="@drawable/search"
+                android:drawableTint="@color/primary_button_start"
+                android:focusable="false"
+                android:text="@string/find"
+                android:textColor="@color/splash_subtitle_color"
+                app:layout_constraintEnd_toStartOf="@+id/filter"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/title" />
+
+            <ImageButton
+                android:id="@+id/filter"
+                android:layout_width="@dimen/padding_margin_38"
+                android:layout_height="@dimen/padding_margin_38"
+                android:layout_gravity="top|end"
+                android:background="@drawable/transparent_rounded_btn"
+                android:layout_margin="@dimen/padding_margin_8"
+                android:contentDescription="@string/add_to_favorites"
+                android:padding="@dimen/padding_margin_8"
+                app:srcCompat="@drawable/unfiltered"
+                app:tint="@color/primary_button_end"
+                app:layout_constraintBottom_toBottomOf="@+id/fav_num"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/fav_num" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

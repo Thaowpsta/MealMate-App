@@ -99,4 +99,5 @@
     <string name="_1_meal">1 Meal</string>
     <string name="meals">" Meals"</string>
     <string name="browse_meals_by_s">Browse meals by %s</string>
+    <string name="find">Find your next meal to plan</string>
 </resources>

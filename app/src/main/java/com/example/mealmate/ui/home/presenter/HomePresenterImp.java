@@ -128,11 +128,11 @@ public class HomePresenterImp implements HomePresenter {
 
         String type;
         if (hour >= 5 && hour < 11) {
-            type = String.valueOf(R.string.breakfast);
+            type = "BREAKFAST";
         } else if (hour >= 11 && hour < 16) {
-            type = String.valueOf(R.string.lunch);
+            type = "LUNCH";
         } else {
-            type = String.valueOf(R.string.dinner);
+            type = "DINNER";
         }
 
         addToPlan(meal, date, type);

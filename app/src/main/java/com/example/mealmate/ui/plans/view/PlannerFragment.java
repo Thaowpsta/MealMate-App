@@ -102,7 +102,7 @@ public class PlannerFragment extends Fragment implements PlannerView {
         prevDayBtn.setOnClickListener(v -> changeDate(-1));
         nextDayBtn.setOnClickListener(v -> changeDate(1));
 
-        datePlan.setOnClickListener(v -> showWeekCalendarDialog(MealType.BREAKFAST));
+        datePlan.setOnClickListener(v -> showWeekCalendarDialog());
     }
 
     private void changeDate(int days) {
@@ -215,8 +215,19 @@ public class PlannerFragment extends Fragment implements PlannerView {
 
             @Override
             public void onAddMealClick(MealType mealType) {
+                // When adding a meal, use the current page's date and the button's type.
+                // Navigate directly to Search (or relevant screen) to pick the meal.
+                Bundle bundle = new Bundle();
+                bundle.putBoolean("is_planning_mode", true);
+                bundle.putLong("planned_date", currentViewDate.getTime());
+                bundle.putString("planned_type", mealType.name());
 
-                showWeekCalendarDialog(mealType);
+                try {
+                    // Assuming 'searchFragment' is the ID in your navigation graph
+                    Navigation.findNavController(requireView()).navigate(R.id.searchFragment, bundle);
+                } catch (Exception e) {
+                    showError("Navigation to Search failed: " + e.getMessage());
+                }
             }
 
             @Override
@@ -227,7 +238,7 @@ public class PlannerFragment extends Fragment implements PlannerView {
         recyclerView.setAdapter(adapter);
     }
 
-    private void showWeekCalendarDialog(MealType mealType) {
+    private void showWeekCalendarDialog() {
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(requireContext());
         View sheetView = getLayoutInflater().inflate(R.layout.week_calendar, null);
         bottomSheetDialog.setContentView(sheetView);
@@ -270,14 +281,12 @@ public class PlannerFragment extends Fragment implements PlannerView {
         sheetView.findViewById(R.id.btn_confirm_date).setOnClickListener(btn -> {
             bottomSheetDialog.dismiss();
 
-
-            Bundle bundle = new Bundle();
-            bundle.putBoolean("is_planning_mode", true);
-            bundle.putLong("planned_date", currentViewDate.getTime());
-            bundle.putString("planned_type", mealType.name());
-
-            //TODO: nav to search to get meal then return to planned again
-
+            // When confirming from the calendar, we simply update the view to the selected date.
+            Date pickedDate = selectedDate.get(0);
+            if (pickedDate != null) {
+                currentViewDate = pickedDate;
+                updateDateView(false);
+            }
         });
 
         bottomSheetDialog.show();

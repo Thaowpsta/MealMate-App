@@ -214,11 +214,11 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
     public void onPlanAddedSuccess() {
         if (getView() != null) {
             Snackbar.make(getView(), R.string.success_added_to_plan, Snackbar.LENGTH_LONG).show();
-            Navigation.findNavController(requireView()).navigate(R.id.action_homeFragment_to_plannerFragment);
+            Navigation.findNavController(requireView()).navigate(R.id.action_mealDetailsFragment_to_plannerFragment);
 
         } else {
             Toast.makeText(getContext(), R.string.success_added_to_plan, Toast.LENGTH_SHORT).show();
-            Navigation.findNavController(requireView()).navigate(R.id.action_homeFragment_to_plannerFragment);
+            Navigation.findNavController(requireView()).navigate(R.id.action_mealDetailsFragment_to_plannerFragment);
         }
     }
 
@@ -313,15 +313,15 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
 
             String type = "";
             if (checkedId == R.id.chip_breakfast) {
-                type = String.valueOf((R.string.breakfast));
+                type = getString(R.string.breakfast);
                 updateChipVisuals(chipBreakfast, true);
             }
             else if (checkedId == R.id.chip_lunch) {
-                type = String.valueOf((R.string.lunch));
+                type = getString(R.string.lunch);
                 updateChipVisuals(chipLunch, true);
             }
             else if (checkedId == R.id.chip_dinner) {
-                type = String.valueOf((R.string.dinner));
+                type = getString(R.string.dinner);
                 updateChipVisuals(chipDinner, true);
             }
 
@@ -336,9 +336,9 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
             int selectedId = chipGroup.getCheckedChipId();
             String type = null;
 
-            if (selectedId == R.id.chip_breakfast) type = String.valueOf((R.string.breakfast));
-            else if (selectedId == R.id.chip_lunch) type = String.valueOf((R.string.lunch));
-            else if (selectedId == R.id.chip_dinner) type = String.valueOf((R.string.dinner));
+            if (selectedId == R.id.chip_breakfast) type = "BREAKFAST";
+            else if (selectedId == R.id.chip_lunch) type = "LUNCH";
+            else if (selectedId == R.id.chip_dinner) type = "DINNER";
 
             if (type != null) {
                 presenter.addToPlan(currentMeal, selectedDateForPlan, type);
