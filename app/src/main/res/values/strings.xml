@@ -29,8 +29,8 @@
     <string name="greeting">Good Morning,</string>
     <string name="username">Thaowpsta</string>
     <string name="meal_title">Spaghetti Carbonara</string>
-    <string name="area">Italian</string>
-    <string name="category">Pasta</string>
+    <string name="area">Area</string>
+    <string name="category">Category</string>
     <string name="cook_now">Cook Now</string>
     <string name="cook_later">Cook Later</string>
     <string name="loading">Loading...</string>
@@ -100,4 +100,10 @@
     <string name="meals">" Meals"</string>
     <string name="browse_meals_by_s">Browse meals by %s</string>
     <string name="find">Find your next meal to plan</string>
+    <string name="search_by_name">Search by Name</string>
+    <string name="search_by_category">Search by Category</string>
+    <string name="search_by_area">Search by Area</string>
+    <string name="search_by_ingredient">Search by Ingredient</string>
+    <string name="find_by_s">Find by %s</string>
+    <string name="ingredient">Ingredient</string>
 </resources>

@@ -2,25 +2,28 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/frameLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.search.view.SearchFragment">
+    android:background="@color/splash_subtitle_color">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_meals"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/horizontal" />
 
     <LinearLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/rounded_appbar"
-        android:gravity="center_vertical"
         android:orientation="vertical"
         android:paddingBottom="@dimen/padding_margin_16"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/linearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="@dimen/padding_margin_8">
@@ -31,7 +34,6 @@
                 android:layout_height="@dimen/back_size"
                 android:layout_marginStart="@dimen/padding_margin_16"
                 android:background="@drawable/transparent_rounded_btn"
-                android:contentDescription="@string/back"
                 android:src="@drawable/outline_arrow_back_24"
                 app:layout_constraintBottom_toBottomOf="@id/title"
                 app:layout_constraintStart_toStartOf="parent"
@@ -52,38 +54,73 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <EditText
-                android:id="@+id/fav_num"
+                android:id="@+id/search_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/padding_margin_16"
+                android:layout_marginTop="@dimen/padding_margin_16"
+                android:background="@drawable/rounded_txt_field"
+                android:hint="@string/find"
+                android:padding="@dimen/padding_margin_8"
+                android:drawableStart="@drawable/search"
+                app:layout_constraintTop_toBottomOf="@id/title" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+
+    <HorizontalScrollView
+        android:id="@+id/horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none"
+        android:layout_marginTop="@dimen/padding_margin_8"
+        app:layout_constraintTop_toBottomOf="@id/appbar">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chip_group_search_filters"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="@dimen/padding_margin_16"
+            app:selectionRequired="true"
+            app:singleSelection="false">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_name"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/padding_margin_16"
-                android:layout_marginTop="@dimen/padding_margin_3"
-                android:background="@android:color/transparent"
-                android:drawableStart="@drawable/search"
-                android:drawableTint="@color/primary_button_start"
-                android:focusable="false"
-                android:text="@string/find"
-                android:textColor="@color/splash_subtitle_color"
-                app:layout_constraintEnd_toStartOf="@+id/filter"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/title" />
+                android:checked="true"
+                android:text="Name"
+                android:textColor="@color/chip_text_selector"
+                app:chipBackgroundColor="@color/chip_bg_selector" />
 
-            <ImageButton
-                android:id="@+id/filter"
-                android:layout_width="@dimen/padding_margin_38"
-                android:layout_height="@dimen/padding_margin_38"
-                android:layout_gravity="top|end"
-                android:background="@drawable/transparent_rounded_btn"
-                android:layout_margin="@dimen/padding_margin_8"
-                android:contentDescription="@string/add_to_favorites"
-                android:padding="@dimen/padding_margin_8"
-                app:srcCompat="@drawable/unfiltered"
-                app:tint="@color/primary_button_end"
-                app:layout_constraintBottom_toBottomOf="@+id/fav_num"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/fav_num" />
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_category"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/category"
+                android:textColor="@color/chip_text_selector"
+                app:chipBackgroundColor="@color/chip_bg_selector" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_area"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/area"
+                android:textColor="@color/chip_text_selector"
+                app:chipBackgroundColor="@color/chip_bg_selector" />
 
-    </LinearLayout>
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_ingredient"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ingredient"
+                android:textColor="@color/chip_text_selector"
+                app:chipBackgroundColor="@color/chip_bg_selector" />
+
+        </com.google.android.material.chip.ChipGroup>
+    </HorizontalScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
