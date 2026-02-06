@@ -27,10 +27,12 @@ public class CategoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private final List<Category> categories;
     private final int viewType;
+    private final OnCategoryClickListener onCategoryClickListener;
 
-    public CategoriesAdapter(List<Category> categories, int viewType){
+    public CategoriesAdapter(List<Category> categories, int viewType, OnCategoryClickListener listener){
         this.categories = categories;
         this.viewType = viewType;
+        onCategoryClickListener = listener;
     }
 
     @Override
@@ -53,6 +55,12 @@ public class CategoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         Category category = categories.get(position);
+
+        holder.itemView.setOnClickListener(v -> {
+            if (onCategoryClickListener != null) {
+                onCategoryClickListener.onCategoryClick(category);
+            }
+        });
 
         if (holder instanceof ChipViewHolder) {
             ChipViewHolder chipHolder = (ChipViewHolder) holder;

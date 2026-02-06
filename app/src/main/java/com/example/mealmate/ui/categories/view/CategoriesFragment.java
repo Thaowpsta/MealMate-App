@@ -73,7 +73,19 @@ public class CategoriesFragment extends Fragment implements CategoriesView {
 
     @Override
     public void showCategories(List<Category> categories) {
-        CategoriesAdapter adapter = new CategoriesAdapter(categories, CategoriesAdapter.VIEW_TYPE_CARD);
+        CategoriesAdapter adapter = new CategoriesAdapter(categories, CategoriesAdapter.VIEW_TYPE_CARD, category -> {
+
+            Bundle bundle = new Bundle();
+            bundle.putString("category_name", category.strCategory);
+
+            try {
+                Navigation.findNavController(requireView())
+                        .navigate(R.id.action_categoriesFragment_to_mealFragment, bundle);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
         rvAllCategories.setLayoutManager(new GridLayoutManager(getContext(), 2));
         rvAllCategories.setAdapter(adapter);
     }

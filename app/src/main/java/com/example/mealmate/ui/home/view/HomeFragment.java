@@ -35,6 +35,7 @@ import com.example.mealmate.data.repositories.UserRepository;
 import com.example.mealmate.ui.categories.view.CategoriesAdapter;
 import com.example.mealmate.ui.home.presenter.HomePresenter;
 import com.example.mealmate.ui.home.presenter.HomePresenterImp;
+import com.example.mealmate.ui.meals.view.MealsAdapter;
 import com.example.mealmate.ui.plans.view.WeekCalendarAdapter;
 import com.example.mealmate.ui.splash.view.SplashActivity;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -235,7 +236,13 @@ public class HomeFragment extends Fragment implements HomeView {
 
     @Override
     public void showCategories(List<Category> categories) {
-        CategoriesAdapter categoriesAdapter = new CategoriesAdapter(categories, CategoriesAdapter.VIEW_TYPE_CHIP);
+        CategoriesAdapter categoriesAdapter = new CategoriesAdapter(categories, CategoriesAdapter.VIEW_TYPE_CHIP, category -> {
+
+            Bundle bundle = new Bundle();
+            bundle.putString("category_name", category.strCategory);
+            Navigation.findNavController(requireView()).navigate(R.id.action_homeFragment_to_mealFragment, bundle);
+
+        });
         rvCategories.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         rvCategories.setAdapter(categoriesAdapter);
     }

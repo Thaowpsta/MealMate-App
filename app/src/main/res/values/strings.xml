@@ -98,4 +98,5 @@
     <string name="cannot_go_past_this_week">Cannot go past this week</string>
     <string name="_1_meal">1 Meal</string>
     <string name="meals">" Meals"</string>
+    <string name="browse_meals_by_s">Browse meals by %s</string>
 </resources>
