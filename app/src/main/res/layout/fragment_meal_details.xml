@@ -250,7 +250,7 @@
             </androidx.cardview.widget.CardView>
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/sign_up"
+                android:id="@+id/add_tp_plan"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/padding_margin_38"
                 android:layout_marginEnd="@dimen/padding_margin_16"

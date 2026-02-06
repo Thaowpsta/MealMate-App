@@ -132,6 +132,7 @@ public class HomeFragment extends Fragment implements HomeView {
         btnCookNow.setOnClickListener(v -> {
             if (currentMeal != null) {
                 presenter.addToPlan(currentMeal, new Date());
+                presenter.onMealClicked(currentMeal);
             } else {
                 showError(getString(R.string.no_meal_loaded));
             }
@@ -383,12 +384,12 @@ public class HomeFragment extends Fragment implements HomeView {
     @Override
     public void onPlanAddedSuccess() {
         if (getView() != null) {
-            Snackbar.make(getView(), R.string.success_added_to_plan, Snackbar.LENGTH_LONG)
-                    .setBackgroundTint(getResources().getColor(android.R.color.holo_green_dark))
-                    .setTextColor(getResources().getColor(android.R.color.white))
-                    .show();
+            Snackbar.make(getView(), R.string.success_added_to_plan, Snackbar.LENGTH_LONG).show();
+            Navigation.findNavController(requireView()).navigate(R.id.action_homeFragment_to_plannerFragment);
+
         } else {
             Toast.makeText(getContext(), R.string.success_added_to_plan, Toast.LENGTH_SHORT).show();
+            Navigation.findNavController(requireView()).navigate(R.id.action_homeFragment_to_plannerFragment);
         }
     }
 

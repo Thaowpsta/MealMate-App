@@ -6,6 +6,10 @@ import com.example.mealmate.data.meals.models.Meal;
 import com.example.mealmate.data.repositories.MealRepository;
 import com.example.mealmate.ui.meal_details.view.MealDetailsView;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 
@@ -84,6 +88,24 @@ public class MealDetailsPresenterImp implements MealDetailsPresenter {
                 }, throwable -> {
                     if (view != null) view.showError(throwable.getMessage());
                 }));
+    }
+
+    @Override
+    public void addToPlan(Meal meal, Date date, String mealType) {
+        if (meal == null || date == null || mealType == null) return;
+
+        SimpleDateFormat dbDateFormat = new SimpleDateFormat("yyy-MM-dd", Locale.getDefault());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE", Locale.getDefault());
+
+        String dateStr = dbDateFormat.format(date);
+        String dayOfWeek = dateFormat.format(date);
+
+        disposable.add(repository.addPlan(meal, dateStr, dayOfWeek, mealType)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        () -> { if (view != null) view.onPlanAddedSuccess(); },
+                        error -> { if (view != null) view.onPlanAddedError(error.getMessage()); }
+                ));
     }
 
     @Override

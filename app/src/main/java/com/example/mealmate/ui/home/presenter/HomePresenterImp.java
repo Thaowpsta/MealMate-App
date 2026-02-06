@@ -2,6 +2,7 @@ package com.example.mealmate.ui.home.presenter;
 
 import android.content.Context;
 
+import com.example.mealmate.R;
 import com.example.mealmate.data.categories.model.Category;
 import com.example.mealmate.data.meals.models.Meal;
 import com.example.mealmate.data.repositories.MealRepository;
@@ -121,21 +122,19 @@ public class HomePresenterImp implements HomePresenter {
     public void addToPlan(Meal meal, Date date) {
         if (meal == null || date == null) return;
 
-        // Auto-calculate type based on current hour
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         int hour = cal.get(Calendar.HOUR_OF_DAY);
 
         String type;
         if (hour >= 5 && hour < 11) {
-            type = "BREAKFAST";
+            type = String.valueOf(R.string.breakfast);
         } else if (hour >= 11 && hour < 16) {
-            type = "LUNCH";
+            type = String.valueOf(R.string.lunch);
         } else {
-            type = "DINNER";
+            type = String.valueOf(R.string.dinner);
         }
 
-        // Delegate to the specific method
         addToPlan(meal, date, type);
     }
 
