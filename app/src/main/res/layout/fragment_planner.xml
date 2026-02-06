@@ -9,10 +9,20 @@
         android:id="@+id/rv_plans"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:paddingTop="140dp"
-        android:paddingBottom="8dp"
         android:clipToPadding="false"
+        android:paddingTop="170dp"
+        android:paddingBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -21,10 +31,10 @@
         android:layout_height="wrap_content"
         android:background="@drawable/rounded_appbar"
         android:gravity="center_vertical"
+        android:paddingBottom="@dimen/padding_margin_16"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-
 
         <ImageButton
             android:id="@+id/btn_back"
@@ -34,8 +44,6 @@
             android:background="@drawable/transparent_rounded_btn"
             android:contentDescription="@string/back"
             android:src="@drawable/outline_arrow_back_24"
-            app:layout_constraintBottom_toTopOf="@+id/imageView"
-            app:layout_constraintEnd_toStartOf="@+id/title"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:tint="@color/primary_button_start" />
@@ -53,7 +61,6 @@
             app:layout_constraintStart_toEndOf="@+id/btn_back"
             app:layout_constraintTop_toTopOf="@+id/btn_back" />
 
-
         <ImageView
             android:id="@+id/imageView"
             android:layout_width="wrap_content"
@@ -68,14 +75,14 @@
             android:id="@+id/date_plan"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/padding_margin_16"
             android:text="@string/date_txt"
-            android:layout_marginBottom="@dimen/padding_margin_16"
             android:textColor="@color/splash_subtitle_color"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:textSize="@dimen/txt_size_19"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            android:textStyle="bold"/>
+            app:layout_constraintTop_toBottomOf="@+id/title" />
 
         <ImageView
             android:id="@+id/imageView1"
@@ -88,9 +95,23 @@
             app:layout_constraintTop_toTopOf="@+id/date_plan"
             app:tint="@color/splash_subtitle_color" />
 
-        <androidx.constraintlayout.widget.Group android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
+        <TextView
+            android:id="@+id/day_meal_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/padding_margin_8"
+            android:alpha="0.9"
+            android:background="@drawable/rounded_txt_field"
+            android:backgroundTint="@color/transparent"
+            android:paddingHorizontal="@dimen/padding_margin_16"
+            android:paddingVertical="@dimen/padding_margin_3"
+            android:text="@string/meals_num"
+            android:textColor="@color/splash_subtitle_color"
+            android:textSize="@dimen/txt_size_12"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/date_plan" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

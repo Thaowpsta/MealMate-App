@@ -25,6 +25,7 @@ import com.example.mealmate.data.meals.models.Meal;
 import com.example.mealmate.ui.meal_details.presenter.MealDetailsPresenter;
 import com.example.mealmate.ui.meal_details.presenter.MealDetailsPresenterImp;
 import com.google.android.material.chip.Chip;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +36,6 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
     private ImageView mealImage;
     private TextView mealTitle;
     private Chip areaChip, categoryChip, itemNumber;
-    private int counter = 0;
     private RecyclerView rvIngredients;
     private RecyclerView rvInstructions;
     private TextView seeMoreSteps;
@@ -84,7 +84,6 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
         }
 
         WebSettings webSettings = videoWebView.getSettings();
-        webSettings.setJavaScriptEnabled(true);
         webSettings.setDomStorageEnabled(true);
         webSettings.setLoadWithOverviewMode(true);
         webSettings.setUseWideViewPort(true);
@@ -122,9 +121,9 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
                 .into(mealImage);
 
         List<Pair<String, String>> ingredientList = meal.getIngredientsAndMeasures();
-        counter = ingredientList.size();
+        int counter = ingredientList.size();
 
-        itemNumber.setText(counter + " item");
+        itemNumber.setText(String.format(getString(R.string.d_item), counter));
         IngredientsAdapter adapter = new IngredientsAdapter(ingredientList);
         rvIngredients.setLayoutManager(new LinearLayoutManager(getContext()));
         rvIngredients.setAdapter(adapter);
@@ -193,7 +192,11 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
 
     @Override
     public void showError(String message) {
-        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+        if (getView() != null) {
+            Snackbar.make(getView(), message, Snackbar.LENGTH_SHORT).show();
+        }
+        else
+            Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     @Override

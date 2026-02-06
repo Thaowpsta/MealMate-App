@@ -1,6 +1,5 @@
 package com.example.mealmate.ui.plans.view;
 
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,7 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
-import com.example.mealmate.R; // Replace with your package name
+import com.example.mealmate.R;
 
 public class WeekCalendarAdapter extends RecyclerView.Adapter<WeekCalendarAdapter.DayViewHolder> {
 
@@ -40,11 +39,17 @@ public class WeekCalendarAdapter extends RecyclerView.Adapter<WeekCalendarAdapte
         holder.tvDayNumber.setText(day.getDayNumber());
 
         if (selectedPosition == position) {
-            holder.container.setBackgroundTintList(ContextCompat.getColorStateList(holder.itemView.getContext(), R.color.primary_button_end));
+            // SELECTED: Use Gradient Drawable & White Text
+            holder.container.setBackgroundResource(R.drawable.primary_button_filled);
+            holder.container.setBackgroundTintList(null); // Important: Clear tint to show gradient
+
             holder.tvDayName.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.splash_subtitle_color));
             holder.tvDayNumber.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.splash_subtitle_color));
         } else {
+            // UNSELECTED: Use Shape Drawable & Tint & Dark/Gray Text
+            holder.container.setBackgroundResource(R.drawable.rounded_txt_field);
             holder.container.setBackgroundTintList(ContextCompat.getColorStateList(holder.itemView.getContext(), R.color.splash_subtitle_color));
+
             holder.tvDayName.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.txt_light));
             holder.tvDayNumber.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.txt_dark));
         }
@@ -74,7 +79,7 @@ public class WeekCalendarAdapter extends RecyclerView.Adapter<WeekCalendarAdapte
             container = itemView.findViewById(R.id.item_day_container);
         }
     }
-    
+
     public static class DayModel {
         private String dayName;
         private String dayNumber;

@@ -29,10 +29,19 @@ public interface MealDAO {
 
     @Query("SELECT * FROM meal_plans WHERE date = :date")
     Flowable<List<PlannedMealDTO>> getPlansByDate(String date);
-    
+
+    @Query("SELECT COUNT(*) FROM meal_plans")
+    Flowable<Integer> getPlansCount();
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     Completable insertPlan(PlannedMealDTO plan);
-    
-    @Query("DELETE FROM meal_plans WHERE id = :planId")
-    Completable deletePlan(int planId);
+
+    @Query("SELECT * FROM meal_plans WHERE date < :todayDate")
+    Single<List<PlannedMealDTO>> getPastPlans(String todayDate);
+
+    @Query("DELETE FROM meal_plans WHERE date < :todayDate")
+    Completable deletePastPlans(String todayDate);
+
+    @Query("SELECT * FROM meal_plans")
+    Flowable<List<PlannedMealDTO>> getAllPlans();
 }

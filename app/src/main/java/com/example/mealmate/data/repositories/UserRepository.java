@@ -1,5 +1,7 @@
 package com.example.mealmate.data.repositories;
 
+import static androidx.core.graphics.drawable.DrawableCompat.applyTheme;
+
 import android.content.Context;
 
 import com.example.mealmate.data.SharedPreferencesManager;
@@ -194,11 +196,9 @@ public class UserRepository {
     }
 
     public void saveProfileSettings(String themeMode, String languageCode) {
-        // 1. Save Locally
         sharedPreferencesManager.setThemeMode(themeMode);
-         sharedPreferencesManager.setLanguage(languageCode); // You need to add this to PrefsManager
+         sharedPreferencesManager.setLanguage(languageCode);
 
-        // 2. Sync to Firestore if logged in
         FirebaseUser user = firebaseAuth.getCurrentUser();
         if (user != null) {
             Map<String, Object> settings = new HashMap<>();
@@ -218,9 +218,8 @@ public class UserRepository {
                     .addOnSuccessListener(documentSnapshot -> {
                         if (documentSnapshot.exists()) {
                             String theme = documentSnapshot.getString("theme");
-                            // String lang = documentSnapshot.getString("language");
+                             String lang = documentSnapshot.getString("language");
                             if (theme != null) sharedPreferencesManager.setThemeMode(theme);
-                            // applyTheme(theme); // Call a helper to apply immediately
                         }
                     });
         }

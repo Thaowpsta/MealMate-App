@@ -30,6 +30,7 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.Arrays;
 
@@ -80,7 +81,6 @@ public class SignUpFragment extends Fragment implements SignUpView{
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Initialize views
         nameInput = view.findViewById(R.id.name);
         emailInput = view.findViewById(R.id.email);
         passwordInput = view.findViewById(R.id.password);
@@ -125,7 +125,11 @@ public class SignUpFragment extends Fragment implements SignUpView{
             }
             @Override
             public void onCancel() {
-                Toast.makeText(getContext(), "Facebook Login Cancelled", Toast.LENGTH_SHORT).show();
+                if (getView() != null) {
+                    Snackbar.make(getView(), R.string.facebook_login_cancelled, Snackbar.LENGTH_SHORT).show();
+                }
+                else
+                    Toast.makeText(getContext(), R.string.facebook_login_cancelled, Toast.LENGTH_SHORT).show();
             }
             @Override
             public void onError(FacebookException error) {
@@ -151,13 +155,21 @@ public class SignUpFragment extends Fragment implements SignUpView{
 
     @Override
     public void onSignUpSuccess() {
-        Toast.makeText(getContext(), "Sign up successful! Please login.", Toast.LENGTH_SHORT).show();
+        if (getView() != null) {
+            Snackbar.make(getView(), R.string.sign_up_successful_please_login, Snackbar.LENGTH_SHORT).show();
+        }
+        else
+            Toast.makeText(getContext(), R.string.sign_up_successful_please_login, Toast.LENGTH_SHORT).show();
         Navigation.findNavController(requireView()).navigate(R.id.action_signUpFragment_to_loginFragment);
     }
 
     @Override
     public void onGuestLoginSuccess() {
-        Toast.makeText(getContext(), "Login Successful", Toast.LENGTH_SHORT).show();
+        if (getView() != null) {
+            Snackbar.make(getView(), R.string.login_successful, Snackbar.LENGTH_SHORT).show();
+        }
+        else
+            Toast.makeText(getContext(), R.string.login_successful, Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(requireContext(), MainActivity.class);
         startActivity(intent);
 
@@ -169,7 +181,11 @@ public class SignUpFragment extends Fragment implements SignUpView{
 
     @Override
     public void onSignUpError(String message) {
-        Toast.makeText(getContext(), "Sign up failed: " + message, Toast.LENGTH_LONG).show();
+        if (getView() != null) {
+            Snackbar.make(getView(), R.string.sign_up_successful_please_login, Snackbar.LENGTH_SHORT).show();
+        }
+        else
+            Toast.makeText(getContext(), getString(R.string.sign_up_failed) + message, Toast.LENGTH_LONG).show();
     }
 
     @Override

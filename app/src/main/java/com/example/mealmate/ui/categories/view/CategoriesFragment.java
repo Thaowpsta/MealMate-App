@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.mealmate.R;
 import com.example.mealmate.data.categories.model.Category;
 import com.example.mealmate.ui.categories.presenter.CategoriesPresenterImp;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
 
@@ -79,7 +80,11 @@ public class CategoriesFragment extends Fragment implements CategoriesView {
 
     @Override
     public void showError(String message) {
-        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+        if (getView() != null) {
+            Snackbar.make(getView(), message, Snackbar.LENGTH_SHORT).show();
+        }
+        else
+            Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     @Override

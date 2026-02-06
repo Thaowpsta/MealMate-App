@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.example.mealmate.R;
 import com.example.mealmate.data.meals.models.Meal;
 import com.example.mealmate.ui.favorites.presenter.FavoritesPresenterImp;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
 
@@ -77,9 +78,11 @@ public class FavoritesFragment extends Fragment implements FavoriteView, OnFavor
 
     @Override
     public void showError(String message) {
-        if (getContext() != null) {
-            Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+        if (getView() != null) {
+            Snackbar.make(getView(), message, Snackbar.LENGTH_SHORT).show();
         }
+        else
+            Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     @Override

@@ -1,7 +1,6 @@
 package com.example.mealmate.ui.meal_details.presenter;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.example.mealmate.data.meals.models.Meal;
 import com.example.mealmate.data.repositories.MealRepository;
@@ -23,22 +22,53 @@ public class MealDetailsPresenterImp implements MealDetailsPresenter {
 
     @Override
     public void getMealDetails(Meal meal) {
-        if (view != null && meal != null) {
-            disposable.add(repository.isFavorite(meal.getId())
+        if (view == null || meal == null) return;
+
+        // Display what we have initially (e.g., image/name from Planner)
+        view.showMeal(meal);
+
+        // Check if this is a "partial" meal from Planner (missing instructions)
+        if (meal.getStrInstructions() == null || meal.getStrInstructions().isEmpty() || meal.getStrInstructions().startsWith("Planned for")) {
+            view.showLoading();
+            disposable.add(repository.getMealById(meal.getId())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(isFav -> {
-                        meal.isFavorite = isFav;
-                        if (view != null) {
-                            view.showMeal(meal);
-                        }
-                    }, throwable -> {
-                        if (view != null) {
-                            view.showMeal(meal);
-                        }
-                    }));
-        } else if (view != null) {
-            view.showError("Could not load meal details");
+                    .subscribe(
+                            fullMeal -> {
+                                if (view != null) {
+                                    view.hideLoading();
+                                    checkFavoriteStatus(fullMeal);
+                                }
+                            },
+                            error -> {
+                                if (view != null) {
+                                    view.hideLoading();
+                                    view.showError("Failed to load full details: " + error.getMessage());
+                                }
+                            }
+                    ));
+        } else {
+            // It's a full meal object, just check favorite status
+            checkFavoriteStatus(meal);
         }
+    }
+
+    private void checkFavoriteStatus(Meal meal) {
+        if (meal == null || view == null) return;
+        disposable.add(repository.isFavorite(meal.getId())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        isFav -> {
+                            if (view != null) {
+                                meal.isFavorite = isFav;
+                                view.showMeal(meal);
+                            }
+                        },
+                        error -> {
+                            if (view != null) {
+                                view.showMeal(meal); // Still show meal even if check fails
+                            }
+                        }
+                ));
     }
 
     @Override

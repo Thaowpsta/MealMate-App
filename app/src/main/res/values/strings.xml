@@ -78,4 +78,24 @@
     <string name="select_date">Select Date</string>
     <string name="october_2025">October 2025</string>
     <string name="select">Select</string>
+    <string name="select_meal_type">Select meal type</string>
+    <string name="breakfast">Breakfast</string>
+    <string name="lunch">Lunch</string>
+    <string name="dinner">Dinner</string>
+    <string name="add_to_meal_type">Add to %s</string>
+    <string name="select_meal">Please select a meal type</string>
+    <string name="success_added_to_plan">Success! Meal added to your plan.</string>
+    <string name="failed_to_add_plan_s">Failed to add plan: %s</string>
+    <string name="facebook_login_cancelled">Facebook Login Cancelled</string>
+    <string name="login_successful">Login Successful</string>
+    <string name="login_failed">"Login Failed: "</string>
+    <string name="sign_up_successful_please_login">Sign up successful! Please login.</string>
+    <string name="sign_up_failed">"Sign up failed: "</string>
+    <string name="no_meal_loaded">No meal loaded.</string>
+    <string name="please_select_a_date">Please select a date</string>
+    <string name="d_item">%d item</string>
+    <string name="cannot_go_back_past_today">Cannot go back past today</string>
+    <string name="cannot_go_past_this_week">Cannot go past this week</string>
+    <string name="_1_meal">1 Meal</string>
+    <string name="meals">" Meals"</string>
 </resources>

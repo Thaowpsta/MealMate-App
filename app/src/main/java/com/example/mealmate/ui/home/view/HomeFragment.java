@@ -1,11 +1,17 @@
 package com.example.mealmate.ui.home.view;
 
+import android.app.Dialog;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -14,6 +20,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -22,16 +29,23 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.mealmate.R;
 import com.example.mealmate.data.categories.model.Category;
+import com.example.mealmate.data.meals.datasource.local.PlannedMealDTO;
 import com.example.mealmate.data.meals.models.Meal;
 import com.example.mealmate.data.repositories.UserRepository;
 import com.example.mealmate.ui.categories.view.CategoriesAdapter;
 import com.example.mealmate.ui.home.presenter.HomePresenter;
 import com.example.mealmate.ui.home.presenter.HomePresenterImp;
+import com.example.mealmate.ui.plans.view.WeekCalendarAdapter;
 import com.example.mealmate.ui.splash.view.SplashActivity;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -40,15 +54,16 @@ public class HomeFragment extends Fragment implements HomeView {
 
     private HomePresenter presenter;
 
-    private TextView mealTitle;
-    private ImageView mealImage;
+    private TextView mealTitle, favNum, plannedNum, planTitle, planType;
+    private ImageView mealImage, planImage;
     private Chip areaChip, categoryChip;
     private ImageButton refreshButton;
     private UserRepository userRepository;
     private Meal currentMeal;
     private RecyclerView rvCategories;
     private String currentDate;
-    private TextView favNum;
+    private Date selectedDateForPlan;
+    private CardView plansCard;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -84,60 +99,71 @@ public class HomeFragment extends Fragment implements HomeView {
         rvCategories = view.findViewById(R.id.rv_categories);
         TextView seeAll = view.findViewById(R.id.see_all);
         favNum = view.findViewById(R.id.fav_num);
+        plannedNum = view.findViewById(R.id.planed_num);
+        Button btnCookNow = view.findViewById(R.id.cook_now);
+        Button btnCookLater = view.findViewById(R.id.cook_later);
+        CardView favoritesCard = view.findViewById(R.id.fav_card);
+        plansCard = view.findViewById(R.id.plan_card);
 
+        planImage = view.findViewById(R.id.plan_meal_image);
+        planTitle = view.findViewById(R.id.plan_meal_title);
+        planType = view.findViewById(R.id.mealTypeText);
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMM. d", Locale.getDefault());
         currentDate = dateFormat.format(new Date());
         date.setText(currentDate);
 
-        if (userRepository.isUserLoggedIn()) {
-            String name = userRepository.getUserDisplayName();
-            String email = userRepository.getUserEmail();
-
-            if (name == null || name.isEmpty()) {
-                if (email != null && email.contains("@")) {
-                    name = email.split("@")[0];
-                } else {
-                    name = "Guest";
-                }
-            }
-            usernameTxt.setText(name);
-
-            String photoUrl = userRepository.getUserPhotoUrl();
-            if (photoUrl != null && !photoUrl.isEmpty()) {
-                Glide.with(this)
-                        .load(photoUrl)
-                        .placeholder(R.drawable.user)
-                        .circleCrop()
-                        .into(userImg);
-            }
-        } else {
-            usernameTxt.setText("Guest");
-        }
+        setupUserInfo(usernameTxt, userImg);
 
         presenter.getCachedMeal(currentDate);
         presenter.getCategories();
         presenter.getFavoritesCount();
+        presenter.getPlansCount();
+        presenter.getTodaysPlan();
 
         refreshButton.setOnClickListener(v -> presenter.getRandomMeal());
+        logoutButton.setOnClickListener(v -> presenter.logout());
 
-        logoutButton.setOnClickListener(v -> {
-            presenter.logout();
-        });
-
-        modCard.setOnClickListener(v -> {
-            if (currentMeal != null) {
-                presenter.onMealClicked(currentMeal);
-            }
-        });
+        modCard.setOnClickListener(v -> {if (currentMeal != null) {presenter.onMealClicked(currentMeal);}});
 
         seeAll.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG);
-        seeAll.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Navigation.findNavController(view).navigate(R.id.action_homeFragment_to_categoriesFragment);
+        seeAll.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_categoriesFragment));
+
+        btnCookNow.setOnClickListener(v -> {
+            if (currentMeal != null) {
+                presenter.addToPlan(currentMeal, new Date());
+            } else {
+                showError(getString(R.string.no_meal_loaded));
             }
         });
+
+        btnCookLater.setOnClickListener(v -> {
+            if (currentMeal != null) {
+                showWeekCalendarDialog();
+            } else {
+                showError(getString(R.string.no_meal_loaded));
+            }
+        });
+
+        favoritesCard.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_favoritesFragment));
+        plansCard.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_plannerFragment));
+    }
+
+    private void setupUserInfo(TextView usernameTxt, ImageView userImg) {
+        if (userRepository.isUserLoggedIn()) {
+            String name = userRepository.getUserDisplayName();
+            String email = userRepository.getUserEmail();
+            if (name == null || name.isEmpty()) {
+                name = (email != null && email.contains("@")) ? email.split("@")[0] : String.valueOf(R.string.guest);
+            }
+            usernameTxt.setText(name);
+            String photoUrl = userRepository.getUserPhotoUrl();
+            if (photoUrl != null && !photoUrl.isEmpty()) {
+                Glide.with(this).load(photoUrl).placeholder(R.drawable.user).circleCrop().into(userImg);
+            }
+        } else {
+            usernameTxt.setText(R.string.guest);
+        }
     }
 
     @Override
@@ -145,26 +171,58 @@ public class HomeFragment extends Fragment implements HomeView {
         refreshButton.setEnabled(false);
         mealTitle.setText(R.string.loading);
     }
-
     @Override
     public void hideLoading() {
         refreshButton.setEnabled(true);
     }
-
     @Override
     public void showMeal(Meal meal) {
         currentMeal = meal;
         mealTitle.setText(meal.strMeal);
         categoryChip.setText(meal.strCategory);
         areaChip.setText(meal.strArea);
-
         String mealJson = new Gson().toJson(meal);
         userRepository.saveCachedMeal(mealJson, currentDate);
+        Glide.with(this).load(meal.strMealThumb).error(R.drawable.medium).into(mealImage);
+    }
 
-        Glide.with(this)
-                .load(meal.strMealThumb)
-                .error(R.drawable.medium)
-                .into(mealImage);
+    @Override
+    public void showTodaysPlan(PlannedMealDTO plan) {
+        if (plan != null) {
+            if (planTitle != null) planTitle.setText(plan.mealName);
+            if (planType != null) {
+                planType.setText(plan.mealType);
+                planType.setVisibility(View.VISIBLE);
+            }
+            if (planImage != null) {
+                Glide.with(this)
+                        .load(plan.mealThumb)
+                        .error(R.drawable.medium)
+                        .centerCrop()
+                        .into(planImage);
+            }
+
+            if (plansCard != null) {
+                plansCard.setOnClickListener(v ->
+                        Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_plannerFragment)
+                );
+            }
+
+        } else {
+            if (planTitle != null) planTitle.setText(R.string.add_to_plan);
+            if (planType != null) planType.setVisibility(View.GONE);
+            if (planImage != null) planImage.setImageResource(R.drawable.medium);
+
+            if (plansCard != null) {
+                plansCard.setOnClickListener(v -> {
+                    if (currentMeal != null) {
+                        showWeekCalendarDialog();
+                    } else {
+                        showError(getString(R.string.no_meal_loaded));
+                    }
+                });
+            }
+        }
     }
 
     @Override
@@ -177,7 +235,6 @@ public class HomeFragment extends Fragment implements HomeView {
     @Override
     public void showCategories(List<Category> categories) {
         CategoriesAdapter categoriesAdapter = new CategoriesAdapter(categories, CategoriesAdapter.VIEW_TYPE_CHIP);
-
         rvCategories.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         rvCategories.setAdapter(categoriesAdapter);
     }
@@ -187,9 +244,176 @@ public class HomeFragment extends Fragment implements HomeView {
         favNum.setText(String.valueOf(count));
     }
 
+    private void showWeekCalendarDialog() {
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(requireContext());
+        View sheetView = getLayoutInflater().inflate(R.layout.week_calendar, null);
+        bottomSheetDialog.setContentView(sheetView);
+
+        RecyclerView rvWeekDays = sheetView.findViewById(R.id.rv_week_days);
+        TextView tvCurrentMonth = sheetView.findViewById(R.id.tv_current_month);
+
+        List<WeekCalendarAdapter.DayModel> days = new ArrayList<>();
+        Calendar calendar = Calendar.getInstance();
+
+        SimpleDateFormat dayFormat = new SimpleDateFormat("EEE", Locale.ENGLISH);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd", Locale.ENGLISH);
+        SimpleDateFormat monthFormat = new SimpleDateFormat("MMMM yyyy", Locale.ENGLISH);
+
+        tvCurrentMonth.setText(monthFormat.format(calendar.getTime()));
+
+        for (int i = 0; i < 7; i++) {
+            days.add(new WeekCalendarAdapter.DayModel(
+                    dayFormat.format(calendar.getTime()),
+                    dateFormat.format(calendar.getTime()),
+                    calendar.getTime().toString()
+            ));
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
+        }
+
+        selectedDateForPlan = null;
+
+        WeekCalendarAdapter adapter = new WeekCalendarAdapter(days, selectedDay -> {
+            try {
+                selectedDateForPlan = new Date(selectedDay.getFullDate());
+            } catch (Exception e) { e.printStackTrace(); }
+        });
+
+        rvWeekDays.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
+        rvWeekDays.setAdapter(adapter);
+
+        sheetView.findViewById(R.id.btn_confirm_date).setOnClickListener(btn -> {
+            if (selectedDateForPlan != null) {
+                bottomSheetDialog.dismiss();
+                showMealTypeSelectionDialog();
+            } else {
+                if (getView() != null) {
+                    Snackbar.make(getView(), R.string.please_select_a_date, Snackbar.LENGTH_SHORT).show();
+                } else
+                    Toast.makeText(getContext(), R.string.please_select_a_date, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        bottomSheetDialog.show();
+    }
+
+    private void showMealTypeSelectionDialog() {
+        Dialog dialog = new Dialog(requireContext());
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_select_meal_type);
+        if(dialog.getWindow() != null)
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        TextView tvDate = dialog.findViewById(R.id.tv_selected_date);
+        ChipGroup chipGroup = dialog.findViewById(R.id.chip_group_meal_type);
+        Button btnAdd = dialog.findViewById(R.id.btn_add_to_plan);
+
+        Chip chipBreakfast = dialog.findViewById(R.id.chip_breakfast);
+        Chip chipLunch = dialog.findViewById(R.id.chip_lunch);
+        Chip chipDinner = dialog.findViewById(R.id.chip_dinner);
+
+        SimpleDateFormat displayFormat = new SimpleDateFormat("EEE, MMM dd", Locale.getDefault());
+        tvDate.setText(displayFormat.format(selectedDateForPlan));
+
+        updateChipVisuals(chipBreakfast, false);
+        updateChipVisuals(chipLunch, false);
+        updateChipVisuals(chipDinner, false);
+
+        chipGroup.setSingleSelection(true);
+        chipGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            updateChipVisuals(chipBreakfast, false);
+            updateChipVisuals(chipLunch, false);
+            updateChipVisuals(chipDinner, false);
+
+            String type = "";
+            if (checkedId == R.id.chip_breakfast) {
+                type = String.valueOf((R.string.breakfast));
+                updateChipVisuals(chipBreakfast, true);
+            }
+            else if (checkedId == R.id.chip_lunch) {
+                type = String.valueOf((R.string.lunch));
+                updateChipVisuals(chipLunch, true);
+            }
+            else if (checkedId == R.id.chip_dinner) {
+                type = String.valueOf((R.string.dinner));
+                updateChipVisuals(chipDinner, true);
+            }
+
+            if(!type.isEmpty()){
+                btnAdd.setText(String.format(getString(R.string.add_to_meal_type), type));
+            } else {
+                btnAdd.setText(R.string.add_to_plan);
+            }
+        });
+
+        btnAdd.setOnClickListener(v -> {
+            int selectedId = chipGroup.getCheckedChipId();
+            String type = null;
+
+            if (selectedId == R.id.chip_breakfast) type = String.valueOf((R.string.breakfast));
+            else if (selectedId == R.id.chip_lunch) type = String.valueOf((R.string.lunch));
+            else if (selectedId == R.id.chip_dinner) type = String.valueOf((R.string.dinner));
+
+            if (type != null) {
+                presenter.addToPlan(currentMeal, selectedDateForPlan, type);
+                dialog.dismiss();
+            } else {
+                if (getView() != null) {
+                    Snackbar.make(getView(), R.string.select_meal, Snackbar.LENGTH_SHORT).show();
+                } else
+                    Toast.makeText(getContext(), R.string.select_meal, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        dialog.show();
+    }
+
+    private void updateChipVisuals(Chip chip, boolean isSelected) {
+        if (chip == null) return;
+        if (isSelected) {
+            chip.setChipBackgroundColor(ColorStateList.valueOf(R.drawable.secondary_button_filled));
+            chip.setTextColor(ContextCompat.getColor(requireContext(), R.color.splash_subtitle_color));
+        } else {
+            chip.setBackgroundResource(R.drawable.rounded_txt_field);
+            chip.setBackgroundTintList(ContextCompat.getColorStateList(requireContext(), R.color.splash_subtitle_color));
+            chip.setTextColor(ContextCompat.getColor(requireContext(), R.color.txt_dark));
+            chip.setChipBackgroundColor(null);
+        }
+    }
+
+    @Override
+    public void onPlanAddedSuccess() {
+        if (getView() != null) {
+            Snackbar.make(getView(), R.string.success_added_to_plan, Snackbar.LENGTH_LONG)
+                    .setBackgroundTint(getResources().getColor(android.R.color.holo_green_dark))
+                    .setTextColor(getResources().getColor(android.R.color.white))
+                    .show();
+        } else {
+            Toast.makeText(getContext(), R.string.success_added_to_plan, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onPlanAddedError(String error) {
+        if (getView() != null) {
+            Snackbar.make(getView(), String.format(getString(R.string.failed_to_add_plan_s), error), Snackbar.LENGTH_SHORT).show();
+        }
+        else
+            Toast.makeText(getContext(), String.format(getString(R.string.failed_to_add_plan_s), error), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showPlansCount(int count) {
+        if(plannedNum != null) {
+            plannedNum.setText(String.valueOf(count));
+        }
+    }
+
     @Override
     public void showError(String message) {
-        Toast.makeText(getContext(), "Error: " + message, Toast.LENGTH_SHORT).show();
+        if (getView() != null) {
+            Snackbar.make(getView(), message, Snackbar.LENGTH_SHORT).show();
+        } else
+            Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     @Override

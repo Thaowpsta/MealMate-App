@@ -24,6 +24,17 @@ public class MealRemoteDataSource {
                 .map(response -> response.meals);
     }
 
+    public Single<Meal> getMealByIdService(String id) {
+        return mealService.getMealById(id)
+                .map(response -> {
+                    if (response.meals != null && !response.meals.isEmpty()) {
+                        return response.meals.get(0);
+                    } else {
+                        throw new Exception("Meal not found");
+                    }
+                });
+    }
+
     public Single<List<Meal>> searchMeals(String query) {
         return mealService.searchMeals(query)
                 .map(response -> response.meals);

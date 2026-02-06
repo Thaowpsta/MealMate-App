@@ -1,6 +1,7 @@
 package com.example.mealmate.data.repositories;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.example.mealmate.data.categories.dataSource.remote.CategoryRemoteDataSource;
 import com.example.mealmate.data.categories.model.Category;
@@ -12,12 +13,18 @@ import com.example.mealmate.data.meals.datasource.remote.MealRemoteDataSource;
 import com.example.mealmate.data.meals.models.Meal;
 import com.example.mealmate.data.meals.models.MealResponse;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.WriteBatch;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
+
 import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Single;
@@ -43,6 +50,10 @@ public class MealRepository {
 
     public Single<List<Meal>> getRandomMeal() {
         return remoteMealDataSource.getRandomMealService();
+    }
+
+    public Single<Meal> getMealById(String id) {
+        return remoteMealDataSource.getMealByIdService(id).subscribeOn(Schedulers.io());
     }
 
     public Single<List<Category>> getCategories() {
@@ -127,6 +138,13 @@ public class MealRepository {
         return localDataSource.getPlansByDate(date).subscribeOn(Schedulers.io());
     }
 
+    public Flowable<Integer> getPlansCount() {
+        return localDataSource.getPlansCount().subscribeOn(Schedulers.io());
+    }
+
+    public Flowable<List<PlannedMealDTO>> getAllPlans() {
+        return localDataSource.getAllPlans().subscribeOn(Schedulers.io());
+    }
     public Completable addPlan(Meal meal, String date, String dayOfWeek, String type) {
         PlannedMealDTO plan = new PlannedMealDTO();
         plan.mealId = meal.getId();
@@ -142,18 +160,63 @@ public class MealRepository {
                 .subscribeOn(Schedulers.io());
     }
 
+    //TODO: need to be enhanced
+    public void deletePastPlans() {
+        SimpleDateFormat dbFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        String todayStr = dbFormat.format(new Date());
+
+        // 1. Get plans older than today
+        localDataSource.getPastPlans(todayStr)
+                .subscribeOn(Schedulers.io())
+                .flatMapCompletable(plans -> {
+                    if (plans.isEmpty()) return Completable.complete();
+
+                    String uid = auth.getUid();
+                    if (uid == null) return Completable.complete();
+
+                    // 2. Prepare Batch Delete for Firestore
+                    WriteBatch batch = firestore.batch();
+                    for (PlannedMealDTO plan : plans) {
+                        String docId = plan.date + "_" + plan.mealType + "_" + plan.mealId;
+                        DocumentReference docRef = firestore.collection("users")
+                                .document(uid)
+                                .collection("plans")
+                                .document(docId);
+                        batch.delete(docRef);
+                    }
+
+                    // 3. Commit Firestore Batch
+                    return Completable.create(emitter ->
+                            batch.commit()
+                                    .addOnSuccessListener(aVoid -> emitter.onComplete())
+                                    .addOnFailureListener(emitter::onError)
+                    );
+                })
+                .observeOn(Schedulers.io()) // Ensure subsequent operations run on background thread
+                // 4. Delete from Local DB after Firestore success
+                .andThen(localDataSource.deletePastPlans(todayStr))
+                .subscribe(
+                        () -> Log.d("MealRepository", "Past plans cleaned up successfully"),
+                        error -> Log.e("MealRepository", "Failed to clean past plans: " + error.getMessage())
+                );
+    }
+
+
     private Completable syncPlanToFirestore(PlannedMealDTO plan) {
         return Completable.create(emitter -> {
             String uid = auth.getUid();
             if (uid == null) { emitter.onComplete(); return; }
-
             String docId = plan.date + "_" + plan.mealType + "_" + plan.mealId;
+            firestore.collection("users").document(uid).collection("plans").document(docId).set(plan).addOnSuccessListener(aVoid -> emitter.onComplete()).addOnFailureListener(emitter::onError);
+        });
+    }
 
-            firestore.collection("users").document(uid)
-                    .collection("plans").document(docId)
-                    .set(plan)
-                    .addOnSuccessListener(aVoid -> emitter.onComplete())
-                    .addOnFailureListener(emitter::onError);
+    private Completable deleteFirestorePlan(PlannedMealDTO plan) {
+        return Completable.create(emitter -> {
+            String uid = auth.getUid();
+            if (uid == null) { emitter.onComplete(); return; }
+            String docId = plan.date + "_" + plan.mealType + "_" + plan.mealId;
+            firestore.collection("users").document(uid).collection("plans").document(docId).delete().addOnSuccessListener(aVoid -> emitter.onComplete()).addOnFailureListener(emitter::onError);
         });
     }
 }

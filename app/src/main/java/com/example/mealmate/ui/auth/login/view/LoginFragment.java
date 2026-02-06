@@ -31,6 +31,7 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.Arrays;
 
@@ -113,7 +114,11 @@ public class LoginFragment extends Fragment implements LoginView {
 
             @Override
             public void onCancel() {
-                Toast.makeText(getContext(), "Facebook Login Cancelled", Toast.LENGTH_SHORT).show();
+                if (getView() != null) {
+                    Snackbar.make(getView(), R.string.facebook_login_cancelled, Snackbar.LENGTH_SHORT).show();
+                }
+                else
+                    Toast.makeText(getContext(), R.string.facebook_login_cancelled, Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -150,7 +155,11 @@ public class LoginFragment extends Fragment implements LoginView {
 
     @Override
     public void onLoginSuccess() {
-        Toast.makeText(getContext(), "Login Successful", Toast.LENGTH_SHORT).show();
+        if (getView() != null) {
+            Snackbar.make(getView(), R.string.login_successful, Snackbar.LENGTH_SHORT).show();
+        }
+        else
+            Toast.makeText(getContext(), R.string.login_successful, Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(requireContext(), MainActivity.class);
         startActivity(intent);
 
@@ -162,8 +171,11 @@ public class LoginFragment extends Fragment implements LoginView {
 
     @Override
     public void onLoginError(String error) {
-        Toast.makeText(getContext(), "Login Failed: " + error, Toast.LENGTH_SHORT).show();
-        Log.i("Facebook", error);
+        if (getView() != null) {
+            Snackbar.make(getView(), R.string.login_failed, Snackbar.LENGTH_SHORT).show();
+        }
+        else
+            Toast.makeText(getContext(), getString(R.string.login_failed) + error, Toast.LENGTH_SHORT).show();
     }
 
     @Override

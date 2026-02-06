@@ -10,6 +10,7 @@ public class PlannedMealDTO {
     public int id;
 
     public String mealId;
+
     public String date;
     public String dayOfWeek;
     public String mealType;

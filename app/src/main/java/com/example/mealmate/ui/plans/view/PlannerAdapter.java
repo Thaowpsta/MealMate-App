@@ -48,8 +48,6 @@ public class PlannerAdapter extends ListAdapter<MealPlannerItem, RecyclerView.Vi
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         switch (viewType) {
-            case VIEW_TYPE_DATE_HEADER:
-                return new DateHeaderViewHolder(inflater.inflate(R.layout.item_date_header, parent, false));
             case VIEW_TYPE_MEAL:
                 return new MealViewHolder(inflater.inflate(R.layout.item_plan, parent, false));
             case VIEW_TYPE_ADD_MEAL:
@@ -64,37 +62,12 @@ public class PlannerAdapter extends ListAdapter<MealPlannerItem, RecyclerView.Vi
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         MealPlannerItem item = getItem(position);
-        if (holder instanceof DateHeaderViewHolder) {
-            ((DateHeaderViewHolder) holder).bind((MealPlannerItem.DateHeader) item, position == 0);
-        } else if (holder instanceof MealViewHolder) {
+        if (holder instanceof MealViewHolder) {
             ((MealViewHolder) holder).bind((MealPlannerItem.MealItem) item, listener);
         } else if (holder instanceof AddMealViewHolder) {
             ((AddMealViewHolder) holder).bind((MealPlannerItem.AddMealButton) item, listener);
         } else if (holder instanceof EmptyDayViewHolder) {
             ((EmptyDayViewHolder) holder).bind((MealPlannerItem.EmptyDayPrompt) item, listener);
-        }
-    }
-
-    static class DateHeaderViewHolder extends RecyclerView.ViewHolder {
-        private final TextView dateText, mealCountText;
-        private final View divider;
-
-        public DateHeaderViewHolder(@NonNull View itemView) {
-            super(itemView);
-            dateText = itemView.findViewById(R.id.dateText);
-            mealCountText = itemView.findViewById(R.id.mealCountText);
-            divider = itemView.findViewById(R.id.divider);
-        }
-
-        public void bind(MealPlannerItem.DateHeader item, boolean isFirst) {
-            divider.setVisibility(isFirst ? View.GONE : View.VISIBLE);
-            dateText.setText(item.getDate());
-            if (item.getMealCount() <= 0) {
-                mealCountText.setVisibility(View.GONE);
-            } else {
-                mealCountText.setVisibility(View.VISIBLE);
-                mealCountText.setText(MessageFormat.format("{0} Meals", item.getMealCount()));
-            }
         }
     }
 

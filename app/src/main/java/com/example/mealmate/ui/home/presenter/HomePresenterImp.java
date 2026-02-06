@@ -9,8 +9,12 @@ import com.example.mealmate.data.repositories.UserRepository;
 import com.example.mealmate.ui.home.view.HomeView;
 import com.google.gson.Gson;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
@@ -25,8 +29,10 @@ public class HomePresenterImp implements HomePresenter {
 
     public HomePresenterImp(HomeView view, Context context) {
         this.view = view;
-        this.mealRepository = new MealRepository(context);
-        this.userRepository = new UserRepository(context);
+        mealRepository = new MealRepository(context);
+        userRepository = new UserRepository(context);
+
+        mealRepository.deletePastPlans();
     }
 
     @Override
@@ -105,6 +111,88 @@ public class HomePresenterImp implements HomePresenter {
                         error -> {
                             if (view != null) {
                                 view.showError(error.getMessage());
+                            }
+                        }
+                )
+        );
+    }
+
+    @Override
+    public void addToPlan(Meal meal, Date date) {
+        if (meal == null || date == null) return;
+
+        // Auto-calculate type based on current hour
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        int hour = cal.get(Calendar.HOUR_OF_DAY);
+
+        String type;
+        if (hour >= 5 && hour < 11) {
+            type = "BREAKFAST";
+        } else if (hour >= 11 && hour < 16) {
+            type = "LUNCH";
+        } else {
+            type = "DINNER";
+        }
+
+        // Delegate to the specific method
+        addToPlan(meal, date, type);
+    }
+
+    @Override
+    public void addToPlan(Meal meal, Date date, String mealType) {
+        if (meal == null || date == null || mealType == null) return;
+
+        SimpleDateFormat dbDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE", Locale.getDefault());
+
+        String dateStr = dbDateFormat.format(date);
+        String dayOfWeek = dayFormat.format(date);
+
+        compositeDisposable.add(mealRepository.addPlan(meal, dateStr, dayOfWeek, mealType)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        () -> { if (view != null) view.onPlanAddedSuccess(); },
+                        error -> { if (view != null) view.onPlanAddedError(error.getMessage()); }
+                ));
+    }
+
+    @Override
+    public void getPlansCount() {
+        compositeDisposable.add(mealRepository.getPlansCount()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        count -> {
+                            if (view != null) {
+                                view.showPlansCount(count);
+                            }
+                        },
+                        error -> {
+                            if (view != null) {
+                                view.showError(error.getMessage());
+                            }
+                        }
+                )
+        );
+    }
+
+    @Override
+    public void getTodaysPlan() {
+        SimpleDateFormat dbDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        String todayStr = dbDateFormat.format(new Date());
+
+        compositeDisposable.add(mealRepository.getPlansByDate(todayStr)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        plans -> {
+                            if (view != null) {
+                                if (!plans.isEmpty()) {
+                                    view.showTodaysPlan(plans.get(0));
+                                } else {
+                                    view.showTodaysPlan(null);
+                                }
                             }
                         }
                 )
