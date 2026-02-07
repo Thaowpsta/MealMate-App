@@ -110,4 +110,6 @@
     <string name="dark_mode">الوضع الداكن</string>
     <string name="switch_to_arabic">اللغة العربية</string>
     <string name="save">حفظ التغييرات</string>
+    <string name="add_0">أضف {0}</string>
+    <string name="Name">الاسم</string>
 </resources>

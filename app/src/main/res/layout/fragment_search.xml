@@ -89,7 +89,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:checked="true"
-                android:text="Name"
+                android:text="@string/Name"
                 android:textColor="@color/chip_text_selector"
                 app:chipBackgroundColor="@color/chip_bg_selector" />
 

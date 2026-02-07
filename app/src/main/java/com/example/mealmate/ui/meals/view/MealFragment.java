@@ -25,7 +25,7 @@ import com.google.android.material.snackbar.Snackbar;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MealFragment extends Fragment implements MealsView{
+public class MealFragment extends Fragment implements MealsView, MealsAdapter.OnMealClickListener {
 
     private MealsAdapter adapter;
     private MealsPresenter presenter;
@@ -61,7 +61,7 @@ public class MealFragment extends Fragment implements MealsView{
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
         recyclerView.setLayoutManager(gridLayoutManager);
 
-        adapter = new MealsAdapter(mealsList);
+        adapter = new MealsAdapter(mealsList, this);
         recyclerView.setAdapter(adapter);
 
         presenter = new MealsPresenterImp(this, getContext());
@@ -106,5 +106,12 @@ public class MealFragment extends Fragment implements MealsView{
         if (presenter != null) {
             presenter.onDestroy();
         }
+    }
+
+    @Override
+    public void onMealClick(Meal meal) {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("meal", meal);
+        Navigation.findNavController(requireView()).navigate(R.id.action_mealFragment_to_mealDetailsFragment, bundle);
     }
 }

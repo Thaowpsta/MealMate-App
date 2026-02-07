@@ -35,7 +35,7 @@ import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
-public class SearchFragment extends Fragment implements SearchView {
+public class SearchFragment extends Fragment implements SearchView, MealsAdapter.OnMealClickListener {
 
     private SearchPresenter presenter;
     private MealsAdapter adapter;
@@ -70,7 +70,7 @@ public class SearchFragment extends Fragment implements SearchView {
         ImageButton btnBack = view.findViewById(R.id.btn_back);
         chipGroupFilters = view.findViewById(R.id.chip_group_search_filters);
 
-        adapter = new MealsAdapter(searchResults);
+        adapter = new MealsAdapter(searchResults, this);
         rvMeals.setLayoutManager(new GridLayoutManager(getContext(), 2));
         rvMeals.setAdapter(adapter);
 
@@ -177,5 +177,12 @@ public class SearchFragment extends Fragment implements SearchView {
         super.onDestroyView();
         presenter.onDestroy();
         disposable.clear();
+    }
+
+    @Override
+    public void onMealClick(Meal meal) {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("meal", meal);
+        Navigation.findNavController(requireView()).navigate(R.id.action_searchFragment_to_mealDetailsFragment, bundle);
     }
 }

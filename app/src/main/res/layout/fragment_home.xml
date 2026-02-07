@@ -374,10 +374,10 @@
             android:orientation="horizontal">
 
             <View
-                android:id="@+id/accent_bar"
-                android:layout_width="@dimen/padding_margin_8"
-                android:layout_height="match_parent"
-                android:background="@color/secondary_color_start" />
+            android:id="@+id/accent_bar"
+            android:layout_width="@dimen/padding_margin_8"
+            android:layout_height="match_parent"
+            android:background="@color/secondary_color_start" />
 
             <androidx.cardview.widget.CardView
                 android:layout_width="@dimen/medium_img"
@@ -390,15 +390,15 @@
                     android:id="@+id/plan_meal_image"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:contentDescription="@string/today_plan"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/medium" />
+                    android:src="@drawable/medium"
+                    android:contentDescription="@string/today_plan"/>
             </androidx.cardview.widget.CardView>
 
-
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:orientation="vertical"
                 android:layout_gravity="center_vertical">
 
@@ -411,19 +411,18 @@
                     android:textColor="@color/secondary_color_start"
                     android:textSize="@dimen/txt_size_12"
                     android:fontFamily="@font/fredoka_bold"
-                    app:layout_constraintStart_toEndOf="@id/mealImage"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    android:textAlignment="viewStart" />
 
                 <TextView
                     android:id="@+id/plan_meal_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
                     android:layout_marginStart="@dimen/padding_margin_16"
                     android:fontFamily="@font/fredoka_bold"
                     android:text="@string/meal_title"
                     android:textColor="@color/txt_dark"
-                    android:textSize="@dimen/txt_size_19" />
+                    android:textSize="@dimen/txt_size_19"
+                    android:textAlignment="viewStart" />
 
             </LinearLayout>
         </LinearLayout>

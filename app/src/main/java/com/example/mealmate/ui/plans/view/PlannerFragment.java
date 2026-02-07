@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -139,9 +140,27 @@ public class PlannerFragment extends Fragment implements PlannerView {
     private void animateDateChange(int direction) {
         isAnimating = true;
 
-        // Direction > 0 (Next Day): Slide out to Left (-TranslationX)
-        // Direction < 0 (Prev Day): Slide out to Right (+TranslationX)
-        float slideOutTo = (direction > 0) ? -recyclerView.getWidth() : recyclerView.getWidth();
+        // Check layout direction
+        boolean isRtl = ViewCompat.getLayoutDirection(recyclerView) == ViewCompat.LAYOUT_DIRECTION_RTL;
+
+        // Direction > 0 (Next Day):
+        // LTR: Slide out to Left (-Width), Enter from Right (+Width)
+        // RTL: Slide out to Right (+Width), Enter from Left (-Width) [INVERTED]
+
+        // Direction < 0 (Prev Day):
+        // LTR: Slide out to Right (+Width), Enter from Left (-Width)
+        // RTL: Slide out to Left (-Width), Enter from Right (+Width) [INVERTED]
+
+        float slideOutTo;
+        float enterFrom;
+
+        if (direction > 0) { // Next Day
+            slideOutTo = isRtl ? recyclerView.getWidth() : -recyclerView.getWidth();
+            enterFrom = isRtl ? -recyclerView.getWidth() : recyclerView.getWidth();
+        } else { // Prev Day
+            slideOutTo = isRtl ? -recyclerView.getWidth() : recyclerView.getWidth();
+            enterFrom = isRtl ? recyclerView.getWidth() : -recyclerView.getWidth();
+        }
 
         recyclerView.animate()
                 .translationX(slideOutTo)
@@ -150,7 +169,6 @@ public class PlannerFragment extends Fragment implements PlannerView {
                 .withEndAction(() -> {
                     updateDateView(true);
 
-                    float enterFrom = (direction > 0) ? recyclerView.getWidth() : -recyclerView.getWidth();
                     recyclerView.setTranslationX(enterFrom);
 
                     // Slide Back In
@@ -333,20 +351,32 @@ public class PlannerFragment extends Fragment implements PlannerView {
         private static final int SWIPE_VELOCITY_THRESHOLD = 100;
 
         @Override
-        public boolean onDown(MotionEvent e) {
+        public boolean onDown(@NonNull MotionEvent e) {
             return true;
         }
 
         @Override
-        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        public boolean onFling(@Nullable MotionEvent e1, @NonNull MotionEvent e2, float velocityX, float velocityY) {
+            if (e1 == null || e2 == null) return false; // Safety check
+
             boolean result = false;
             try {
                 float diffX = e2.getX() - e1.getX();
                 if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
+
+                    // Check if layout is RTL (Arabic)
+                    boolean isRtl = ViewCompat.getLayoutDirection(recyclerView) == ViewCompat.LAYOUT_DIRECTION_RTL;
+
                     if (diffX > 0) {
-                        changeDate(-1);
+                        // User Swiped Right (Finger moves Left -> Right)
+                        // LTR: Go to Previous (-1)
+                        // RTL: Go to Next (+1) (Because Next is on the Left)
+                        changeDate(isRtl ? 1 : -1);
                     } else {
-                        changeDate(1);
+                        // User Swiped Left (Finger moves Right -> Left)
+                        // LTR: Go to Next (+1)
+                        // RTL: Go to Previous (-1) (Because Previous is on the Right)
+                        changeDate(isRtl ? -1 : 1);
                     }
                     result = true;
                 }

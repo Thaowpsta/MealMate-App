@@ -4,14 +4,15 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:paddingVertical="@dimen/padding_margin_8"
-    android:gravity="center_vertical">
+    android:gravity="center_vertical"
+    android:layoutDirection="locale">
 
     <ImageView
-        android:id="@+id/img_ingredient_thumb"
-        android:layout_width="@dimen/padding_margin_38"
-        android:layout_height="@dimen/padding_margin_38"
-        android:src="@drawable/plate"
-        android:layout_marginEnd="@dimen/padding_margin_16"/>
+    android:id="@+id/img_ingredient_thumb"
+    android:layout_width="@dimen/padding_margin_38"
+    android:layout_height="@dimen/padding_margin_38"
+    android:src="@drawable/plate"
+    android:layout_marginEnd="@dimen/padding_margin_16"/>
 
     <TextView
         android:id="@+id/tv_ingredient_name"
@@ -20,12 +21,14 @@
         android:layout_weight="1"
         android:text="@string/ingredient_name"
         android:textColor="@color/txt_dark"
-        android:textStyle="bold"/>
+        android:textStyle="bold"
+        android:textAlignment="viewStart"/>
 
     <TextView
         android:id="@+id/tv_ingredient_measure"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/measure"
-        android:textColor="@color/txt_light"/>
+        android:textColor="@color/txt_light"
+        android:textAlignment="viewEnd"/>
 </LinearLayout>

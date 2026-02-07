@@ -110,4 +110,6 @@
     <string name="dark_mode">Dark Mode</string>
     <string name="switch_to_arabic">Switch to Arabic language</string>
     <string name="save">Save Changes</string>
+    <string name="add_0">Add {0}</string>
+    <string name="Name">Name</string>
 </resources>

@@ -7,9 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
-import android.os.Bundle;
 
 import com.bumptech.glide.Glide;
 import com.example.mealmate.R;
@@ -20,9 +18,15 @@ import java.util.List;
 
 public class MealsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final List<Meal> meals;
+    private final OnMealClickListener listener;
 
-    public MealsAdapter(List<Meal> meals){
+    public interface OnMealClickListener {
+        void onMealClick(Meal meal);
+    }
+
+    public MealsAdapter(List<Meal> meals, OnMealClickListener listener){
         this.meals = meals;
+        this.listener = listener;
     }
 
     @NonNull
@@ -64,9 +68,9 @@ public class MealsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                     .into(cardHolder.image);
 
         holder.itemView.setOnClickListener(v -> {
-            Bundle bundle = new Bundle();
-            bundle.putSerializable("meal", meal);
-            Navigation.findNavController(v).navigate(R.id.action_mealFragment_to_mealDetailsFragment, bundle);
+            if (listener != null) {
+                listener.onMealClick(meal);
+            }
         });
     }
 

@@ -14,8 +14,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.mealmate.R;
 import com.example.mealmate.data.meals.models.MealPlannerItem;
+import com.example.mealmate.data.meals.models.MealType;
 
-import java.text.MessageFormat;
 import java.util.Objects;
 
 public class PlannerAdapter extends ListAdapter<MealPlannerItem, RecyclerView.ViewHolder> {
@@ -93,19 +93,33 @@ public class PlannerAdapter extends ListAdapter<MealPlannerItem, RecyclerView.Vi
     }
 
     static class AddMealViewHolder extends RecyclerView.ViewHolder {
-        private final TextView addText, promptText;
+        private final TextView addText;
 
         public AddMealViewHolder(@NonNull View itemView) {
             super(itemView);
             addText = itemView.findViewById(R.id.addMealText);
-            promptText = itemView.findViewById(R.id.promptText);
         }
 
         public void bind(MealPlannerItem.AddMealButton item, OnPlannerActionClickListener listener) {
-            String mealTypeName = item.getMealType().name().toLowerCase();
-            mealTypeName = Character.toUpperCase(mealTypeName.charAt(0)) + mealTypeName.substring(1);
-            addText.setText(MessageFormat.format("Add {0}", mealTypeName));
-            promptText.setText(item.getPromptText());
+            // FIX: Get localized string based on MealType
+            int typeResId;
+            switch (item.getMealType()) {
+                case BREAKFAST: typeResId = R.string.breakfast; break;
+                case LUNCH: typeResId = R.string.lunch; break;
+                case DINNER: typeResId = R.string.dinner; break;
+                default: typeResId = R.string.meal_type;
+            }
+            String mealTypeName = itemView.getContext().getString(typeResId);
+
+            String formattedText = itemView.getContext().getString(R.string.add_0);
+            if (formattedText.contains("{0}")) {
+                formattedText = formattedText.replace("{0}", mealTypeName);
+            } else {
+                // This handles "Add to %s" format
+                formattedText = itemView.getContext().getString(R.string.add_to_meal_type, mealTypeName);
+            }
+
+            addText.setText(formattedText);
             itemView.setOnClickListener(v -> { if (listener != null) listener.onAddMealClick(item.getMealType()); });
         }
     }

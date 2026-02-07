@@ -85,7 +85,15 @@
         android:id="@+id/searchFragment"
         android:name="com.example.mealmate.ui.search.view.SearchFragment"
         android:label="fragment_search"
-        tools:layout="@layout/fragment_search" />
+        tools:layout="@layout/fragment_search" >
+        <action
+            android:id="@+id/action_searchFragment_to_mealDetailsFragment"
+            app:destination="@id/mealDetailsFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
+    </fragment>
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.example.mealmate.ui.profile.view.ProfileFragment"
