@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="@dimen/padding_margin_19"
     android:layout_marginVertical="@dimen/padding_margin_8"
-    app:cardCornerRadius="@dimen/padding_margin_16"
+    app:cardCornerRadius="@dimen/padding_margin_38"
     app:cardElevation="0dp"
     android:foreground="@drawable/dotted_border">
 

@@ -8,7 +8,16 @@
     </style>
 
     <style name="BottomNavStyle" parent="Widget.Material3.BottomNavigationView">
-        <item name="itemIconSize">56dp</item>
-        <item name="android:layout_height">88dp</item>
+        <item name="itemIconSize">24dp</item>
+    </style>
+
+    <style name="CalendarDialogAnimation">
+        <item name="android:windowEnterAnimation">@anim/slide_up</item>
+        <item name="android:windowExitAnimation">@anim/slide_down</item>
+    </style>
+
+    <style name="roundedCornersImageView" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">20dp</item>
     </style>
 </resources>

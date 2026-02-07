@@ -106,7 +106,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:alpha="0.8"
-                    android:backgroundTint="@color/stroke_txt_field"
+                    android:backgroundTint="@color/filled_txt_field"
                     android:fontFamily="@font/fredoka_bold"
                     android:inputType="textCapWords"
                     android:paddingHorizontal="@dimen/padding_margin_8"
@@ -156,9 +156,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:alpha="0.8"
-                    android:backgroundTint="@color/stroke_txt_field"
+                    android:backgroundTint="@color/filled_txt_field"
                     android:text="@string/area"
-                    android:textColor="@color/txt_light"
+                    android:textColor="@color/txt_dark"
                     app:chipCornerRadius="@dimen/padding_margin_16" />
 
                 <com.google.android.material.chip.Chip
@@ -166,9 +166,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:alpha="0.8"
-                    android:backgroundTint="@color/stroke_txt_field"
+                    android:backgroundTint="@color/filled_txt_field"
                     android:text="@string/category"
-                    android:textColor="@color/txt_light"
+                    android:textColor="@color/txt_dark"
                     app:chipCornerRadius="@dimen/padding_margin_16" />
 
             </com.google.android.material.chip.ChipGroup>
@@ -361,7 +361,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/padding_margin_8"
-        app:cardBackgroundColor="@color/splash_subtitle_color"
+        app:cardBackgroundColor="@color/filled_txt_field"
         app:cardCornerRadius="@dimen/primary_button_corners"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintEnd_toStartOf="parent"

@@ -1,22 +1,22 @@
 <resources>
     <string name="app_name">MealMate</string>
-    <string name="splash_subtitle">من الإلهام إلى الطبق</string>
-    <string name="hello_blank_fragment">شاشة اختبار فارغة</string>
-    <string name="welcome">مرحبًا! 👋</string>
-    <string name="login_subtitle">سجّل الدخول لمتابعة تخطيط وجباتك</string>
+    <string name="splash_subtitle">من الإلهام إلى طبقك</string>
+    <string name="hello_blank_fragment">تجربة الشاشة الفارغة</string>
+    <string name="welcome">أهلاً بك! 👋</string>
+    <string name="login_subtitle">سجل الدخول لمتابعة تخطيط وجباتك</string>
     <string name="email">البريد الإلكتروني</string>
     <string name="emailHint">name@example.com</string>
     <string name="password">كلمة المرور</string>
     <string name="login">تسجيل الدخول</string>
     <string name="dont_have_acc">ليس لديك حساب؟</string>
-    <string name="have_acc">لديك حساب؟</string>
+    <string name="have_acc">لديك حساب بالفعل؟</string>
     <string name="sign_up">إنشاء حساب</string>
     <string name="or">أو</string>
     <string name="guest">المتابعة كضيف</string>
     <string name="create_acc">إنشاء حساب</string>
-    <string name="sign_up_subtitle">انضم إلينا وابدأ في تخطيط وجباتك</string>
+    <string name="sign_up_subtitle">انضم إلينا وابدأ تخطيط وجباتك</string>
     <string name="name">الاسم الكامل</string>
-    <string name="name_hint">ثوابسطة سعيد</string>
+    <string name="name_hint">ثاوبستا سعيد</string>
     <string name="default_web_client_id">1059358869778-h94k0abgf8028pqpga0bvsnuv1dmep0o.apps.googleusercontent.com</string>
     <string name="facebook_app_id">772485545295397</string>
     <string name="facebook_client_token">83871079694584cb3b86b30f5ec873a9</string>
@@ -27,30 +27,30 @@
     <string name="favs">المفضلة</string>
     <string name="date_txt">الاثنين، 24 أكتوبر</string>
     <string name="greeting">صباح الخير،</string>
-    <string name="username">ثوابسطة</string>
+    <string name="username">ثاوبستا</string>
     <string name="meal_title">سباغيتي كاربونارا</string>
-    <string name="area">إيطالي</string>
-    <string name="category">مكرونة</string>
+    <string name="area">المنطقة</string>
+    <string name="category">التصنيف</string>
     <string name="cook_now">اطبخ الآن</string>
-    <string name="cook_later">اطبخ لاحقًا</string>
+    <string name="cook_later">اطبخ لاحقاً</string>
     <string name="loading">جاري التحميل...</string>
     <string name="ingredients">المكونات</string>
     <string name="item_num">0 عناصر</string>
-    <string name="instructions">طريقة التحضير</string>
-    <string name="video_tutorial">فيديو الشرح</string>
-    <string name="add_to_plan">إضافة إلى الخطة</string>
+    <string name="instructions">التعليمات</string>
+    <string name="video_tutorial">فيديو تعليمي</string>
+    <string name="add_to_plan">أضف إلى الخطة</string>
     <string name="q_cat">تصنيفات سريعة</string>
     <string name="see_all">عرض الكل</string>
-    <string name="countries">الدول</string>
+    <string name="countries">البلاد</string>
     <string name="today_plan">خطة اليوم</string>
-    <string name="new_recipe">اكتشف وصفات جديدة</string>
-    <string name="favorite">مفضل</string>
+    <string name="new_recipe">استكشف وصفات جديدة</string>
+    <string name="favorite">مفضلة</string>
     <string name="categories">التصنيفات</string>
     <string name="categories_subtitle">تصفح الوجبات حسب التصنيف</string>
     <string name="mix_the_flour">اخلط الدقيق...</string>
     <string name="show_more">عرض المزيد</string>
     <string name="show_less">عرض أقل</string>
-    <string name="favs_subtitle">24 وصفة محفوظة</string>
+    <string name="favs_subtitle">الوصفات المحفوظة</string>
     <string name="weekly_plans">الخطط الأسبوعية</string>
     <string name="plans_subtitle">وجباتك لهذا الأسبوع</string>
     <string name="back">رجوع</string>
@@ -62,20 +62,52 @@
     <string name="google_login">تسجيل الدخول باستخدام Google</string>
     <string name="facebook_login">تسجيل الدخول باستخدام Facebook</string>
     <string name="x_login">تسجيل الدخول باستخدام X</string>
-    <string name="add_to_favorites">إضافة إلى المفضلة</string>
-    <string name="add_meal">إضافة الغداء</string>
+    <string name="add_to_favorites">أضف إلى المفضلة</string>
+    <string name="add_meal">أضف غداء</string>
     <string name="quick_add">ابحث عن وصفة أو إضافة سريعة</string>
     <string name="meals_num">0 وجبات</string>
-    <string name="plan_next_day">اضغط لتخطيط يوم الأربعاء</string>
+    <string name="plan_next_day">اضغط لتخطيط الأربعاء</string>
     <string name="ingredient_name">اسم المكون</string>
-    <string name="measure">الكمية</string>
+    <string name="measure">المقدار</string>
     <string name="instruction_num">1</string>
     <string name="meal_type">إفطار</string>
-    <string name="planed_desc">350 سعر حراري • عالي البروتين</string>
-    <string name="meal_category">نوع الوجبة</string>
+    <string name="planed_desc">350 سعرة • بروتين عالي</string>
+    <string name="meal_category">تصنيف الوجبة</string>
     <string name="current_date">12</string>
     <string name="current_day">الاثنين</string>
     <string name="select_date">اختر التاريخ</string>
     <string name="october_2025">أكتوبر 2025</string>
     <string name="select">اختيار</string>
+    <string name="select_meal_type">اختر نوع الوجبة</string>
+    <string name="breakfast">إفطار</string>
+    <string name="lunch">غداء</string>
+    <string name="dinner">عشاء</string>
+    <string name="add_to_meal_type">أضف إلى %s</string>
+    <string name="select_meal">يرجى اختيار نوع الوجبة</string>
+    <string name="success_added_to_plan">تم بنجاح! أضيفت الوجبة إلى خطتك.</string>
+    <string name="failed_to_add_plan_s">فشل إضافة الخطة: %s</string>
+    <string name="facebook_login_cancelled">تم إلغاء تسجيل الدخول بـ Facebook</string>
+    <string name="login_successful">تم تسجيل الدخول بنجاح</string>
+    <string name="login_failed">"فشل تسجيل الدخول: "</string>
+    <string name="sign_up_successful_please_login">تم إنشاء الحساب بنجاح! يرجى تسجيل الدخول.</string>
+    <string name="sign_up_failed">"فشل إنشاء الحساب: "</string>
+    <string name="no_meal_loaded">لم يتم تحميل وجبة.</string>
+    <string name="please_select_a_date">يرجى اختيار تاريخ</string>
+    <string name="d_item">%d عنصر</string>
+    <string name="cannot_go_back_past_today">لا يمكن العودة لما قبل اليوم</string>
+    <string name="cannot_go_past_this_week">لا يمكن تجاوز هذا الأسبوع</string>
+    <string name="_1_meal">وجبة واحدة</string>
+    <string name="meals">" وجبات"</string>
+    <string name="browse_meals_by_s">تصفح الوجبات حسب %s</string>
+    <string name="find">ابحث عن وجبتك التالية لتخطيطها</string>
+    <string name="search_by_name">بحث بالاسم</string>
+    <string name="search_by_category">بحث بالتصنيف</string>
+    <string name="search_by_area">بحث بالمنطقة</string>
+    <string name="search_by_ingredient">بحث بالمكونات</string>
+    <string name="find_by_s">بحث بواسطة %s</string>
+    <string name="ingredient">مكون</string>
+    <string name="change_password">تغيير كلمة المرور</string>
+    <string name="dark_mode">الوضع الداكن</string>
+    <string name="switch_to_arabic">اللغة العربية</string>
+    <string name="save">حفظ التغييرات</string>
 </resources>

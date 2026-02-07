@@ -210,19 +210,12 @@ public class UserRepository {
         }
     }
 
-    public void loadProfileSettings() {
-        FirebaseUser user = firebaseAuth.getCurrentUser();
-        if (user != null) {
-            firestore.collection("users").document(user.getUid())
-                    .get()
-                    .addOnSuccessListener(documentSnapshot -> {
-                        if (documentSnapshot.exists()) {
-                            String theme = documentSnapshot.getString("theme");
-                             String lang = documentSnapshot.getString("language");
-                            if (theme != null) sharedPreferencesManager.setThemeMode(theme);
-                        }
-                    });
-        }
+    public String getThemeMode() {
+        return sharedPreferencesManager.getThemeMode();
+    }
+
+    public String getLanguage() {
+        return sharedPreferencesManager.getLanguage();
     }
 
     public interface LoginCallback {

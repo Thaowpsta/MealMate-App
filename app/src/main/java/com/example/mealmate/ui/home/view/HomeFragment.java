@@ -369,7 +369,7 @@ public class HomeFragment extends Fragment implements HomeView {
         if (chip == null) return;
         if (isSelected) {
             chip.setChipBackgroundColor(ColorStateList.valueOf(R.drawable.secondary_button_filled));
-            chip.setTextColor(ContextCompat.getColor(requireContext(), R.color.splash_subtitle_color));
+            chip.setTextColor(ContextCompat.getColor(requireContext(), R.color.chip_txt));
         } else {
             chip.setBackgroundResource(R.drawable.rounded_txt_field);
             chip.setBackgroundTintList(ContextCompat.getColorStateList(requireContext(), R.color.splash_subtitle_color));
