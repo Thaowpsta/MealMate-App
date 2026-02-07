@@ -29,6 +29,9 @@
         <action
             android:id="@+id/action_homeFragment_to_mealFragment"
             app:destination="@id/mealFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
     </fragment>
 
     <fragment
@@ -83,4 +86,9 @@
         android:name="com.example.mealmate.ui.search.view.SearchFragment"
         android:label="fragment_search"
         tools:layout="@layout/fragment_search" />
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.mealmate.ui.profile.view.ProfileFragment"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile" />
 </navigation>

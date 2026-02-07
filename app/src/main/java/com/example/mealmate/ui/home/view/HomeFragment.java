@@ -56,7 +56,7 @@ public class HomeFragment extends Fragment implements HomeView {
     private HomePresenter presenter;
 
     private TextView mealTitle, favNum, plannedNum, planTitle, planType;
-    private ImageView mealImage, planImage;
+    private ImageView mealImage, planImage, userImage;
     private Chip areaChip, categoryChip;
     private ImageButton refreshButton;
     private UserRepository userRepository;
@@ -105,10 +105,10 @@ public class HomeFragment extends Fragment implements HomeView {
         Button btnCookLater = view.findViewById(R.id.cook_later);
         CardView favoritesCard = view.findViewById(R.id.fav_card);
         plansCard = view.findViewById(R.id.planner_card);
-
         planImage = view.findViewById(R.id.plan_meal_image);
         planTitle = view.findViewById(R.id.plan_meal_title);
         planType = view.findViewById(R.id.mealTypeText);
+        userImage = view.findViewById(R.id.user_img);
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMM. d", Locale.getDefault());
         currentDate = dateFormat.format(new Date());
@@ -154,6 +154,8 @@ public class HomeFragment extends Fragment implements HomeView {
         favoritesCard.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_favoritesFragment));
 
         plansCard.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_plannerFragment));
+
+        userImg.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_profileFragment));
     }
 
     private void setupUserInfo(TextView usernameTxt, ImageView userImg) {

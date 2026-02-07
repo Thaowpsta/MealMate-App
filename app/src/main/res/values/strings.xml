@@ -106,4 +106,8 @@
     <string name="search_by_ingredient">Search by Ingredient</string>
     <string name="find_by_s">Find by %s</string>
     <string name="ingredient">Ingredient</string>
+    <string name="change_password">Change Password</string>
+    <string name="dark_mode">Dark Mode</string>
+    <string name="switch_to_arabic">Switch to Arabic language</string>
+    <string name="save">Save Changes</string>
 </resources>

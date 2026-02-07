@@ -1,6 +1,7 @@
 package com.example.mealmate.ui.main;
 
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -35,5 +36,11 @@ public class MainActivity extends AppCompatActivity {
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
         NavigationUI.setupWithNavController(bottomNav, navController);
 
+        navController.addOnDestinationChangedListener((controller, destination, arguments) ->{
+            if(destination.getId() == R.id.profileFragment)
+                bottomNav.setVisibility(View.GONE);
+            else
+                bottomNav.setVisibility(View.VISIBLE);
+        });
     }
 }
