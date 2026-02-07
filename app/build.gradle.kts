@@ -57,6 +57,8 @@ dependencies {
     implementation(libs.rxandroid)
     implementation(libs.glide)
     implementation (libs.room.runtime)
+    implementation(libs.core)
+    implementation(libs.chromecast.sender)
     annotationProcessor (libs.room.compiler)
     implementation (libs.room.rxjava3)
     implementation (libs.firebase.firestore)

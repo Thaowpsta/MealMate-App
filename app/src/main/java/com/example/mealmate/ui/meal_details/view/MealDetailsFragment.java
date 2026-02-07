@@ -1,20 +1,23 @@
 package com.example.mealmate.ui.meal_details.view;
 
 import android.app.Dialog;
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.core.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -24,6 +27,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Lifecycle;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -38,6 +42,9 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.snackbar.Snackbar;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -45,22 +52,22 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MealDetailsFragment extends Fragment implements MealDetailsView {
 
     private MealDetailsPresenter presenter;
     private ImageView mealImage;
-    private TextView mealTitle;
+    private TextView mealTitle, videoLabel, seeMoreSteps;
     private Chip areaChip, categoryChip, itemNumber;
-    private RecyclerView rvIngredients;
-    private RecyclerView rvInstructions;
-    private TextView seeMoreSteps;
+    private RecyclerView rvIngredients, rvInstructions;
     private InstructionsAdapter instructionsAdapter;
-    private WebView videoWebView;
+    private YouTubePlayerView youTubePlayerView;
     private ImageButton btnFavorite;
     private Meal currentMeal;
-    private AppCompatButton btnAddToPlan;
     private Date selectedDateForPlan;
+    private CardView videoCard;
 
     public MealDetailsFragment() {
         // Required empty public constructor
@@ -92,9 +99,12 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
         itemNumber = view.findViewById(R.id.item_num);
         rvInstructions = view.findViewById(R.id.rv_instructions);
         seeMoreSteps = view.findViewById(R.id.see_more_steps);
-        videoWebView = view.findViewById(R.id.vv_video);
-        btnAddToPlan = view.findViewById(R.id.btn_add_to_plan);
+        youTubePlayerView = view.findViewById(R.id.youtube_player_view);
+        AppCompatButton btnAddToPlan = view.findViewById(R.id.btn_add_to_plan);
+        videoCard = view.findViewById(R.id.video_card);
+        videoLabel = view.findViewById(R.id.tv_video_label);
 
+        getLifecycle().addObserver(youTubePlayerView);
 
         if (getArguments() != null) {
             MealDetailsFragmentArgs args = MealDetailsFragmentArgs.fromBundle(getArguments());
@@ -102,11 +112,6 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
 
             presenter.getMealDetails(currentMeal);
         }
-
-        WebSettings webSettings = videoWebView.getSettings();
-        webSettings.setDomStorageEnabled(true);
-        webSettings.setLoadWithOverviewMode(true);
-        webSettings.setUseWideViewPort(true);
 
         btnBack.setOnClickListener(v -> Navigation.findNavController(view).navigateUp());
 
@@ -127,7 +132,32 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
                 showError(getString(R.string.no_meal_loaded));
             }
         });
+    }
 
+    private String extractYouTubeVideoId(String youtubeUrl) {
+        if (youtubeUrl == null || youtubeUrl.isEmpty()) {
+            return "";
+        }
+
+        Pattern pattern = Pattern.compile(
+                "(?:youtube\\.com/(?:watch\\?v=|embed/)|youtu\\.be/)([a-zA-Z0-9_-]{11})",
+                Pattern.CASE_INSENSITIVE
+        );
+
+        Matcher matcher = pattern.matcher(youtubeUrl);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+
+        if (youtubeUrl.contains("v=")) {
+            String[] parts = youtubeUrl.split("v=");
+            if (parts.length > 1) {
+                String videoId = parts[1].split("&")[0];
+                return videoId;
+            }
+        }
+
+        return "";
     }
 
     @Override
@@ -160,7 +190,6 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
         if (meal.strInstructions != null && !meal.strInstructions.isEmpty()) {
             // The regex "\\r?\\n" handles both \r\n and \n
             String[] stepsArray = meal.strInstructions.split("\\r?\\n");
-
             List<String> stepsList = new ArrayList<>();
             for (String step : stepsArray) {
                 if (!step.trim().isEmpty()) {
@@ -193,21 +222,31 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
         }
 
         if (meal.strYoutube != null && !meal.strYoutube.isEmpty()) {
-            String videoId = "";
-
-            if (meal.strYoutube.contains("v=")) {
-                String[] parts = meal.strYoutube.split("v=");
-                if (parts.length > 1) {
-                    videoId = parts[1];
-                }
-            }
+            String videoId = extractYouTubeVideoId(meal.strYoutube);
+            Log.d("MealDetails", "YouTube URL: " + meal.strYoutube);
+            Log.d("MealDetails", "Extracted Video ID: " + videoId);
 
             if (!videoId.isEmpty()) {
-                String embedUrl = "https://www.youtube.com/embed/" + videoId;
-                videoWebView.loadUrl(embedUrl);
+                videoLabel.setVisibility(View.VISIBLE);
+                videoCard.setVisibility(View.VISIBLE);
+                youTubePlayerView.setVisibility(View.VISIBLE);
+
+                youTubePlayerView.addYouTubePlayerListener(new AbstractYouTubePlayerListener() {
+                    @Override
+                    public void onReady(@NonNull YouTubePlayer youTubePlayer) {
+                        youTubePlayer.cueVideo(videoId, 0);
+                        Log.d("MealDetails", "YouTube player ready, video cued: " + videoId);
+                    }
+                });
+            } else {
+                videoLabel.setVisibility(View.GONE);
+                videoCard.setVisibility(View.GONE);
+                youTubePlayerView.setVisibility(View.GONE);
             }
         } else {
-            videoWebView.setVisibility(View.GONE);
+            videoLabel.setVisibility(View.GONE);
+            videoCard.setVisibility(View.GONE);
+            youTubePlayerView.setVisibility(View.GONE);
         }
     }
 
