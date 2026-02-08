@@ -62,7 +62,11 @@ public class HomeFragment extends Fragment implements HomeView {
     private UserRepository userRepository;
     private Meal currentMeal;
     private RecyclerView rvCategories;
-    private String currentDate;
+
+    // Separate variables for UI display and Cache logic
+    private String displayDate;
+    private String cacheDateKey;
+
     private Date selectedDateForPlan;
     private CardView plansCard, todayPlan;
     private View emptyPlanView;;
@@ -113,13 +117,21 @@ public class HomeFragment extends Fragment implements HomeView {
         todayPlan = view.findViewById(R.id.plan_card);
         emptyPlanView = view.findViewById(R.id.empty_plan_view);
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMM. d", Locale.getDefault());
-        currentDate = dateFormat.format(new Date());
-        date.setText(currentDate);
+        Date today = new Date();
+
+        // 1. Format for UI
+        SimpleDateFormat displayFormat = new SimpleDateFormat("EEEE, MMM. d", Locale.getDefault());
+        displayDate = displayFormat.format(today);
+        date.setText(displayDate);
+
+        // 2. Format for Cache
+        SimpleDateFormat cacheFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        cacheDateKey = cacheFormat.format(today);
 
         setupUserInfo(usernameTxt, userImg);
 
-        presenter.getCachedMeal(currentDate);
+        presenter.getCachedMeal(cacheDateKey);
+
         presenter.getCategories();
         presenter.getFavoritesCount();
         presenter.getPlansCount();
@@ -206,8 +218,10 @@ public class HomeFragment extends Fragment implements HomeView {
         mealTitle.setText(meal.strMeal);
         categoryChip.setText(meal.strCategory);
         areaChip.setText(meal.strArea);
+
         String mealJson = new Gson().toJson(meal);
-        userRepository.saveCachedMeal(mealJson, currentDate);
+        userRepository.saveCachedMeal(mealJson, cacheDateKey);
+
         Glide.with(this).load(meal.strMealThumb).error(R.drawable.medium).into(mealImage);
     }
 

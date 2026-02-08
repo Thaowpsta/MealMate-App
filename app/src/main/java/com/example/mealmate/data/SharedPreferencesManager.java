@@ -3,6 +3,15 @@ package com.example.mealmate.data;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.example.mealmate.data.categories.model.Category;
+import com.example.mealmate.data.meals.models.Meal;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Map;
+
 public class SharedPreferencesManager {
 
     private static final String PREF_NAME = "MealMatePrefs";
@@ -21,6 +30,9 @@ public class SharedPreferencesManager {
     private static final String KEY_LANGUAGE = "language_code";
     private static final String KEY_LAST_MEAL_DATE = "last_meal_date";
     private static final String KEY_CACHED_MEAL = "cached_meal";
+    private static final String KEY_CACHED_CATEGORIES = "cached_categories";
+    private static final String KEY_CATEGORIES_TIMESTAMP = "categories_timestamp";
+    private static final long CACHE_DURATION_24H = 24 * 60 * 60 * 1000;
 
     private SharedPreferencesManager(Context context) {
         sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
@@ -138,6 +150,90 @@ public class SharedPreferencesManager {
 
     public String getLastMealDate() {
         return sharedPreferences.getString(KEY_LAST_MEAL_DATE, "");
+    }
+
+    public void cacheMealList(String key, List<Meal> meals) {
+        if (meals == null || meals.isEmpty()) return;
+        String json = new Gson().toJson(meals);
+        editor.putString(key, json);
+        editor.apply();
+    }
+
+    public List<Meal> getCachedMealList(String key) {
+        String json = sharedPreferences.getString(key, null);
+        if (json == null) return null;
+
+        Type type = new TypeToken<List<Meal>>() {}.getType();
+        return new Gson().fromJson(json, type);
+    }
+
+    // ==================== INDIVIDUAL MEAL CACHING (NEW) ====================
+    public void cacheMealDetails(Meal meal) {
+        if (meal == null || meal.getId() == null) return;
+        String json = new Gson().toJson(meal);
+        editor.putString("meal_details_" + meal.getId(), json);
+        editor.apply();
+    }
+
+    public Meal getCachedMealDetails(String id) {
+        String json = sharedPreferences.getString("meal_details_" + id, null);
+        if (json == null) return null;
+        return new Gson().fromJson(json, Meal.class);
+    }
+
+// ==================== Categories Caching ====================
+    public void cacheCategories(List<Category> categories) {
+        if (categories == null || categories.isEmpty()) return;
+        String json = new Gson().toJson(categories);
+        editor.putString(KEY_CACHED_CATEGORIES, json);
+        editor.putLong(KEY_CATEGORIES_TIMESTAMP, System.currentTimeMillis());
+        editor.apply();
+    }
+
+    public List<Category> getCachedCategories() {
+        long lastCacheTime = sharedPreferences.getLong(KEY_CATEGORIES_TIMESTAMP, 0);
+        long currentTime = System.currentTimeMillis();
+
+        if (currentTime - lastCacheTime > CACHE_DURATION_24H) {
+            return null;
+        }
+
+        String json = sharedPreferences.getString(KEY_CACHED_CATEGORIES, null);
+        if (json == null) return null;
+
+        Type type = new TypeToken<List<Category>>() {}.getType();
+        return new Gson().fromJson(json, type);
+    }
+
+    public void cacheCategoryMeals(String categoryName, List<Meal> meals) {
+        if (meals == null || meals.isEmpty() || categoryName == null) return;
+        String json = new Gson().toJson(meals);
+        String key = "category_" + categoryName.toLowerCase().replace(" ", "_") + "_meals";
+        editor.putString(key, json);
+        editor.apply();
+    }
+
+    public List<Meal> getCachedCategoryMeals(String categoryName) {
+        if (categoryName == null) return null;
+        String key = "category_" + categoryName.toLowerCase().replace(" ", "_") + "_meals";
+        String json = sharedPreferences.getString(key, null);
+        if (json == null) return null;
+
+        Type type = new TypeToken<List<Meal>>() {}.getType();
+        return new Gson().fromJson(json, type);
+    }
+
+    public void clearCategoryCache() {
+        editor.remove(KEY_CACHED_CATEGORIES);
+        editor.remove(KEY_CATEGORIES_TIMESTAMP);
+
+        Map<String, ?> allEntries = sharedPreferences.getAll();
+        for (String key : allEntries.keySet()) {
+            if (key.startsWith("category_") && key.endsWith("_meals")) {
+                editor.remove(key);
+            }
+        }
+        editor.apply();
     }
 
     // ==================== Save Complete User Profile ====================

@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.example.mealmate.R;
 import com.example.mealmate.data.categories.model.Category;
+import com.example.mealmate.data.meals.datasource.local.PlannedMealDTO;
 import com.example.mealmate.data.meals.models.Meal;
 import com.example.mealmate.data.repositories.MealRepository;
 import com.example.mealmate.data.repositories.UserRepository;
@@ -87,6 +88,7 @@ public class HomePresenterImp implements HomePresenter {
                                 int limit = Math.min(categories.size(), 5);
                                 List<Category> firstFive = new ArrayList<>(categories.subList(0, limit));
                                 view.showCategories(firstFive);
+                                preloadCategoryMeals(firstFive);
                             }
                         },
                         error -> {
@@ -96,6 +98,14 @@ public class HomePresenterImp implements HomePresenter {
                         }
                 )
         );
+    }
+
+    private void preloadCategoryMeals(List<Category> categories) {
+        compositeDisposable.add(io.reactivex.rxjava3.core.Observable.fromIterable(categories)
+                .concatMap(category ->
+                        mealRepository.filterBy("Category", category.strCategory).toObservable()
+                )
+                .subscribeOn(Schedulers.io()).subscribe());
     }
 
     @Override
@@ -188,7 +198,9 @@ public class HomePresenterImp implements HomePresenter {
                         plans -> {
                             if (view != null) {
                                 if (!plans.isEmpty()) {
-                                    view.showTodaysPlan(plans.get(0));
+                                    PlannedMealDTO plan = plans.get(0);
+                                    view.showTodaysPlan(plan);
+                                    cachePlanDetails(plan.mealId);
                                 } else {
                                     view.showTodaysPlan(null);
                                 }
@@ -196,6 +208,12 @@ public class HomePresenterImp implements HomePresenter {
                         }
                 )
         );
+    }
+
+    private void cachePlanDetails(String mealId) {
+        compositeDisposable.add(mealRepository.getMealById(mealId)
+                .subscribeOn(Schedulers.io())
+                .subscribe());
     }
 
     @Override

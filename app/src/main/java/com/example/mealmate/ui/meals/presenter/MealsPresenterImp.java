@@ -29,13 +29,7 @@ public class MealsPresenterImp implements MealsPresenter {
     public void getMealsByCategory(String categoryType) {
         if (view != null) view.showLoading();
 
-        Single<List<Meal>> networkMealsSingle = mealRepository.filterBy("Category", categoryType)
-                .subscribeOn(Schedulers.io())
-                .flattenAsObservable(meals -> meals)
-                .concatMapEager(meal ->
-                        mealRepository.getMealById(meal.idMeal).toObservable()
-                )
-                .toList();
+        Single<List<Meal>> networkMealsSingle = mealRepository.filterBy("Category", categoryType).subscribeOn(Schedulers.io());
 
         Single<List<String>> favoriteIdsSingle = mealRepository.getFavorites()
                 .first(new ArrayList<>())
@@ -45,8 +39,7 @@ public class MealsPresenterImp implements MealsPresenter {
                         ids.add(meal.getId());
                     }
                     return ids;
-                })
-                .subscribeOn(Schedulers.io());
+                }).subscribeOn(Schedulers.io());
 
         compositeDisposable.add(Single.zip(networkMealsSingle, favoriteIdsSingle, (meals, ids) -> {
                     for (Meal meal : meals) {

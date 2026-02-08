@@ -3,6 +3,7 @@ package com.example.mealmate.data.repositories;
 import android.content.Context;
 import android.util.Log;
 
+import com.example.mealmate.data.SharedPreferencesManager;
 import com.example.mealmate.data.categories.dataSource.remote.CategoryRemoteDataSource;
 import com.example.mealmate.data.categories.model.Category;
 import com.example.mealmate.data.db.MealDatabase;
@@ -38,6 +39,7 @@ public class MealRepository {
     private final MealDAO localDataSource;
     private final FirebaseAuth auth;
     private final FirebaseFirestore firestore;
+    private final SharedPreferencesManager sharedPrefsManager;
 
     public MealRepository(Context context) {
         this.remoteMealDataSource = new MealRemoteDataSource();
@@ -45,6 +47,7 @@ public class MealRepository {
         this.localDataSource = MealDatabase.getInstance(context).mealDao();
         this.auth = FirebaseAuth.getInstance();
         this.firestore = FirebaseFirestore.getInstance();
+        this.sharedPrefsManager = SharedPreferencesManager.getInstance(context);
     }
 
     // ================= NETWORK CALLS (Search & Filter) =================
@@ -54,11 +57,16 @@ public class MealRepository {
     }
 
     public Single<Meal> getMealById(String id) {
-        return remoteMealDataSource.getMealByIdService(id).subscribeOn(Schedulers.io());
-    }
+        Meal cachedMeal = sharedPrefsManager.getCachedMealDetails(id);
+        if (cachedMeal != null) {
+            return Single.just(cachedMeal);
+        }
 
-    public Single<List<Category>> getCategories() {
-        return remoteCategoryDataSource.getCategoriesService();
+        return remoteMealDataSource.getMealByIdService(id)
+                .doOnSuccess(meal -> {
+                    sharedPrefsManager.cacheMealDetails(meal);
+                })
+                .subscribeOn(Schedulers.io());
     }
 
     public Single<List<Meal>> searchMeals(String query) {
@@ -66,15 +74,96 @@ public class MealRepository {
                 .subscribeOn(Schedulers.io());
     }
 
+    // ================= CATEGORIES WITH CACHING =================
+
+    public Single<List<Category>> getCategories() {
+        List<Category> cachedCategories = sharedPrefsManager.getCachedCategories();
+        if (cachedCategories != null && !cachedCategories.isEmpty()) {
+            return Single.just(cachedCategories);
+        }
+
+        return remoteCategoryDataSource.getCategoriesService()
+                .doOnSuccess(categories -> {
+                    sharedPrefsManager.cacheCategories(categories);
+                })
+                .subscribeOn(Schedulers.io());
+    }
+
+    // ================= FILTER BY CATEGORY WITH CACHING =================
+
     public Single<List<Meal>> filterBy(String type, String query) {
+        String cacheKey = "filter_" + type + "_" + query;
+
+        if ("Category".equals(type)) {
+            List<Meal> cachedCategoryMeals = sharedPrefsManager.getCachedCategoryMeals(query);
+            if (cachedCategoryMeals != null && !cachedCategoryMeals.isEmpty()) {
+                return Single.just(cachedCategoryMeals);
+            }
+        }
+
+        List<Meal> cachedMeals = sharedPrefsManager.getCachedMealList(cacheKey);
+        if (cachedMeals != null && !cachedMeals.isEmpty()) {
+            return Single.just(cachedMeals);
+        }
+
         Single<MealResponse> request;
         switch (type) {
-            case "Category": request = remoteMealDataSource.filterByCategory(query); break;
-            case "Area": request = remoteMealDataSource.filterByArea(query); break;
-            case "Ingredient": request = remoteMealDataSource.filterByIngredient(query); break;
-            default: return Single.error(new IllegalArgumentException("Invalid filter type"));
+            case "Category":
+                request = remoteMealDataSource.filterByCategory(query);
+                break;
+            case "Area":
+                request = remoteMealDataSource.filterByArea(query);
+                break;
+            case "Ingredient":
+                request = remoteMealDataSource.filterByIngredient(query);
+                break;
+            default:
+                return Single.error(new IllegalArgumentException("Invalid filter type"));
         }
-        return request.map(response -> response.meals).subscribeOn(Schedulers.io());
+
+        return request.map(response -> response.meals)
+                .doOnSuccess(meals -> {
+                    sharedPrefsManager.cacheMealList(cacheKey, meals);
+
+                    if ("Category".equals(type)) {
+                        sharedPrefsManager.cacheCategoryMeals(query, meals);
+                    }
+                })
+                .subscribeOn(Schedulers.io());
+    }
+
+    // ================= PRELOAD CATEGORY MEALS =================
+
+    public Completable preloadCategoryMeals(List<Category> categories) {
+        return Completable.create(emitter -> {
+            List<Completable> allRequests = new ArrayList<>();
+
+            for (Category category : categories) {
+                List<Meal> cached = sharedPrefsManager.getCachedCategoryMeals(category.getStrCategory());
+                if (cached != null && !cached.isEmpty()) {
+                    continue;
+                }
+
+                Completable request = remoteMealDataSource.filterByCategory(category.getStrCategory())
+                        .map(response -> response.meals)
+                        .doOnSuccess(meals -> {
+                            // Cache the category meals
+                            sharedPrefsManager.cacheCategoryMeals(category.getStrCategory(), meals);
+                        })
+                        .ignoreElement()
+                        .subscribeOn(Schedulers.io());
+
+                allRequests.add(request);
+            }
+
+            if (allRequests.isEmpty()) {
+                emitter.onComplete();
+                return;
+            }
+
+            Completable.merge(allRequests)
+                    .subscribe(emitter::onComplete, emitter::onError);
+        });
     }
 
     // ================= FAVORITES (Offline First) =================
@@ -267,5 +356,27 @@ public class MealRepository {
             String docId = plan.date + "_" + plan.mealType + "_" + plan.mealId;
             firestore.collection("users").document(uid).collection("plans").document(docId).delete().addOnSuccessListener(aVoid -> emitter.onComplete()).addOnFailureListener(emitter::onError);
         });
+    }
+
+    // ================= CLEAR CACHE =================
+
+    public void clearAllCache() {
+        Completable.fromAction(() -> {
+                    sharedPrefsManager.clearAll();
+                }).subscribeOn(Schedulers.io())
+                .subscribe(
+                        () -> Log.d("MealRepository", "All cache cleared"),
+                        error -> Log.e("MealRepository", "Failed to clear cache", error)
+                );
+    }
+
+    public void clearCategoryCache() {
+        Completable.fromAction(() -> {
+                    sharedPrefsManager.clearCategoryCache();
+                }).subscribeOn(Schedulers.io())
+                .subscribe(
+                        () -> Log.d("MealRepository", "Category cache cleared"),
+                        error -> Log.e("MealRepository", "Failed to clear category cache", error)
+                );
     }
 }
