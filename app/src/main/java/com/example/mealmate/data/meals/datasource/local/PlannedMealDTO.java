@@ -9,6 +9,7 @@ public class PlannedMealDTO {
     @PrimaryKey(autoGenerate = true)
     public int id;
 
+    public String userId;
     public String mealId;
 
     public String date;

@@ -28,10 +28,8 @@ public class MealDetailsPresenterImp implements MealDetailsPresenter {
     public void getMealDetails(Meal meal) {
         if (view == null || meal == null) return;
 
-        // Display what we have initially (e.g., image/name from Planner)
         view.showMeal(meal);
 
-        // Check if this is a "partial" meal from Planner (missing instructions)
         if (meal.getStrInstructions() == null || meal.getStrInstructions().isEmpty() || meal.getStrInstructions().startsWith("Planned for")) {
             view.showLoading();
             disposable.add(repository.getMealById(meal.getId())
@@ -51,7 +49,6 @@ public class MealDetailsPresenterImp implements MealDetailsPresenter {
                             }
                     ));
         } else {
-            // It's a full meal object, just check favorite status
             checkFavoriteStatus(meal);
         }
     }
@@ -69,7 +66,7 @@ public class MealDetailsPresenterImp implements MealDetailsPresenter {
                         },
                         error -> {
                             if (view != null) {
-                                view.showMeal(meal); // Still show meal even if check fails
+                                view.showMeal(meal);
                             }
                         }
                 ));
@@ -94,7 +91,7 @@ public class MealDetailsPresenterImp implements MealDetailsPresenter {
     public void addToPlan(Meal meal, Date date, String mealType) {
         if (meal == null || date == null || mealType == null) return;
 
-        SimpleDateFormat dbDateFormat = new SimpleDateFormat("yyy-MM-dd", Locale.getDefault());
+        SimpleDateFormat dbDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE", Locale.getDefault());
 
         String dateStr = dbDateFormat.format(date);

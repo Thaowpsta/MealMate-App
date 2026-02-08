@@ -20,10 +20,8 @@ import java.util.Objects;
 
 public class PlannerAdapter extends ListAdapter<MealPlannerItem, RecyclerView.ViewHolder> {
 
-    private static final int VIEW_TYPE_DATE_HEADER = 0;
     private static final int VIEW_TYPE_MEAL = 1;
     private static final int VIEW_TYPE_ADD_MEAL = 2;
-    private static final int VIEW_TYPE_EMPTY_DAY = 3;
 
     private final OnPlannerActionClickListener listener;
 
@@ -36,10 +34,8 @@ public class PlannerAdapter extends ListAdapter<MealPlannerItem, RecyclerView.Vi
     @Override
     public int getItemViewType(int position) {
         MealPlannerItem item = getItem(position);
-        if (item instanceof MealPlannerItem.DateHeader) return VIEW_TYPE_DATE_HEADER;
         if (item instanceof MealPlannerItem.MealItem) return VIEW_TYPE_MEAL;
         if (item instanceof MealPlannerItem.AddMealButton) return VIEW_TYPE_ADD_MEAL;
-        if (item instanceof MealPlannerItem.EmptyDayPrompt) return VIEW_TYPE_EMPTY_DAY;
         throw new IllegalArgumentException("Unknown view type");
     }
 
@@ -52,8 +48,6 @@ public class PlannerAdapter extends ListAdapter<MealPlannerItem, RecyclerView.Vi
                 return new MealViewHolder(inflater.inflate(R.layout.item_plan, parent, false));
             case VIEW_TYPE_ADD_MEAL:
                 return new AddMealViewHolder(inflater.inflate(R.layout.item_add_plan, parent, false));
-            case VIEW_TYPE_EMPTY_DAY:
-                return new EmptyDayViewHolder(inflater.inflate(R.layout.item_empty_day, parent, false));
             default:
                 throw new IllegalArgumentException("Unknown view type: " + viewType);
         }
@@ -66,8 +60,6 @@ public class PlannerAdapter extends ListAdapter<MealPlannerItem, RecyclerView.Vi
             ((MealViewHolder) holder).bind((MealPlannerItem.MealItem) item, listener);
         } else if (holder instanceof AddMealViewHolder) {
             ((AddMealViewHolder) holder).bind((MealPlannerItem.AddMealButton) item, listener);
-        } else if (holder instanceof EmptyDayViewHolder) {
-            ((EmptyDayViewHolder) holder).bind((MealPlannerItem.EmptyDayPrompt) item, listener);
         }
     }
 
@@ -121,20 +113,6 @@ public class PlannerAdapter extends ListAdapter<MealPlannerItem, RecyclerView.Vi
 
             addText.setText(formattedText);
             itemView.setOnClickListener(v -> { if (listener != null) listener.onAddMealClick(item.getMealType()); });
-        }
-    }
-
-    static class EmptyDayViewHolder extends RecyclerView.ViewHolder {
-        private final TextView promptText;
-
-        public EmptyDayViewHolder(@NonNull View itemView) {
-            super(itemView);
-            promptText = itemView.findViewById(R.id.emptyDayPrompt);
-        }
-
-        public void bind(MealPlannerItem.EmptyDayPrompt item, OnPlannerActionClickListener listener) {
-            promptText.setText(item.getPromptText());
-            itemView.setOnClickListener(v -> { if (listener != null) listener.onEmptyDayClick(); });
         }
     }
 

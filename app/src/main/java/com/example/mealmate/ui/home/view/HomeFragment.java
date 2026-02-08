@@ -56,7 +56,7 @@ public class HomeFragment extends Fragment implements HomeView {
     private HomePresenter presenter;
 
     private TextView mealTitle, favNum, plannedNum, planTitle, planType;
-    private ImageView mealImage, planImage, userImage;
+    private ImageView mealImage, planImage;
     private Chip areaChip, categoryChip;
     private ImageButton refreshButton;
     private UserRepository userRepository;
@@ -64,7 +64,9 @@ public class HomeFragment extends Fragment implements HomeView {
     private RecyclerView rvCategories;
     private String currentDate;
     private Date selectedDateForPlan;
-    private CardView plansCard;
+    private CardView plansCard, todayPlan;
+    private View emptyPlanView;;
+    private PlannedMealDTO todaysPlanDTO;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -108,7 +110,8 @@ public class HomeFragment extends Fragment implements HomeView {
         planImage = view.findViewById(R.id.plan_meal_image);
         planTitle = view.findViewById(R.id.plan_meal_title);
         planType = view.findViewById(R.id.mealTypeText);
-        userImage = view.findViewById(R.id.user_img);
+        todayPlan = view.findViewById(R.id.plan_card);
+        emptyPlanView = view.findViewById(R.id.empty_plan_view);
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMM. d", Locale.getDefault());
         currentDate = dateFormat.format(new Date());
@@ -127,6 +130,23 @@ public class HomeFragment extends Fragment implements HomeView {
 
         modCard.setOnClickListener(v -> {if (currentMeal != null) {presenter.onMealClicked(currentMeal);}});
 
+        todayPlan.setOnClickListener(v -> {
+            if (todaysPlanDTO != null) {
+                Meal meal = new Meal();
+                meal.idMeal = todaysPlanDTO.mealId;
+                meal.strMeal = todaysPlanDTO.mealName;
+                meal.strMealThumb = todaysPlanDTO.mealThumb;
+                meal.strInstructions = String.format(getString(R.string.planned_for_s), todaysPlanDTO.date);
+                presenter.onMealClicked(meal);
+            }
+        });
+
+        if (emptyPlanView != null) {
+            emptyPlanView.setOnClickListener(v ->
+                    Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_plannerFragment)
+            );
+        }
+
         seeAll.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG);
         seeAll.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_categoriesFragment));
 
@@ -134,10 +154,6 @@ public class HomeFragment extends Fragment implements HomeView {
             if (currentMeal != null) {
                 presenter.addToPlan(currentMeal, new Date());
                 presenter.onMealClicked(currentMeal);
-                if (getView() != null) {
-                    Snackbar.make(getView(), R.string.success_added_to_plan, Snackbar.LENGTH_SHORT).show();
-                } else
-                    Toast.makeText(getContext(), R.string.success_added_to_plan, Toast.LENGTH_SHORT).show();
             } else {
                 showError(getString(R.string.no_meal_loaded));
             }
@@ -197,7 +213,12 @@ public class HomeFragment extends Fragment implements HomeView {
 
     @Override
     public void showTodaysPlan(PlannedMealDTO plan) {
+        this.todaysPlanDTO = plan;
+
         if (plan != null) {
+            if (todayPlan != null) todayPlan.setVisibility(View.VISIBLE);
+            if (emptyPlanView != null) emptyPlanView.setVisibility(View.GONE);
+
             if (planTitle != null) planTitle.setText(plan.mealName);
             if (planType != null) {
                 planType.setText(plan.mealType);
@@ -211,9 +232,8 @@ public class HomeFragment extends Fragment implements HomeView {
                         .into(planImage);
             }
         } else {
-            if (planTitle != null) planTitle.setText(R.string.add_to_plan);
-            if (planType != null) planType.setVisibility(View.GONE);
-            if (planImage != null) planImage.setImageResource(R.drawable.medium);
+            if (todayPlan != null) todayPlan.setVisibility(View.GONE);
+            if (emptyPlanView != null) emptyPlanView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -382,11 +402,9 @@ public class HomeFragment extends Fragment implements HomeView {
     public void onPlanAddedSuccess() {
         if (getView() != null) {
             Snackbar.make(getView(), R.string.success_added_to_plan, Snackbar.LENGTH_LONG).show();
-            Navigation.findNavController(requireView()).navigate(R.id.action_homeFragment_to_plannerFragment);
-
-        } else {
-            Toast.makeText(getContext(), R.string.success_added_to_plan, Toast.LENGTH_SHORT).show();
-            Navigation.findNavController(requireView()).navigate(R.id.action_homeFragment_to_plannerFragment);
+            if (Navigation.findNavController(requireView()).getCurrentDestination().getId() == R.id.homeFragment) {
+                Navigation.findNavController(requireView()).navigate(R.id.action_homeFragment_to_plannerFragment);
+            }
         }
     }
 

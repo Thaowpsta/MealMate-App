@@ -18,6 +18,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.WriteBatch;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -79,7 +80,10 @@ public class MealRepository {
     // ================= FAVORITES (Offline First) =================
 
     public Flowable<List<Meal>> getFavorites() {
-        return localDataSource.getFavoriteMeals()
+        String uid = auth.getUid();
+        if (uid == null) return Flowable.error(new Exception("User not logged in"));
+
+        return localDataSource.getFavoriteMeals(uid)
                 .map(entities -> entities.stream()
                         .map(MealDTO::toMeal)
                         .collect(Collectors.toList()))
@@ -87,12 +91,18 @@ public class MealRepository {
     }
 
     public Single<Boolean> isFavorite(String id) {
-        return localDataSource.isFavorite(id)
+        String uid = auth.getUid();
+        if (uid == null) return Single.just(false);
+
+        return localDataSource.isFavorite(id, uid)
                 .subscribeOn(Schedulers.io());
     }
 
     public Completable addFavorite(Meal meal) {
-        MealDTO entity = MealDTO.fromMeal(meal);
+        String uid = auth.getUid();
+        if (uid == null) return Completable.error(new Exception("User not logged in"));
+
+        MealDTO entity = MealDTO.fromMeal(meal, uid);
         entity.isFavorite = true;
 
         return localDataSource.insertFavorite(entity)
@@ -101,7 +111,10 @@ public class MealRepository {
     }
 
     public Completable removeFavorite(Meal meal) {
-        return localDataSource.removeFavorite(meal.getId())
+        String uid = auth.getUid();
+        if (uid == null) return Completable.error(new Exception("User not logged in"));
+
+        return localDataSource.removeFavorite(meal.getId(), uid)
                 .andThen(updateFirestoreFavorite(meal, false))
                 .subscribeOn(Schedulers.io());
     }
@@ -135,46 +148,86 @@ public class MealRepository {
     // ================= MEAL PLANS (Offline First) =================
 
     public Flowable<List<PlannedMealDTO>> getPlansByDate(String date) {
-        return localDataSource.getPlansByDate(date).subscribeOn(Schedulers.io());
+        String uid = auth.getUid();
+        if (uid == null) return Flowable.just(new ArrayList<>());
+
+        return localDataSource.getPlansByDate(date, uid).subscribeOn(Schedulers.io());
     }
 
     public Flowable<Integer> getPlansCount() {
-        return localDataSource.getPlansCount().subscribeOn(Schedulers.io());
+        String uid = auth.getUid();
+        if (uid == null) return Flowable.just(0);
+
+        return localDataSource.getPlansCount(uid).subscribeOn(Schedulers.io());
     }
 
     public Flowable<List<PlannedMealDTO>> getAllPlans() {
-        return localDataSource.getAllPlans().subscribeOn(Schedulers.io());
+        String uid = auth.getUid();
+        if (uid == null) return Flowable.just(new ArrayList<>());
+
+        return localDataSource.getAllPlans(uid).subscribeOn(Schedulers.io());
     }
+
     public Completable addPlan(Meal meal, String date, String dayOfWeek, String type) {
-        PlannedMealDTO plan = new PlannedMealDTO();
-        plan.mealId = meal.getId();
-        plan.mealName = meal.strMeal;
-        plan.mealThumb = meal.strMealThumb;
-        plan.date = date;
-        plan.dayOfWeek = dayOfWeek;
-        plan.mealType = type;
+        return Completable.fromAction(() -> {
+            String uid = auth.getUid();
+            if (uid == null) throw new Exception("User not logged in");
 
-        return localDataSource.insertMeal(MealDTO.fromMeal(meal))
-                .andThen(localDataSource.insertPlan(plan))
-                .andThen(syncPlanToFirestore(plan))
-                .subscribeOn(Schedulers.io());
+            PlannedMealDTO newPlan = new PlannedMealDTO();
+            newPlan.userId = uid;
+            newPlan.mealId = meal.getId();
+            newPlan.mealName = meal.strMeal;
+            newPlan.mealThumb = meal.strMealThumb;
+            newPlan.date = date;
+            newPlan.dayOfWeek = dayOfWeek;
+            newPlan.mealType = type;
+
+            PlannedMealDTO existingPlan = localDataSource.getPlanByDateAndTypeSync(date, type, uid);
+            if (existingPlan != null) {
+                localDataSource.deletePlanSync(existingPlan);
+                deleteFirestorePlanSync(existingPlan);
+            }
+
+            localDataSource.insertMealSync(MealDTO.fromMeal(meal, uid));
+            localDataSource.insertPlanSync(newPlan);
+            syncPlanToFirestoreSync(newPlan);
+        }).subscribeOn(Schedulers.io());
     }
 
-    //TODO: need to be enhanced
-    public void deletePastPlans() {
-        SimpleDateFormat dbFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-        String todayStr = dbFormat.format(new Date());
+    private void deleteFirestorePlanSync(PlannedMealDTO plan) {
+        String uid = auth.getUid();
+        if (uid == null) return;
 
-        // 1. Get plans older than today
-        localDataSource.getPastPlans(todayStr)
+        String docId = plan.date + "_" + plan.mealType + "_" + plan.mealId;
+        firestore.collection("users").document(uid).collection("plans").document(docId)
+                .delete()
+                .addOnFailureListener(e -> Log.e("MealRepository", "Failed to delete plan from Firestore", e));
+    }
+
+    private void syncPlanToFirestoreSync(PlannedMealDTO plan) {
+        String uid = auth.getUid();
+        if (uid == null) return;
+
+        String docId = plan.date + "_" + plan.mealType + "_" + plan.mealId;
+        firestore.collection("users").document(uid).collection("plans").document(docId)
+                .set(plan)
+                .addOnFailureListener(e -> Log.e("MealRepository", "Failed to sync plan to Firestore", e));
+    }
+
+    public void deletePastPlans() {
+        SimpleDateFormat dbFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        String todayStr = dbFormat.format(new Date());
+        String uid = auth.getUid();
+
+        if (uid == null) return;
+
+        localDataSource.getPastPlans(todayStr, uid)
                 .subscribeOn(Schedulers.io())
                 .flatMapCompletable(plans -> {
                     if (plans.isEmpty()) return Completable.complete();
 
-                    String uid = auth.getUid();
                     if (uid == null) return Completable.complete();
 
-                    // 2. Prepare Batch Delete for Firestore
                     WriteBatch batch = firestore.batch();
                     for (PlannedMealDTO plan : plans) {
                         String docId = plan.date + "_" + plan.mealType + "_" + plan.mealId;
@@ -185,22 +238,18 @@ public class MealRepository {
                         batch.delete(docRef);
                     }
 
-                    // 3. Commit Firestore Batch
                     return Completable.create(emitter ->
                             batch.commit()
                                     .addOnSuccessListener(aVoid -> emitter.onComplete())
                                     .addOnFailureListener(emitter::onError)
                     );
                 })
-                .observeOn(Schedulers.io()) // Ensure subsequent operations run on background thread
-                // 4. Delete from Local DB after Firestore success
-                .andThen(localDataSource.deletePastPlans(todayStr))
+                .andThen(localDataSource.deletePastPlans(todayStr, uid))
                 .subscribe(
-                        () -> Log.d("MealRepository", "Past plans cleaned up successfully"),
-                        error -> Log.e("MealRepository", "Failed to clean past plans: " + error.getMessage())
+                        () -> Log.d("MealRepository", "Past plans cleaned up"),
+                        error -> Log.e("MealRepository", "Failed cleanup: " + error.getMessage())
                 );
     }
-
 
     private Completable syncPlanToFirestore(PlannedMealDTO plan) {
         return Completable.create(emitter -> {

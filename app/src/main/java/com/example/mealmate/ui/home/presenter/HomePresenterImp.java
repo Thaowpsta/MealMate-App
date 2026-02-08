@@ -142,7 +142,7 @@ public class HomePresenterImp implements HomePresenter {
     public void addToPlan(Meal meal, Date date, String mealType) {
         if (meal == null || date == null || mealType == null) return;
 
-        SimpleDateFormat dbDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        SimpleDateFormat dbDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE", Locale.getDefault());
 
         String dateStr = dbDateFormat.format(date);
@@ -178,7 +178,7 @@ public class HomePresenterImp implements HomePresenter {
 
     @Override
     public void getTodaysPlan() {
-        SimpleDateFormat dbDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        SimpleDateFormat dbDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         String todayStr = dbDateFormat.format(new Date());
 
         compositeDisposable.add(mealRepository.getPlansByDate(todayStr)

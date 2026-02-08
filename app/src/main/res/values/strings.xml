@@ -27,7 +27,7 @@
     <string name="favs">Favorites</string>
     <string name="date_txt">Monday, Oct. 24</string>
     <string name="greeting">Good Morning,</string>
-    <string name="username">Thaowpsta</string>
+    <string name="username">Username</string>
     <string name="meal_title">Spaghetti Carbonara</string>
     <string name="area">Area</string>
     <string name="category">Category</string>
@@ -112,4 +112,5 @@
     <string name="save">Save Changes</string>
     <string name="add_0">Add {0}</string>
     <string name="Name">Name</string>
+    <string name="planned_for_s">Planned for %s</string>
 </resources>

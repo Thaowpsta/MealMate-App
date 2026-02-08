@@ -37,7 +37,7 @@ public class PlannerPresenterImp implements PlannerPresenter {
     public void getMealsByDate(Date date) {
         if (view != null) view.showLoading();
 
-        SimpleDateFormat dbFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        SimpleDateFormat dbFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         String dateStr = dbFormat.format(date);
 
         compositeDisposable.add(repository.getPlansByDate(dateStr)

@@ -250,14 +250,13 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
         }
     }
 
+    @Override
     public void onPlanAddedSuccess() {
         if (getView() != null) {
             Snackbar.make(getView(), R.string.success_added_to_plan, Snackbar.LENGTH_LONG).show();
-            Navigation.findNavController(requireView()).navigate(R.id.action_mealDetailsFragment_to_plannerFragment);
-
-        } else {
-            Toast.makeText(getContext(), R.string.success_added_to_plan, Toast.LENGTH_SHORT).show();
-            Navigation.findNavController(requireView()).navigate(R.id.action_mealDetailsFragment_to_plannerFragment);
+            if (Navigation.findNavController(requireView()).getCurrentDestination().getId() == R.id.mealDetailsFragment) {
+                Navigation.findNavController(requireView()).navigate(R.id.action_mealDetailsFragment_to_plannerFragment);
+            }
         }
     }
 
