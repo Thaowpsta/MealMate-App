@@ -1,6 +1,8 @@
 package com.example.mealmate.ui.search.presenter;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkCapabilities;
 
 import com.example.mealmate.data.meals.models.Meal;
 import com.example.mealmate.data.repositories.MealRepository;
@@ -21,33 +23,52 @@ public class SearchPresenterImp implements SearchPresenter {
 
     private final SearchView view;
     private final MealRepository repository;
+    private final Context context;
     private final CompositeDisposable compositeDisposable = new CompositeDisposable();
-    
-    // Keep track of the current search to cancel it if a new one starts
+
     private Disposable searchDisposable;
 
     public SearchPresenterImp(SearchView view, Context context) {
         this.view = view;
+        this.context = context;
         this.repository = new MealRepository(context);
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager != null) {
+            NetworkCapabilities capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.getActiveNetwork());
+            return capabilities != null && (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
+                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
+                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET));
+        }
+        return false;
     }
 
     @Override
     public void getAllMeals() {
         List<String> defaultType = new ArrayList<>();
         defaultType.add("Name");
-        performSearch("", defaultType);
+        searchMeals("", defaultType);
     }
 
     @Override
     public void searchMeals(String query, List<String> searchTypes) {
         if (view == null) return;
 
-        if (query == null || query.trim().isEmpty()) {
-            getAllMeals();
+        if (!isNetworkAvailable()) {
+            view.showConnectionError();
             return;
         }
 
-        if (searchTypes == null || searchTypes.isEmpty()) {
+        // Handle empty query by defaulting to "Name" search (which returns all/random in the repo logic)
+        if (query == null || query.trim().isEmpty()) {
+            query = "";
+            if (searchTypes == null || searchTypes.isEmpty()) {
+                searchTypes = new ArrayList<>();
+                searchTypes.add("Name");
+            }
+        } else if (searchTypes == null || searchTypes.isEmpty()) {
             searchTypes = new ArrayList<>();
             searchTypes.add("Name");
         }
@@ -56,7 +77,6 @@ public class SearchPresenterImp implements SearchPresenter {
     }
 
     private void performSearch(String query, List<String> searchTypes) {
-        // Cancel previous search if it exists
         if (searchDisposable != null && !searchDisposable.isDisposed()) {
             searchDisposable.dispose();
         }

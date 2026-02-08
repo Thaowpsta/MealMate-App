@@ -9,4 +9,5 @@ public interface SearchView {
     void showSearchResults(List<Meal> meals);
     void showEmptyState();
     void showError(String message);
+    void showConnectionError();
 }

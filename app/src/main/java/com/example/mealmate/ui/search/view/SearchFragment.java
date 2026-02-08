@@ -1,11 +1,15 @@
 package com.example.mealmate.ui.search.view;
 
+import android.app.Dialog;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -22,7 +26,6 @@ import com.example.mealmate.data.meals.models.Meal;
 import com.example.mealmate.ui.meals.view.MealsAdapter;
 import com.example.mealmate.ui.search.presenter.SearchPresenter;
 import com.example.mealmate.ui.search.presenter.SearchPresenterImp;
-import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -41,9 +44,9 @@ public class SearchFragment extends Fragment implements SearchView, MealsAdapter
     private MealsAdapter adapter;
     private final List<Meal> searchResults = new ArrayList<>();
     private final CompositeDisposable disposable = new CompositeDisposable();
-
     private ChipGroup chipGroupFilters;
     private EditText searchBar;
+    private Dialog errorDialog;
 
     public SearchFragment() {
         // Required empty public constructor
@@ -76,18 +79,13 @@ public class SearchFragment extends Fragment implements SearchView, MealsAdapter
 
         btnBack.setOnClickListener(v -> Navigation.findNavController(v).navigateUp());
 
-        // Handle Chip Selection Changes
         chipGroupFilters.setOnCheckedChangeListener((group, checkedIds) -> {
-            // 1. Get current text
             String query = searchBar.getText().toString();
-
-            // 2. Trigger search immediately with new filters
             triggerSearch(query);
         });
 
         setupSearchObserver(searchBar);
 
-        // Load all meals by default
         presenter.getAllMeals();
     }
 
@@ -107,7 +105,6 @@ public class SearchFragment extends Fragment implements SearchView, MealsAdapter
             else if (id == R.id.chip_ingredient) types.add("Ingredient");
         }
 
-        // Default to Name if nothing selected
         if (types.isEmpty()) {
             types.add("Name");
         }
@@ -141,14 +138,10 @@ public class SearchFragment extends Fragment implements SearchView, MealsAdapter
     }
 
     @Override
-    public void showLoading() {
-        // Implement loading UI logic here
-    }
+    public void showLoading() { }
 
     @Override
-    public void hideLoading() {
-        // Hide loading UI logic here
-    }
+    public void hideLoading() { }
 
     @Override
     public void showSearchResults(List<Meal> meals) {
@@ -173,8 +166,31 @@ public class SearchFragment extends Fragment implements SearchView, MealsAdapter
     }
 
     @Override
+    public void showConnectionError() {
+        // Prevent showing the dialog if it's already visible
+        if (errorDialog != null && errorDialog.isShowing()) {
+            return;
+        }
+
+        errorDialog = new Dialog(requireContext());
+        errorDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        errorDialog.setContentView(R.layout.dialog_no_connection);
+
+        if (errorDialog.getWindow() != null) {
+            errorDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            errorDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
+
+        errorDialog.findViewById(R.id.btn_ok).setOnClickListener(v -> errorDialog.dismiss());
+        errorDialog.show();
+    }
+
+    @Override
     public void onDestroyView() {
         super.onDestroyView();
+        if (errorDialog != null && errorDialog.isShowing()) {
+            errorDialog.dismiss();
+        }
         presenter.onDestroy();
         disposable.clear();
     }

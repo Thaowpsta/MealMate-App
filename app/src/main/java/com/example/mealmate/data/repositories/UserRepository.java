@@ -29,6 +29,11 @@ public class UserRepository {
         this.firestore = FirebaseFirestore.getInstance();
     }
 
+    public boolean isGuest() {
+        FirebaseUser user = firebaseAuth.getCurrentUser();
+        return user != null && user.isAnonymous();
+    }
+
     public void loginGuest(LoginCallback callback) {
         firebaseAuth.signInAnonymously().addOnSuccessListener(authResult -> {
             FirebaseUser user = authResult.getUser();
@@ -197,7 +202,7 @@ public class UserRepository {
 
     public void saveProfileSettings(String themeMode, String languageCode) {
         sharedPreferencesManager.setThemeMode(themeMode);
-         sharedPreferencesManager.setLanguage(languageCode);
+        sharedPreferencesManager.setLanguage(languageCode);
 
         FirebaseUser user = firebaseAuth.getCurrentUser();
         if (user != null) {

@@ -11,11 +11,12 @@ public interface HomePresenter {
     void getCategories();
     void getFavoritesCount();
 
-    // (Cook Now)
-    void addToPlan(Meal meal, Date date);
+    void onCookNowClicked(Meal meal);
+    void onCookLaterClicked(Meal meal);
 
-    // (Cook Later)
+    void addToPlan(Meal meal, Date date);
     void addToPlan(Meal meal, Date date, String mealType);
+
     void getPlansCount();
     void getTodaysPlan();
     void logout();

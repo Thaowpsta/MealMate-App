@@ -113,4 +113,8 @@
     <string name="add_0">Add {0}</string>
     <string name="Name">Name</string>
     <string name="planned_for_s">Planned for %s</string>
+    <string name="guest_mode">Guest Mode</string>
+    <string name="you_need_to_login_to_use_this_feature">You need to login to use this feature.</string>
+    <string name="no_internet">No Internet Connection</string>
+    <string name="internet_required">You need an internet connection to perform this action.</string>
 </resources>

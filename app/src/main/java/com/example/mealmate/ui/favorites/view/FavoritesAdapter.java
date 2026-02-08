@@ -40,11 +40,8 @@ public class FavoritesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         cardViewHolder.chipArea.setText(meal.strArea);
         cardViewHolder.chipCategory.setText(meal.strCategory);
 
-        cardViewHolder.favoriteIcon.setImageResource(R.drawable.favorite);
-
         Glide.with(holder.itemView.getContext()).load(meal.strMealThumb).placeholder(R.drawable.medium).into(((CategoriesAdapter.CardViewHolder) holder).image);
 
-        cardViewHolder.favoriteIcon.setOnClickListener(v -> favoriteClickListener.onRemoveFavorite(meal));
         cardViewHolder.itemView.setOnClickListener(v -> favoriteClickListener.onMealClick(meal));
     }
 

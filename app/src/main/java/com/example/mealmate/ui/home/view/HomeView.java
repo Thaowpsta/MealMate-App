@@ -30,4 +30,10 @@ public interface HomeView {
     void showError(String message);
 
     void navigateToLogin();
+
+    void showConnectionError();
+
+    void showGuestLoginDialog();
+
+    void showWeekCalendarDialog();
 }

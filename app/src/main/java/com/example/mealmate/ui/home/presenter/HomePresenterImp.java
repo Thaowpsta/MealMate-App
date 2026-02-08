@@ -1,6 +1,8 @@
 package com.example.mealmate.ui.home.presenter;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkCapabilities;
 
 import com.example.mealmate.R;
 import com.example.mealmate.data.categories.model.Category;
@@ -27,14 +29,69 @@ public class HomePresenterImp implements HomePresenter {
     private final HomeView view;
     private final MealRepository mealRepository;
     private final UserRepository userRepository;
+    private final Context context;
+    private static final int CATEGORY_LIMIT = 5;
     private final CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     public HomePresenterImp(HomeView view, Context context) {
         this.view = view;
+        this.context = context;
         mealRepository = new MealRepository(context);
         userRepository = new UserRepository(context);
 
         mealRepository.deletePastPlans();
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager != null) {
+            NetworkCapabilities capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.getActiveNetwork());
+            return capabilities != null && (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
+                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
+                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET));
+        }
+        return false;
+    }
+
+    @Override
+    public void onCookNowClicked(Meal meal) {
+        if (meal == null) {
+            if (view != null) view.showError(context.getString(R.string.no_meal_loaded));
+            return;
+        }
+
+        if (userRepository.isGuest()) {
+            if (view != null) view.showGuestLoginDialog();
+            return;
+        }
+
+        if (!isNetworkAvailable()) {
+            if (view != null) view.showConnectionError();
+            return;
+        }
+
+        addToPlan(meal, new Date());
+        onMealClicked(meal);
+    }
+
+    @Override
+    public void onCookLaterClicked(Meal meal) {
+        if (meal == null) {
+            if (view != null) view.showError(context.getString(R.string.no_meal_loaded));
+            return;
+        }
+
+        if (userRepository.isGuest()) {
+            if (view != null) view.showGuestLoginDialog();
+            return;
+        }
+
+        if (!isNetworkAvailable()) {
+            if (view != null) view.showConnectionError();
+            return;
+        }
+
+        if (view != null) view.showWeekCalendarDialog();
     }
 
     @Override
@@ -85,8 +142,9 @@ public class HomePresenterImp implements HomePresenter {
                 .subscribe(
                         categories -> {
                             if (view != null) {
-                                int limit = Math.min(categories.size(), 5);
+                                int limit = Math.min(categories.size(), CATEGORY_LIMIT);
                                 List<Category> firstFive = new ArrayList<>(categories.subList(0, limit));
+
                                 view.showCategories(firstFive);
                                 preloadCategoryMeals(firstFive);
                             }
@@ -101,11 +159,9 @@ public class HomePresenterImp implements HomePresenter {
     }
 
     private void preloadCategoryMeals(List<Category> categories) {
-        compositeDisposable.add(io.reactivex.rxjava3.core.Observable.fromIterable(categories)
-                .concatMap(category ->
-                        mealRepository.filterBy("Category", category.strCategory).toObservable()
-                )
-                .subscribeOn(Schedulers.io()).subscribe());
+        compositeDisposable.add(mealRepository.preloadCategoryMeals(categories)
+                .subscribeOn(Schedulers.io())
+                .subscribe());
     }
 
     @Override

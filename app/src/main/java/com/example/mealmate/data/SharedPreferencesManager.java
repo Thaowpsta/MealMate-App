@@ -18,7 +18,6 @@ public class SharedPreferencesManager {
     private static SharedPreferencesManager instance;
     private final SharedPreferences sharedPreferences;
     private final SharedPreferences.Editor editor;
-
     private static final String KEY_PENDING_EMAIL = "pending_email";
     private static final String KEY_USER_ID = "user_id";
     private static final String KEY_USER_NAME = "user_name";
@@ -167,7 +166,7 @@ public class SharedPreferencesManager {
         return new Gson().fromJson(json, type);
     }
 
-    // ==================== INDIVIDUAL MEAL CACHING (NEW) ====================
+    // ==================== INDIVIDUAL MEAL CACHING ====================
     public void cacheMealDetails(Meal meal) {
         if (meal == null || meal.getId() == null) return;
         String json = new Gson().toJson(meal);
@@ -181,7 +180,12 @@ public class SharedPreferencesManager {
         return new Gson().fromJson(json, Meal.class);
     }
 
-// ==================== Categories Caching ====================
+    public boolean hasCachedMealDetails(String id) {
+        if (id == null) return false;
+        return sharedPreferences.contains("meal_details_" + id);
+    }
+
+    // ==================== Categories Caching ====================
     public void cacheCategories(List<Category> categories) {
         if (categories == null || categories.isEmpty()) return;
         String json = new Gson().toJson(categories);
@@ -211,6 +215,12 @@ public class SharedPreferencesManager {
         String key = "category_" + categoryName.toLowerCase().replace(" ", "_") + "_meals";
         editor.putString(key, json);
         editor.apply();
+    }
+
+    public boolean hasCachedCategoryMeals(String categoryName) {
+        if (categoryName == null) return false;
+        String key = "category_" + categoryName.toLowerCase().replace(" ", "_") + "_meals";
+        return sharedPreferences.contains(key);
     }
 
     public List<Meal> getCachedCategoryMeals(String categoryName) {

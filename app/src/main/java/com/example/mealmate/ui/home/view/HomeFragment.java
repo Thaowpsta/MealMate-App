@@ -1,6 +1,8 @@
 package com.example.mealmate.ui.home.view;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -35,7 +37,6 @@ import com.example.mealmate.data.repositories.UserRepository;
 import com.example.mealmate.ui.categories.view.CategoriesAdapter;
 import com.example.mealmate.ui.home.presenter.HomePresenter;
 import com.example.mealmate.ui.home.presenter.HomePresenterImp;
-import com.example.mealmate.ui.meals.view.MealsAdapter;
 import com.example.mealmate.ui.plans.view.WeekCalendarAdapter;
 import com.example.mealmate.ui.splash.view.SplashActivity;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -63,7 +64,6 @@ public class HomeFragment extends Fragment implements HomeView {
     private Meal currentMeal;
     private RecyclerView rvCategories;
 
-    // Separate variables for UI display and Cache logic
     private String displayDate;
     private String cacheDateKey;
 
@@ -131,7 +131,6 @@ public class HomeFragment extends Fragment implements HomeView {
         setupUserInfo(usernameTxt, userImg);
 
         presenter.getCachedMeal(cacheDateKey);
-
         presenter.getCategories();
         presenter.getFavoritesCount();
         presenter.getPlansCount();
@@ -154,36 +153,121 @@ public class HomeFragment extends Fragment implements HomeView {
         });
 
         if (emptyPlanView != null) {
-            emptyPlanView.setOnClickListener(v ->
-                    Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_plannerFragment)
-            );
+            emptyPlanView.setOnClickListener(v -> {
+                if(userRepository.isGuest()) showGuestLoginDialog();
+                else Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_plannerFragment);
+            });
         }
 
         seeAll.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG);
         seeAll.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_categoriesFragment));
 
-        btnCookNow.setOnClickListener(v -> {
-            if (currentMeal != null) {
-                presenter.addToPlan(currentMeal, new Date());
-                presenter.onMealClicked(currentMeal);
+        btnCookNow.setOnClickListener(v -> presenter.onCookNowClicked(currentMeal));
+        btnCookLater.setOnClickListener(v -> presenter.onCookLaterClicked(currentMeal));
+
+        favoritesCard.setOnClickListener(v -> {
+            if(userRepository.isGuest()) showGuestLoginDialog();
+            else Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_favoritesFragment);
+        });
+
+        plansCard.setOnClickListener(v -> {
+            if(userRepository.isGuest()) showGuestLoginDialog();
+            else Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_plannerFragment);
+        });
+
+        userImg.setOnClickListener(v -> {
+            if(userRepository.isGuest()) showGuestLoginDialog();
+            else Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_profileFragment);
+        });
+    }
+
+    @Override
+    public void showConnectionError() {
+        Dialog dialog = new Dialog(requireContext());
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_no_connection);
+
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
+
+        dialog.findViewById(R.id.btn_ok).setOnClickListener(v -> dialog.dismiss());
+        dialog.show();
+    }
+
+    @Override
+    public void showGuestLoginDialog() {
+        Dialog dialog = new Dialog(requireContext());
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_guest_login);
+
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
+
+        dialog.findViewById(R.id.btn_login).setOnClickListener(v -> {
+            dialog.dismiss();
+            navigateToLogin();
+        });
+
+        dialog.findViewById(R.id.btn_cancel).setOnClickListener(v -> dialog.dismiss());
+
+        dialog.show();
+    }
+
+    @Override
+    public void showWeekCalendarDialog() {
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(requireContext());
+        View sheetView = getLayoutInflater().inflate(R.layout.week_calendar, null);
+        bottomSheetDialog.setContentView(sheetView);
+
+        RecyclerView rvWeekDays = sheetView.findViewById(R.id.rv_week_days);
+        TextView tvCurrentMonth = sheetView.findViewById(R.id.tv_current_month);
+
+        List<WeekCalendarAdapter.DayModel> days = new ArrayList<>();
+        Calendar calendar = Calendar.getInstance();
+
+        SimpleDateFormat dayFormat = new SimpleDateFormat("EEE", Locale.ENGLISH);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd", Locale.ENGLISH);
+        SimpleDateFormat monthFormat = new SimpleDateFormat("MMMM yyyy", Locale.ENGLISH);
+
+        tvCurrentMonth.setText(monthFormat.format(calendar.getTime()));
+
+        for (int i = 0; i < 7; i++) {
+            days.add(new WeekCalendarAdapter.DayModel(
+                    dayFormat.format(calendar.getTime()),
+                    dateFormat.format(calendar.getTime()),
+                    calendar.getTime().toString()
+            ));
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
+        }
+
+        selectedDateForPlan = null;
+
+        WeekCalendarAdapter adapter = new WeekCalendarAdapter(days, selectedDay -> {
+            try {
+                selectedDateForPlan = new Date(selectedDay.getFullDate());
+            } catch (Exception e) { e.printStackTrace(); }
+        });
+
+        rvWeekDays.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
+        rvWeekDays.setAdapter(adapter);
+
+        sheetView.findViewById(R.id.btn_confirm_date).setOnClickListener(btn -> {
+            if (selectedDateForPlan != null) {
+                bottomSheetDialog.dismiss();
+                showMealTypeSelectionDialog();
             } else {
-                showError(getString(R.string.no_meal_loaded));
+                if (getView() != null) {
+                    Snackbar.make(getView(), R.string.please_select_a_date, Snackbar.LENGTH_SHORT).show();
+                } else
+                    Toast.makeText(getContext(), R.string.please_select_a_date, Toast.LENGTH_SHORT).show();
             }
         });
 
-        btnCookLater.setOnClickListener(v -> {
-            if (currentMeal != null) {
-                showWeekCalendarDialog();
-            } else {
-                showError(getString(R.string.no_meal_loaded));
-            }
-        });
-
-        favoritesCard.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_favoritesFragment));
-
-        plansCard.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_plannerFragment));
-
-        userImg.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_profileFragment));
+        bottomSheetDialog.show();
     }
 
     private void setupUserInfo(TextView usernameTxt, ImageView userImg) {
@@ -274,58 +358,6 @@ public class HomeFragment extends Fragment implements HomeView {
     @Override
     public void showFavoritesCount(int count) {
         favNum.setText(String.valueOf(count));
-    }
-
-    private void showWeekCalendarDialog() {
-        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(requireContext());
-        View sheetView = getLayoutInflater().inflate(R.layout.week_calendar, null);
-        bottomSheetDialog.setContentView(sheetView);
-
-        RecyclerView rvWeekDays = sheetView.findViewById(R.id.rv_week_days);
-        TextView tvCurrentMonth = sheetView.findViewById(R.id.tv_current_month);
-
-        List<WeekCalendarAdapter.DayModel> days = new ArrayList<>();
-        Calendar calendar = Calendar.getInstance();
-
-        SimpleDateFormat dayFormat = new SimpleDateFormat("EEE", Locale.ENGLISH);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd", Locale.ENGLISH);
-        SimpleDateFormat monthFormat = new SimpleDateFormat("MMMM yyyy", Locale.ENGLISH);
-
-        tvCurrentMonth.setText(monthFormat.format(calendar.getTime()));
-
-        for (int i = 0; i < 7; i++) {
-            days.add(new WeekCalendarAdapter.DayModel(
-                    dayFormat.format(calendar.getTime()),
-                    dateFormat.format(calendar.getTime()),
-                    calendar.getTime().toString()
-            ));
-            calendar.add(Calendar.DAY_OF_MONTH, 1);
-        }
-
-        selectedDateForPlan = null;
-
-        WeekCalendarAdapter adapter = new WeekCalendarAdapter(days, selectedDay -> {
-            try {
-                selectedDateForPlan = new Date(selectedDay.getFullDate());
-            } catch (Exception e) { e.printStackTrace(); }
-        });
-
-        rvWeekDays.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
-        rvWeekDays.setAdapter(adapter);
-
-        sheetView.findViewById(R.id.btn_confirm_date).setOnClickListener(btn -> {
-            if (selectedDateForPlan != null) {
-                bottomSheetDialog.dismiss();
-                showMealTypeSelectionDialog();
-            } else {
-                if (getView() != null) {
-                    Snackbar.make(getView(), R.string.please_select_a_date, Snackbar.LENGTH_SHORT).show();
-                } else
-                    Toast.makeText(getContext(), R.string.please_select_a_date, Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        bottomSheetDialog.show();
     }
 
     private void showMealTypeSelectionDialog() {

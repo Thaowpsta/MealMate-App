@@ -42,59 +42,31 @@ public class ProfileFragment extends Fragment implements ProfileView {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Initialize Views
         usernameTv = view.findViewById(R.id.username);
         emailTv = view.findViewById(R.id.email);
         nameEt = view.findViewById(R.id.change_name);
         emailEt = view.findViewById(R.id.change_email);
         darkModeSwitch = view.findViewById(R.id.dark_mode);
         arabicSwitch = view.findViewById(R.id.arabic);
-
-        // Setup the "Save/Done" button
         saveButton = view.findViewById(R.id.login);
-        saveButton.setText(R.string.save); // Ensure text says "Save" (or check your strings.xml)
+        saveButton.setText(R.string.save);
 
-        // Initialize Presenter
         UserRepository repository = new UserRepository(requireContext());
-        presenter = new ProfilePresenterImp(this, repository);
+        presenter = new ProfilePresenterImp(this, repository, requireContext());
 
-        // Load Data
         presenter.getUserProfile();
         presenter.getSettings();
+        presenter.checkNetworkStatus();
 
-        // --- 1. Immediate Switching Logic ---
-
-        // Dark Mode: Updates immediately
         darkModeSwitch.setOnClickListener(v -> {
-            boolean isDark = darkModeSwitch.isChecked();
-            presenter.updateTheme(isDark); // Save to Prefs
-
-            // Apply visual change immediately
-            if (isDark) {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-            } else {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-            }
+            presenter.onThemeChanged(darkModeSwitch.isChecked());
         });
 
-        // Language: Updates immediately (Recreates Activity)
         arabicSwitch.setOnClickListener(v -> {
-            boolean isArabic = arabicSwitch.isChecked();
-            presenter.updateLanguage(isArabic); // Save to Prefs
-
-            // Recreate activity to apply new language strings
-            requireActivity().recreate();
+            presenter.onLanguageChanged(arabicSwitch.isChecked());
         });
 
-        // --- 2. Button Click Logic ---
-
-        // On Click: Go to Home (Restart MainActivity to clear stack)
-        saveButton.setOnClickListener(v -> {
-            Intent intent = new Intent(requireContext(), MainActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-            requireActivity().finish();
-        });
+        saveButton.setOnClickListener(v -> presenter.onSaveClicked());
     }
 
     @Override
@@ -113,5 +85,38 @@ public class ProfileFragment extends Fragment implements ProfileView {
     @Override
     public void setLanguageSwitch(boolean isArabic) {
         arabicSwitch.setChecked(isArabic);
+    }
+
+    @Override
+    public void setSaveButtonVisible(boolean isVisible) {
+        if (saveButton != null) {
+            saveButton.setVisibility(isVisible ? View.VISIBLE : View.GONE);
+        }
+    }
+
+    @Override
+    public void applyTheme(boolean isDark) {
+        if (isDark) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        }
+    }
+
+    @Override
+    public void restartActivity() {
+        if (getActivity() != null) {
+            getActivity().recreate();
+        }
+    }
+
+    @Override
+    public void navigateToHome() {
+        Intent intent = new Intent(requireContext(), MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        if (getActivity() != null) {
+            getActivity().finish();
+        }
     }
 }
