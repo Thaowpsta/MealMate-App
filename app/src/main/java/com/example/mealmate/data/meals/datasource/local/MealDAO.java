@@ -42,7 +42,7 @@ public interface MealDAO {
     Flowable<List<PlannedMealDTO>> getAllPlans(String userId);
 
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertMealSync(MealDTO meal);
 
     @Insert
