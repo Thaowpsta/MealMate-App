@@ -1,6 +1,7 @@
 package com.example.mealmate.data.network;
 
 import com.example.mealmate.data.categories.model.CategoryResponse;
+import com.example.mealmate.data.meals.models.IngredientResponse;
 import com.example.mealmate.data.meals.models.MealResponse;
 import io.reactivex.rxjava3.core.Single;
 import retrofit2.http.GET;
@@ -27,4 +28,10 @@ public interface MealService {
 
     @GET("lookup.php")
     Single<MealResponse> getMealById(@Query("i") String id);
+
+    @GET("list.php?a=list")
+    Single<MealResponse> getAreas();
+
+    @GET("list.php?i=list")
+    Single<IngredientResponse> getIngredients();
 }

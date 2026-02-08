@@ -1,9 +1,9 @@
 package com.example.mealmate.ui.search.presenter;
 
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkCapabilities;
-
+import com.example.mealmate.data.categories.model.Category;
+import com.example.mealmate.data.meals.models.FilterUIModel;
+import com.example.mealmate.data.meals.models.Ingredient;
 import com.example.mealmate.data.meals.models.Meal;
 import com.example.mealmate.data.repositories.MealRepository;
 import com.example.mealmate.ui.search.view.SearchView;
@@ -11,133 +11,235 @@ import com.example.mealmate.ui.search.view.SearchView;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
-import io.reactivex.rxjava3.disposables.Disposable;
-import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class SearchPresenterImp implements SearchPresenter {
 
     private final SearchView view;
     private final MealRepository repository;
-    private final Context context;
     private final CompositeDisposable compositeDisposable = new CompositeDisposable();
 
-    private Disposable searchDisposable;
+    // Cache to hold the meals of the currently selected category/area/ingredient
+    private List<Meal> cachedFilteredMeals = new ArrayList<>();
+    private String lastFilterType = "";
+    private String lastFilterQuery = "";
 
     public SearchPresenterImp(SearchView view, Context context) {
         this.view = view;
-        this.context = context;
         this.repository = new MealRepository(context);
     }
 
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (connectivityManager != null) {
-            NetworkCapabilities capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.getActiveNetwork());
-            return capabilities != null && (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
-                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
-                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET));
-        }
-        return false;
-    }
-
+    // ... [getAllMeals, loadDefaultMeals, searchMeals, filterLocalList methods remain unchanged] ...
     @Override
     public void getAllMeals() {
-        List<String> defaultType = new ArrayList<>();
-        defaultType.add("Name");
-        searchMeals("", defaultType);
-    }
-
-    @Override
-    public void searchMeals(String query, List<String> searchTypes) {
-        if (view == null) return;
-
-        if (!isNetworkAvailable()) {
-            view.showConnectionError();
-            return;
-        }
-
-        // Handle empty query by defaulting to "Name" search (which returns all/random in the repo logic)
-        if (query == null || query.trim().isEmpty()) {
-            query = "";
-            if (searchTypes == null || searchTypes.isEmpty()) {
-                searchTypes = new ArrayList<>();
-                searchTypes.add("Name");
-            }
-        } else if (searchTypes == null || searchTypes.isEmpty()) {
-            searchTypes = new ArrayList<>();
-            searchTypes.add("Name");
-        }
-
-        performSearch(query, searchTypes);
-    }
-
-    private void performSearch(String query, List<String> searchTypes) {
-        if (searchDisposable != null && !searchDisposable.isDisposed()) {
-            searchDisposable.dispose();
-        }
+        // Search with single letter to get a broad set of meals initially
+        lastFilterType = "";
+        lastFilterQuery = "";
+        cachedFilteredMeals.clear();
 
         view.showLoading();
-
-        List<Observable<List<Meal>>> observables = new ArrayList<>();
-
-        for (String type : searchTypes) {
-            if ("Name".equalsIgnoreCase(type)) {
-                observables.add(repository.searchMeals(query).toObservable().onErrorReturnItem(new ArrayList<>()));
-            } else {
-                observables.add(repository.filterBy(type, query).toObservable().onErrorReturnItem(new ArrayList<>()));
-            }
-        }
-
-        Observable<List<Meal>> mergedSearch = Observable.merge(observables)
-                .collectInto(new HashMap<String, Meal>(), (map, list) -> {
-                    for (Meal meal : list) {
-                        map.put(meal.getId(), meal);
-                    }
-                })
-                .map(map -> (List<Meal>) new ArrayList<>(map.values()))
-                .toObservable();
-
-        searchDisposable = mergedSearch.flatMapSingle(meals -> {
-                    if (meals.isEmpty()) return Single.just(meals);
-                    return repository.getFavorites().first(new ArrayList<>())
-                            .map(favorites -> {
-                                List<String> favIds = new ArrayList<>();
-                                for (Meal fav : favorites) favIds.add(fav.getId());
-                                for (Meal meal : meals) meal.isFavorite = favIds.contains(meal.getId());
-                                return meals;
-                            });
-                })
-                .subscribeOn(Schedulers.io())
+        compositeDisposable.add(repository.searchMeals("a")
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         meals -> {
-                            if (view != null) {
-                                view.hideLoading();
-                                if (meals.isEmpty()) {
-                                    view.showEmptyState();
-                                } else {
-                                    view.showSearchResults(meals);
-                                }
+                            view.hideLoading();
+                            if (meals != null && !meals.isEmpty()) {
+                                view.showSearchResults(meals);
+                            } else {
+                                loadDefaultMeals();
                             }
                         },
                         error -> {
-                            if (view != null) {
+                            view.hideLoading();
+                            loadDefaultMeals();
+                        }
+                ));
+    }
+
+    private void loadDefaultMeals() {
+        compositeDisposable.add(repository.getCategories()
+                .flatMap(categories -> {
+                    if (categories != null && !categories.isEmpty()) {
+                        return repository.filterBy("Category", categories.get(0).getStrCategory());
+                    }
+                    return Single.just(new ArrayList<Meal>());
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        meals -> view.showSearchResults(meals),
+                        error -> view.showError(error.getMessage())
+                ));
+    }
+
+    @Override
+    public void searchMeals(String query, String filterType, List<String> filterValues) {
+        if (filterType == null || filterValues == null || filterValues.isEmpty()) {
+            if (query == null || query.trim().isEmpty()) return;
+            view.showLoading();
+            compositeDisposable.add(repository.searchMeals(query)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+                            meals -> {
+                                view.hideLoading();
+                                view.showSearchResults(meals);
+                            },
+                            error -> {
                                 view.hideLoading();
                                 view.showError(error.getMessage());
                             }
-                        }
-                );
+                    ));
+            return;
+        }
 
-        compositeDisposable.add(searchDisposable);
+        String currentFilterQuery;
+        if (filterValues.size() > 1) {
+            currentFilterQuery = String.join(",", filterValues);
+        } else {
+            currentFilterQuery = filterValues.get(0);
+        }
+
+        if (filterType.equals(lastFilterType) && currentFilterQuery.equals(lastFilterQuery) && !cachedFilteredMeals.isEmpty()) {
+            filterLocalList(query);
+        } else {
+            view.showLoading();
+            compositeDisposable.add(repository.filterBy(filterType, currentFilterQuery)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(meals -> {
+                        cachedFilteredMeals = meals != null ? meals : new ArrayList<>();
+                        lastFilterType = filterType;
+                        lastFilterQuery = currentFilterQuery;
+                        filterLocalList(query);
+                    }, error -> {
+                        view.hideLoading();
+                        view.showError(error.getMessage());
+                    }));
+        }
+    }
+
+    private void filterLocalList(String query) {
+        view.hideLoading();
+        if (cachedFilteredMeals.isEmpty()) {
+            view.showEmptyState();
+            return;
+        }
+        if (query == null || query.trim().isEmpty()) {
+            view.showSearchResults(cachedFilteredMeals);
+        } else {
+            List<Meal> filtered = cachedFilteredMeals.stream()
+                    .filter(m -> m.strMeal.toLowerCase().contains(query.toLowerCase()))
+                    .collect(Collectors.toList());
+            view.showSearchResults(filtered);
+        }
+    }
+
+    @Override
+    public void loadCategories() {
+        view.showLoading();
+        compositeDisposable.add(repository.getCategories()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(categories -> {
+                    List<FilterUIModel> uiModels = new ArrayList<>();
+                    for (Category c : categories) {
+                        uiModels.add(new FilterUIModel(c.getStrCategory(), c.strCategoryThumb));
+                    }
+                    view.showFilterOptions(uiModels, false);
+                    view.hideLoading();
+                }, error -> view.showError(error.getMessage())));
+    }
+
+    @Override
+    public void loadAreas() {
+        view.showLoading();
+        compositeDisposable.add(repository.getAreas()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(meals -> {
+                    List<FilterUIModel> uiModels = new ArrayList<>();
+                    for (Meal m : meals) {
+                        // 1. Get the country code for the area name
+                        String countryCode = getCountryCode(m.strArea);
+                        String flagUrl = null;
+
+                        // 2. Construct the flag URL (using flagcdn)
+                        if (countryCode != null) {
+                            flagUrl = "https://flagcdn.com/w320/" + countryCode + ".png";
+                        }
+
+                        uiModels.add(new FilterUIModel(m.strArea, flagUrl));
+                    }
+                    view.showFilterOptions(uiModels, false);
+                    view.hideLoading();
+                }, error -> view.showError(error.getMessage())));
+    }
+
+    @Override
+    public void loadIngredients() {
+        view.showLoading();
+        compositeDisposable.add(repository.getIngredients()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(ingredients -> {
+                    List<FilterUIModel> uiModels = new ArrayList<>();
+                    for (Ingredient i : ingredients) {
+                        String thumb = "https://www.themealdb.com/images/ingredients/" + i.strIngredient + "-Small.png";
+                        uiModels.add(new FilterUIModel(i.strIngredient, thumb));
+                    }
+                    view.showFilterOptions(uiModels, true);
+                    view.hideLoading();
+                }, error -> view.showError(error.getMessage())));
     }
 
     @Override
     public void onDestroy() {
         compositeDisposable.clear();
+    }
+
+    // Helper method to map Area names to ISO 2-letter country codes
+    private String getCountryCode(String areaName) {
+        if (areaName == null) return null;
+
+        switch (areaName) {
+            case "Algerian": return "dz";      // Added
+            case "American": return "us";
+            case "Argentinian": return "ar";   // Added
+            case "Australian": return "au";    // Added
+            case "British": return "gb";
+            case "Canadian": return "ca";
+            case "Chinese": return "cn";
+            case "Croatian": return "hr";
+            case "Dutch": return "nl";
+            case "Egyptian": return "eg";
+            case "Filipino": return "ph";
+            case "French": return "fr";
+            case "Greek": return "gr";
+            case "Indian": return "in";
+            case "Irish": return "ie";
+            case "Italian": return "it";
+            case "Jamaican": return "jm";
+            case "Japanese": return "jp";
+            case "Kenyan": return "ke";
+            case "Malaysian": return "my";
+            case "Mexican": return "mx";
+            case "Moroccan": return "ma";
+            case "Norwegian": return "no";
+            case "Polish": return "pl";
+            case "Portuguese": return "pt";
+            case "Russian": return "ru";
+            case "Saudi Arabian": return "sa"; // Added
+            case "Slovakian": return "sk";     // Added
+            case "Spanish": return "es";
+            case "Syrian": return "sy";        // Added
+            case "Thai": return "th";
+            case "Tunisian": return "tn";
+            case "Turkish": return "tr";
+            case "Ukrainian": return "ua";
+            case "Uruguayan": return "uy";     // Added
+            case "Vietnamese": return "vn";
+            case "Venezulan": return "ve";    // Added
+            default: return null;
+        }
     }
 }

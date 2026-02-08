@@ -3,6 +3,7 @@ package com.example.mealmate.ui.home.presenter;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkCapabilities;
+import android.util.Log;
 
 import com.example.mealmate.R;
 import com.example.mealmate.data.categories.model.Category;
@@ -39,7 +40,10 @@ public class HomePresenterImp implements HomePresenter {
         mealRepository = new MealRepository(context);
         userRepository = new UserRepository(context);
 
-        mealRepository.deletePastPlans();
+        compositeDisposable.add(mealRepository.deletePastPlans()
+                .subscribeOn(Schedulers.io())
+                .subscribe(() -> Log.d("HomePresenter", "Past plans deleted"),
+                        error -> Log.e("HomePresenter", "Error deleting past plans: " + error.getMessage())));
     }
 
     private boolean isNetworkAvailable() {
@@ -161,7 +165,8 @@ public class HomePresenterImp implements HomePresenter {
     private void preloadCategoryMeals(List<Category> categories) {
         compositeDisposable.add(mealRepository.preloadCategoryMeals(categories)
                 .subscribeOn(Schedulers.io())
-                .subscribe());
+                .subscribe(() -> Log.d("HomePresenter", "Categories preloaded"), 
+                          error -> Log.e("HomePresenter", "Error preloading categories: " + error.getMessage())));
     }
 
     @Override
@@ -260,6 +265,11 @@ public class HomePresenterImp implements HomePresenter {
                                 } else {
                                     view.showTodaysPlan(null);
                                 }
+                            }
+                        },
+                        error -> {
+                            if (view != null) {
+                                view.showError(error.getMessage());
                             }
                         }
                 )

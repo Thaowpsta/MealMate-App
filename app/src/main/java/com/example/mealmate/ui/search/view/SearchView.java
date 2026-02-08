@@ -1,5 +1,6 @@
 package com.example.mealmate.ui.search.view;
 
+import com.example.mealmate.data.meals.models.FilterUIModel;
 import com.example.mealmate.data.meals.models.Meal;
 import java.util.List;
 
@@ -10,4 +11,5 @@ public interface SearchView {
     void showEmptyState();
     void showError(String message);
     void showConnectionError();
+    void showFilterOptions(List<FilterUIModel> options, boolean allowMultiSelect);
 }

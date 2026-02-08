@@ -11,6 +11,7 @@ import com.example.mealmate.data.meals.datasource.local.MealDAO;
 import com.example.mealmate.data.meals.datasource.local.MealDTO;
 import com.example.mealmate.data.meals.datasource.local.PlannedMealDTO;
 import com.example.mealmate.data.meals.datasource.remote.MealRemoteDataSource;
+import com.example.mealmate.data.meals.models.Ingredient;
 import com.example.mealmate.data.meals.models.Meal;
 import com.example.mealmate.data.meals.models.MealResponse;
 import com.google.firebase.auth.FirebaseAuth;
@@ -280,12 +281,13 @@ public class MealRepository {
         firestore.collection("users").document(uid).collection("plans").document(docId).set(plan);
     }
 
-    public void deletePastPlans() {
+    public Completable deletePastPlans() {
         SimpleDateFormat dbFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         String todayStr = dbFormat.format(new Date());
         String uid = auth.getUid();
-        if (uid == null) return;
-        localDataSource.getPastPlans(todayStr, uid)
+        if (uid == null) return Completable.complete();
+        
+        return localDataSource.getPastPlans(todayStr, uid)
                 .subscribeOn(Schedulers.io())
                 .flatMapCompletable(plans -> {
                     if (plans.isEmpty()) return Completable.complete();
@@ -295,16 +297,30 @@ public class MealRepository {
                         DocumentReference docRef = firestore.collection("users").document(uid).collection("plans").document(docId);
                         batch.delete(docRef);
                     }
-                    return Completable.create(emitter -> batch.commit().addOnSuccessListener(aVoid -> emitter.onComplete()).addOnFailureListener(emitter::onError));
+                    return Completable.create(emitter -> batch.commit()
+                            .addOnSuccessListener(aVoid -> emitter.onComplete())
+                            .addOnFailureListener(emitter::onError));
                 })
-                .andThen(localDataSource.deletePastPlans(todayStr, uid))
-                .subscribe();
+                .observeOn(Schedulers.io())
+                .andThen(localDataSource.deletePastPlans(todayStr, uid));
+    }
+
+    public Single<List<Meal>> getAreas() {
+        return remoteMealDataSource.getAreas().subscribeOn(Schedulers.io());
+    }
+
+    public Single<List<Ingredient>> getIngredients() {
+        return remoteMealDataSource.getIngredients().subscribeOn(Schedulers.io());
     }
 
     public void clearAllCache() {
-        Completable.fromAction(sharedPrefsManager::clearAll).subscribeOn(Schedulers.io()).subscribe();
+        Completable.fromAction(sharedPrefsManager::clearAll)
+                .subscribeOn(Schedulers.io())
+                .subscribe(() -> {}, error -> Log.e("MealRepository", "Error clearing all cache: " + error.getMessage()));
     }
     public void clearCategoryCache() {
-        Completable.fromAction(sharedPrefsManager::clearCategoryCache).subscribeOn(Schedulers.io()).subscribe();
+        Completable.fromAction(sharedPrefsManager::clearCategoryCache)
+                .subscribeOn(Schedulers.io())
+                .subscribe(() -> {}, error -> Log.e("MealRepository", "Error clearing category cache: " + error.getMessage()));
     }
 }

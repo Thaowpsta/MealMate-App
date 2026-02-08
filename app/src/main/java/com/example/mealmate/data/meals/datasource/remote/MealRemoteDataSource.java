@@ -1,5 +1,6 @@
 package com.example.mealmate.data.meals.datasource.remote;
 
+import com.example.mealmate.data.meals.models.Ingredient;
 import com.example.mealmate.data.meals.models.Meal;
 import com.example.mealmate.data.meals.models.MealResponse;
 import com.example.mealmate.data.network.MealService;
@@ -50,6 +51,16 @@ public class MealRemoteDataSource {
 
     public Single<MealResponse> filterByIngredient(String ingredient) {
         return mealService.filterByIngredient(ingredient);
+    }
+
+    public Single<List<Meal>> getAreas() {
+        return mealService.getAreas()
+                .map(response -> response.meals);
+    }
+
+    public Single<List<Ingredient>> getIngredients() {
+        return mealService.getIngredients()
+                .map(response -> response.meals);
     }
 
     public void clearDisposables() {

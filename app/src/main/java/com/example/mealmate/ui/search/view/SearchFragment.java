@@ -19,9 +19,11 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mealmate.R;
+import com.example.mealmate.data.meals.models.FilterUIModel;
 import com.example.mealmate.data.meals.models.Meal;
 import com.example.mealmate.ui.meals.view.MealsAdapter;
 import com.example.mealmate.ui.search.presenter.SearchPresenter;
@@ -44,9 +46,12 @@ public class SearchFragment extends Fragment implements SearchView, MealsAdapter
     private MealsAdapter adapter;
     private final List<Meal> searchResults = new ArrayList<>();
     private final CompositeDisposable disposable = new CompositeDisposable();
-    private ChipGroup chipGroupFilters;
     private EditText searchBar;
     private Dialog errorDialog;
+    private RecyclerView rvFilterValues;
+    private FilterAdapter filterAdapter;
+    private String currentFilterType = null;
+    private List<String> currentFilterValues = new ArrayList<>();
 
     public SearchFragment() {
         // Required empty public constructor
@@ -71,7 +76,8 @@ public class SearchFragment extends Fragment implements SearchView, MealsAdapter
         RecyclerView rvMeals = view.findViewById(R.id.rv_meals);
         searchBar = view.findViewById(R.id.search_bar);
         ImageButton btnBack = view.findViewById(R.id.btn_back);
-        chipGroupFilters = view.findViewById(R.id.chip_group_search_filters);
+        ChipGroup chipGroupFilters = view.findViewById(R.id.chip_group_search_filters);
+        rvFilterValues = view.findViewById(R.id.rv_filter_values);
 
         adapter = new MealsAdapter(searchResults, this);
         rvMeals.setLayoutManager(new GridLayoutManager(getContext(), 2));
@@ -79,36 +85,59 @@ public class SearchFragment extends Fragment implements SearchView, MealsAdapter
 
         btnBack.setOnClickListener(v -> Navigation.findNavController(v).navigateUp());
 
-        chipGroupFilters.setOnCheckedChangeListener((group, checkedIds) -> {
-            String query = searchBar.getText().toString();
-            triggerSearch(query);
+        // Initialize filter adapter BEFORE chip listener
+        filterAdapter = new FilterAdapter(selectedItems -> {
+            currentFilterValues = selectedItems;
+            triggerSearch(); // Fetch meals for the selected filter
+        });
+
+        rvFilterValues.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        rvFilterValues.setAdapter(filterAdapter);
+
+        chipGroupFilters.setOnCheckedChangeListener((group, checkedId) -> {
+            // Clear current filter values
+            currentFilterValues.clear();
+
+            // Clear the search bar text when switching filter types
+            searchBar.setText("");
+
+            if (checkedId == R.id.chip_category) {
+                currentFilterType = "Category";
+                rvFilterValues.setVisibility(View.VISIBLE);
+                presenter.loadCategories();
+            } else if (checkedId == R.id.chip_area) {
+                currentFilterType = "Area";
+                rvFilterValues.setVisibility(View.VISIBLE);
+                presenter.loadAreas();
+            } else if (checkedId == R.id.chip_ingredient) {
+                currentFilterType = "Ingredient";
+                rvFilterValues.setVisibility(View.VISIBLE);
+                presenter.loadIngredients();
+            } else {
+                // No chip selected - show all meals
+                currentFilterType = null;
+                rvFilterValues.setVisibility(View.GONE);
+                presenter.getAllMeals();
+            }
         });
 
         setupSearchObserver(searchBar);
 
+        // Load initial meals
         presenter.getAllMeals();
     }
 
-    private void triggerSearch(String query) {
-        List<String> selectedTypes = getSelectedSearchTypes();
-        presenter.searchMeals(query, selectedTypes);
+    private void triggerSearch() {
+        String query = searchBar.getText().toString();
+        // This will use the Presenter's cache if the filter hasn't changed
+        presenter.searchMeals(query, currentFilterType, currentFilterValues);
     }
 
-    private List<String> getSelectedSearchTypes() {
-        List<String> types = new ArrayList<>();
-        List<Integer> ids = chipGroupFilters.getCheckedChipIds();
-
-        for (Integer id : ids) {
-            if (id == R.id.chip_name) types.add("Name");
-            else if (id == R.id.chip_category) types.add("Category");
-            else if (id == R.id.chip_area) types.add("Area");
-            else if (id == R.id.chip_ingredient) types.add("Ingredient");
-        }
-
-        if (types.isEmpty()) {
-            types.add("Name");
-        }
-        return types;
+    @Override
+    public void showFilterOptions(List<FilterUIModel> options, boolean allowMultiSelect) {
+        filterAdapter.setItems(options);
+        filterAdapter.setMultiSelect(allowMultiSelect);
+        rvFilterValues.setVisibility(View.VISIBLE);
     }
 
     private void setupSearchObserver(EditText searchBar) {
@@ -116,12 +145,10 @@ public class SearchFragment extends Fragment implements SearchView, MealsAdapter
             TextWatcher textWatcher = new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
                     emitter.onNext(s.toString());
                 }
-
                 @Override
                 public void afterTextChanged(Editable s) {}
             };
@@ -134,7 +161,7 @@ public class SearchFragment extends Fragment implements SearchView, MealsAdapter
                 .distinctUntilChanged()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::triggerSearch));
+                .subscribe(s -> triggerSearch()));
     }
 
     @Override
