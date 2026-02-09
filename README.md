@@ -109,4 +109,4 @@ This project uses [TheMealDB](https://www.themealdb.com/api.php) for recipe data
 
 * Mobile App Developer (Java, Flutter, Android)
 * [GitHub Profile](https://www.google.com/search?q=https://github.com/Thaowpsta)
-* 
+
