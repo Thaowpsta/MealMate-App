@@ -1,12 +1,16 @@
 package com.example.mealmate.ui.main;
 
-import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,6 +31,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
+
+    private UserRepository userRepository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,21 +64,17 @@ public class MainActivity extends AppCompatActivity {
 
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
 
-        // Standard setup
         NavigationUI.setupWithNavController(bottomNav, navController);
 
-        // Guest Restriction Logic
-        UserRepository userRepository = new UserRepository(this);
+        userRepository = new UserRepository(this);
         bottomNav.setOnItemSelectedListener(item -> {
             if (userRepository.isGuest()) {
                 int id = item.getItemId();
-                // Check if the destination is one of the restricted fragments
-                if (id == R.id.searchFragment || id == R.id.favoritesFragment || id == R.id.profileFragment || id == R.id.plannerFragment) {
+                if ( id == R.id.favoritesFragment || id == R.id.profileFragment || id == R.id.plannerFragment) {
                     showGuestLoginDialog();
-                    return false; // Cancel navigation
+                    return false;
                 }
             }
-            // Proceed with normal navigation
             return NavigationUI.onNavDestinationSelected(item, navController);
         });
 
@@ -84,19 +86,30 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void showGuestLoginDialog() {
-        new AlertDialog.Builder(this)
-                .setTitle("Guest Mode")
-                .setMessage("You need to login to use this feature.")
-                .setPositiveButton(R.string.login, (dialog, which) -> {
-                    Intent intent = new Intent(this, SplashActivity.class);
-                    intent.putExtra("IS_LOGOUT", true);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(intent);
-                    finish();
-                })
-                .setNegativeButton(android.R.string.cancel, null)
-                .show();
+    public void showGuestLoginDialog() {
+        Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_guest_login);
+
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
+
+        dialog.findViewById(R.id.btn_login).setOnClickListener(v -> {
+            dialog.dismiss();
+            userRepository.logout();
+
+            Intent intent = new Intent(this, SplashActivity.class);
+            intent.putExtra("IS_LOGOUT", true);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
+        });
+
+        dialog.findViewById(R.id.btn_cancel).setOnClickListener(v -> dialog.dismiss());
+
+        dialog.show();
     }
 
     private void setLocale(String langCode) {

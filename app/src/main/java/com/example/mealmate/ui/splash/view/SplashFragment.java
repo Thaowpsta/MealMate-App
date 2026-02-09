@@ -63,9 +63,11 @@ public class SplashFragment extends Fragment implements SplashView {
             splashTitle.setVisibility(View.GONE);
             splashSubtitle.setVisibility(View.GONE);
 
-            if (presenter != null) {
-                presenter.checkLoginStatus();
-            }
+            view.post(() -> {
+                if (presenter != null) {
+                    presenter.checkLoginStatus();
+                }
+            });
         } else {
             Animation slideUp = AnimationUtils.loadAnimation(getActivity(), R.anim.slide_up);
             splashSubtitle.startAnimation(slideUp);

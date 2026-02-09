@@ -484,6 +484,8 @@ public class HomeFragment extends Fragment implements HomeView {
 
     @Override
     public void navigateToLogin() {
+        userRepository.logout();
+
         Intent intent = new Intent(requireContext(), SplashActivity.class);
         intent.putExtra("IS_LOGOUT", true);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

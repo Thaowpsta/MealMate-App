@@ -9,11 +9,11 @@ import com.example.mealmate.data.meals.models.Meal;
 import com.example.mealmate.data.meals.models.MealPlannerItem;
 import com.example.mealmate.data.meals.models.MealType;
 import com.example.mealmate.data.repositories.MealRepository;
+import com.example.mealmate.data.repositories.UserRepository;
 import com.example.mealmate.ui.plans.view.PlannerView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -27,13 +27,13 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 public class PlannerPresenterImp implements PlannerPresenter {
 
     private PlannerView view;
-    private final MealRepository repository;
+    private final MealRepository mealRepository;
     private final CompositeDisposable compositeDisposable = new CompositeDisposable();
     private final Context context;
 
     public PlannerPresenterImp(PlannerView view, Context context) {
         this.view = view;
-        this.repository = new MealRepository(context);
+        this.mealRepository = new MealRepository(context);
         this.context = context;
     }
 
@@ -44,7 +44,7 @@ public class PlannerPresenterImp implements PlannerPresenter {
         SimpleDateFormat dbFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         String dateStr = dbFormat.format(date);
 
-        compositeDisposable.add(repository.getPlansByDate(dateStr)
+        compositeDisposable.add(mealRepository.getPlansByDate(dateStr)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -91,7 +91,7 @@ public class PlannerPresenterImp implements PlannerPresenter {
         SimpleDateFormat dbFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         String dateStr = dbFormat.format(date);
 
-        compositeDisposable.add(repository.deletePlan(dateStr, item.getMealType().name(), item.getMeal().getId())
+        compositeDisposable.add(mealRepository.deletePlan(dateStr, item.getMealType().name(), item.getMeal().getId())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

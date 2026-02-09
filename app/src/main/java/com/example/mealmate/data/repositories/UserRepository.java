@@ -162,7 +162,6 @@ public class UserRepository {
     public void logout() {
         firebaseAuth.signOut();
         sharedPreferencesManager.clearUserData();
-
     }
 
     public void saveUserToPrefs(FirebaseUser user) {
