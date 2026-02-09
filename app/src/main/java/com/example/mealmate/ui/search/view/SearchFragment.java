@@ -95,6 +95,11 @@ public class SearchFragment extends Fragment implements SearchView, MealsAdapter
 
         btnBack.setOnClickListener(v -> Navigation.findNavController(v).navigateUp());
 
+        searchBar.setOnClickListener(v -> presenter.onSearchBarClicked());
+        searchBar.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus) presenter.onSearchBarClicked();
+        });
+
         filterAdapter = new FilterAdapter(selectedItems -> {
             if (currentFilterType != null) {
                 if (selectedItems.isEmpty()) {
@@ -236,22 +241,6 @@ public class SearchFragment extends Fragment implements SearchView, MealsAdapter
     }
 
     @Override
-    public void showConnectionError() {
-        if (errorDialog != null && errorDialog.isShowing()) return;
-        errorDialog = new Dialog(requireContext());
-        errorDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        errorDialog.setContentView(R.layout.dialog_no_connection);
-
-        if (errorDialog.getWindow() != null) {
-            errorDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            errorDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        }
-
-        errorDialog.findViewById(R.id.btn_ok).setOnClickListener(v -> errorDialog.dismiss());
-        errorDialog.show();
-    }
-
-    @Override
     public void onDestroyView() {
         super.onDestroyView();
         if (errorDialog != null && errorDialog.isShowing()) errorDialog.dismiss();
@@ -264,5 +253,20 @@ public class SearchFragment extends Fragment implements SearchView, MealsAdapter
         Bundle bundle = new Bundle();
         bundle.putSerializable("meal", meal);
         Navigation.findNavController(requireView()).navigate(R.id.action_searchFragment_to_mealDetailsFragment, bundle);
+    }
+
+    @Override
+    public void showConnectionError() {
+        Dialog dialog = new Dialog(requireContext());
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_no_connection);
+
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
+
+        dialog.findViewById(R.id.btn_ok).setOnClickListener(v -> dialog.dismiss());
+        dialog.show();
     }
 }

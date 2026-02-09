@@ -1,6 +1,9 @@
 package com.example.mealmate.ui.search.presenter;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkCapabilities;
+
 import com.example.mealmate.data.categories.model.Category;
 import com.example.mealmate.data.meals.models.FilterUIModel;
 import com.example.mealmate.data.meals.models.Ingredient;
@@ -25,10 +28,12 @@ public class SearchPresenterImp implements SearchPresenter {
     private final MealRepository repository;
     private final CompositeDisposable compositeDisposable = new CompositeDisposable();
     private final List<Meal> cachedFilteredMeals = new ArrayList<>();
+    private final Context context;
 
     public SearchPresenterImp(SearchView view, Context context) {
         this.view = view;
         this.repository = new MealRepository(context);
+        this.context = context;
     }
 
     @Override
@@ -71,6 +76,23 @@ public class SearchPresenterImp implements SearchPresenter {
                 ));
     }
 
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager != null) {
+            NetworkCapabilities capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.getActiveNetwork());
+            return capabilities != null && (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
+                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
+                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET));
+        }
+        return false;
+    }
+
+    @Override
+    public void onSearchBarClicked() {
+        if (!isNetworkAvailable()) {
+            view.showConnectionError();
+        }
+    }
     @Override
     public void searchMeals(String query, Map<String, List<String>> filters) {
         if (filters == null || filters.isEmpty()) {

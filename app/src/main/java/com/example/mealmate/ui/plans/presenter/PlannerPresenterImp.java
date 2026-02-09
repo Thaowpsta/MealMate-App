@@ -1,6 +1,8 @@
 package com.example.mealmate.ui.plans.presenter;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkCapabilities;
 
 import com.example.mealmate.data.meals.datasource.local.PlannedMealDTO;
 import com.example.mealmate.data.meals.models.Meal;
@@ -27,10 +29,12 @@ public class PlannerPresenterImp implements PlannerPresenter {
     private PlannerView view;
     private final MealRepository repository;
     private final CompositeDisposable compositeDisposable = new CompositeDisposable();
+    private final Context context;
 
     public PlannerPresenterImp(PlannerView view, Context context) {
         this.view = view;
         this.repository = new MealRepository(context);
+        this.context = context;
     }
 
     @Override
@@ -60,6 +64,26 @@ public class PlannerPresenterImp implements PlannerPresenter {
                         }
                 )
         );
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager != null) {
+            NetworkCapabilities capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.getActiveNetwork());
+            return capabilities != null && (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
+                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
+                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET));
+        }
+        return false;
+    }
+
+    @Override
+    public void onAddMealClicked(MealType type) {
+        if (isNetworkAvailable()) {
+            if (view != null) view.navigateToAddMeal(type);
+        } else {
+            if (view != null) view.showConnectionError();
+        }
     }
 
     @Override

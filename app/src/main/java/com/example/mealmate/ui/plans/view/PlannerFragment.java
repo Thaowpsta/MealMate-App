@@ -1,12 +1,16 @@
 package com.example.mealmate.ui.plans.view;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -226,16 +230,7 @@ public class PlannerFragment extends Fragment implements PlannerView {
 
             @Override
             public void onAddMealClick(MealType mealType) {
-                Bundle bundle = new Bundle();
-                bundle.putBoolean("is_planning_mode", true);
-                bundle.putLong("planned_date", currentViewDate.getTime());
-                bundle.putString("planned_type", mealType.name());
-
-                try {
-                    Navigation.findNavController(requireView()).navigate(R.id.searchFragment, bundle);
-                } catch (Exception e) {
-                    showError("Navigation to Search failed: " + e.getMessage());
-                }
+                presenter.onAddMealClicked(mealType);
             }
         });
 
@@ -276,6 +271,35 @@ public class PlannerFragment extends Fragment implements PlannerView {
         };
 
         new ItemTouchHelper(simpleItemTouchCallback).attachToRecyclerView(recyclerView);
+    }
+
+    @Override
+    public void navigateToAddMeal(MealType mealType) {
+        Bundle bundle = new Bundle();
+        bundle.putBoolean("is_planning_mode", true);
+        bundle.putLong("planned_date", currentViewDate.getTime());
+        bundle.putString("planned_type", mealType.name());
+
+        try {
+            Navigation.findNavController(requireView()).navigate(R.id.searchFragment, bundle);
+        } catch (Exception e) {
+            showError("Navigation to Search failed: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public void showConnectionError() {
+        Dialog dialog = new Dialog(requireContext());
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_no_connection);
+
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
+
+        dialog.findViewById(R.id.btn_ok).setOnClickListener(v -> dialog.dismiss());
+        dialog.show();
     }
 
     private void showWeekCalendarDialog() {

@@ -6,6 +6,7 @@ import java.util.Map;
 public interface SearchPresenter {
     void getAllMeals();
     void searchMeals(String query, Map<String, List<String>> filters);
+    void onSearchBarClicked();
     void loadCategories();
     void loadAreas();
     void loadIngredients();
