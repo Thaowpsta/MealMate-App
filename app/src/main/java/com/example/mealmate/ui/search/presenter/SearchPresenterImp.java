@@ -38,8 +38,6 @@ public class SearchPresenterImp implements SearchPresenter {
 
     @Override
     public void getAllMeals() {
-        String lastFilterType = "";
-        String lastFilterQuery = "";
         cachedFilteredMeals.clear();
 
         view.showLoading();

@@ -179,8 +179,7 @@ public class MealRepository {
                 return;
             }
 
-            Completable.merge(allRequests)
-                    .subscribe(emitter::onComplete, emitter::onError);
+            Completable.merge(allRequests).subscribe(emitter::onComplete, emitter::onError);
         });
     }
 

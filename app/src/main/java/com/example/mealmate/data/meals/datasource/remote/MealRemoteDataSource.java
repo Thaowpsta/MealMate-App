@@ -62,8 +62,4 @@ public class MealRemoteDataSource {
         return mealService.getIngredients()
                 .map(response -> response.meals);
     }
-
-    public void clearDisposables() {
-        compositeDisposable.clear();
-    }
 }
