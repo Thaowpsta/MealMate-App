@@ -6,5 +6,8 @@ public interface ProfilePresenter {
     void checkNetworkStatus();
     void onThemeChanged(boolean isDark);
     void onLanguageChanged(boolean isArabic);
-    void onSaveClicked();
+    void onSaveClicked(String name, String password);
+    void getFavoritesCount();
+    void getPlansCount();
+
 }

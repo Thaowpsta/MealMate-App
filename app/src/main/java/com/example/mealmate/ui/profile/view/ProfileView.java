@@ -8,4 +8,6 @@ public interface ProfileView {
     void applyTheme(boolean isDark);
     void restartActivity();
     void navigateToHome();
+    void showPlansCount(int count);
+    void showFavoritesCount(int count);
 }

@@ -213,28 +213,19 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/padding_margin_19"
                 android:fontFamily="sans-serif-medium"
-                android:text="@string/email"
+                android:text="@string/password"
                 android:textColor="@color/txt_dark" />
 
             <EditText
-                android:id="@+id/change_email"
+                android:id="@+id/change_password"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/txt_field_h"
                 android:layout_marginTop="@dimen/padding_margin_8"
                 android:autofillHints="password"
                 android:background="@drawable/rounded_txt_field"
-                android:hint="@string/emailHint"
-                android:inputType="textEmailAddress"
+                android:hint="@string/change_password"
+                android:inputType="textPassword"
                 android:padding="@dimen/padding_margin_16" />
-
-<!--            <TextView-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginTop="@dimen/padding_margin_19"-->
-<!--                android:text="@string/change_password"-->
-<!--                android:textColor="@color/secondary_color_start"-->
-<!--                app:drawableEndCompat="@drawable/outline_arrow_forward_ios_24"-->
-<!--                app:drawableTint="@color/secondary_color_start" />-->
 
         </LinearLayout>
     </androidx.cardview.widget.CardView>

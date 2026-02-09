@@ -11,6 +11,7 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 
@@ -68,6 +69,50 @@ public class UserRepository {
             if (callback != null)
                 callback.onError(error.getMessage());
         });
+    }
+
+    public void updateProfile(String newName, String newPassword, UpdateProfileCallback callback) {
+        FirebaseUser user = firebaseAuth.getCurrentUser();
+        if (user == null) {
+            if (callback != null) callback.onError("User not logged in");
+            return;
+        }
+
+        if (newName != null && !newName.trim().isEmpty()) {
+            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                    .setDisplayName(newName)
+                    .build();
+
+            user.updateProfile(profileUpdates).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    sharedPreferencesManager.saveUserName(newName);
+
+                    if (newPassword != null && !newPassword.trim().isEmpty()) {
+                        user.updatePassword(newPassword).addOnCompleteListener(passTask -> {
+                            if (passTask.isSuccessful()) {
+                                if (callback != null) callback.onSuccess();
+                            } else {
+                                if (callback != null) callback.onError(passTask.getException() != null ? passTask.getException().getMessage() : "Failed to update password");
+                            }
+                        });
+                    } else {
+                        if (callback != null) callback.onSuccess();
+                    }
+                } else {
+                    if (callback != null) callback.onError(task.getException() != null ? task.getException().getMessage() : "Failed to update name");
+                }
+            });
+        } else if (newPassword != null && !newPassword.trim().isEmpty()) {
+            user.updatePassword(newPassword).addOnCompleteListener(passTask -> {
+                if (passTask.isSuccessful()) {
+                    if (callback != null) callback.onSuccess();
+                } else {
+                    if (callback != null) callback.onError(passTask.getException() != null ? passTask.getException().getMessage() : "Failed to update password");
+                }
+            });
+        } else {
+            if (callback != null) callback.onSuccess();
+        }
     }
 
     public void sendLoginLinkToEmail(String email, SendLoginLinkToEmailCallback callback){
@@ -238,6 +283,11 @@ public class UserRepository {
     }
     public interface loginWithEmailLinkCallback {
         void onSuccess(FirebaseUser user);
+        void onError(String error);
+    }
+
+    public interface UpdateProfileCallback {
+        void onSuccess();
         void onError(String error);
     }
 }
