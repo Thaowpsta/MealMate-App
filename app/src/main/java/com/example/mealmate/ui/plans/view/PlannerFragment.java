@@ -247,9 +247,6 @@ public class PlannerFragment extends Fragment implements PlannerView {
                     showError("Navigation to Search failed: " + e.getMessage());
                 }
             }
-
-            @Override
-            public void onEmptyDayClick() { }
         });
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -267,7 +264,6 @@ public class PlannerFragment extends Fragment implements PlannerView {
         List<WeekCalendarAdapter.DayModel> days = new ArrayList<>();
         Calendar calendar = Calendar.getInstance();
 
-        // Show week starting from Today (MinDate)
         calendar.setTime(minDate);
 
         SimpleDateFormat dayFormat = new SimpleDateFormat("EEE", Locale.ENGLISH);
@@ -299,7 +295,6 @@ public class PlannerFragment extends Fragment implements PlannerView {
         sheetView.findViewById(R.id.btn_confirm_date).setOnClickListener(btn -> {
             bottomSheetDialog.dismiss();
 
-            // When confirming from the calendar, we simply update the view to the selected date.
             Date pickedDate = selectedDate.get(0);
             if (pickedDate != null) {
                 currentViewDate = pickedDate;
@@ -357,25 +352,18 @@ public class PlannerFragment extends Fragment implements PlannerView {
 
         @Override
         public boolean onFling(@Nullable MotionEvent e1, @NonNull MotionEvent e2, float velocityX, float velocityY) {
-            if (e1 == null || e2 == null) return false; // Safety check
+            if (e1 == null) return false;
 
             boolean result = false;
             try {
                 float diffX = e2.getX() - e1.getX();
                 if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
 
-                    // Check if layout is RTL (Arabic)
                     boolean isRtl = ViewCompat.getLayoutDirection(recyclerView) == ViewCompat.LAYOUT_DIRECTION_RTL;
 
                     if (diffX > 0) {
-                        // User Swiped Right (Finger moves Left -> Right)
-                        // LTR: Go to Previous (-1)
-                        // RTL: Go to Next (+1) (Because Next is on the Left)
                         changeDate(isRtl ? 1 : -1);
                     } else {
-                        // User Swiped Left (Finger moves Right -> Left)
-                        // LTR: Go to Next (+1)
-                        // RTL: Go to Previous (-1) (Because Previous is on the Right)
                         changeDate(isRtl ? -1 : 1);
                     }
                     result = true;

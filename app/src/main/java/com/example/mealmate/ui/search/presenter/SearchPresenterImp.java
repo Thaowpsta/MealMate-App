@@ -17,29 +17,24 @@ import java.util.stream.Collectors;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class SearchPresenterImp implements SearchPresenter {
 
     private final SearchView view;
     private final MealRepository repository;
     private final CompositeDisposable compositeDisposable = new CompositeDisposable();
-
-    // Cache to hold the meals of the currently selected category/area/ingredient
-    private List<Meal> cachedFilteredMeals = new ArrayList<>();
-    private String lastFilterType = "";
-    private String lastFilterQuery = "";
+    private final List<Meal> cachedFilteredMeals = new ArrayList<>();
 
     public SearchPresenterImp(SearchView view, Context context) {
         this.view = view;
         this.repository = new MealRepository(context);
     }
 
-    // ... [getAllMeals, loadDefaultMeals, searchMeals, filterLocalList methods remain unchanged] ...
     @Override
     public void getAllMeals() {
-        // Search with single letter to get a broad set of meals initially
-        lastFilterType = "";
-        lastFilterQuery = "";
+        String lastFilterType = "";
+        String lastFilterQuery = "";
         cachedFilteredMeals.clear();
 
         view.showLoading();
@@ -77,9 +72,12 @@ public class SearchPresenterImp implements SearchPresenter {
     }
 
     @Override
-    public void searchMeals(String query, String filterType, List<String> filterValues) {
-        if (filterType == null || filterValues == null || filterValues.isEmpty()) {
-            if (query == null || query.trim().isEmpty()) return;
+    public void searchMeals(String query, Map<String, List<String>> filters) {
+        if (filters == null || filters.isEmpty()) {
+            if (query == null || query.trim().isEmpty()) {
+                getAllMeals();
+                return;
+            }
             view.showLoading();
             compositeDisposable.add(repository.searchMeals(query)
                     .observeOn(AndroidSchedulers.mainThread())
@@ -96,41 +94,68 @@ public class SearchPresenterImp implements SearchPresenter {
             return;
         }
 
-        String currentFilterQuery;
-        if (filterValues.size() > 1) {
-            currentFilterQuery = String.join(",", filterValues);
-        } else {
-            currentFilterQuery = filterValues.get(0);
+        view.showLoading();
+
+        List<Single<List<Meal>>> typeRequests = new ArrayList<>();
+
+        for (Map.Entry<String, List<String>> entry : filters.entrySet()) {
+            String type = entry.getKey();
+            List<String> values = entry.getValue();
+            if (values.isEmpty()) continue;
+
+            List<Single<List<Meal>>> valueRequests = new ArrayList<>();
+            for (String val : values) {
+                valueRequests.add(repository.filterBy(type, val));
+            }
+
+            Single<List<Meal>> typeUnion = Single.merge(valueRequests)
+                    .collectInto(new ArrayList<Meal>(), List::addAll)
+                    .map(list -> {
+                        Map<String, Meal> uniqueMap = new HashMap<>();
+                        for (Meal m : list) uniqueMap.put(m.getId(), m);
+                        return new ArrayList<>(uniqueMap.values());
+                    });
+
+            typeRequests.add(typeUnion);
         }
 
-        if (filterType.equals(lastFilterType) && currentFilterQuery.equals(lastFilterQuery) && !cachedFilteredMeals.isEmpty()) {
-            filterLocalList(query);
-        } else {
-            view.showLoading();
-            compositeDisposable.add(repository.filterBy(filterType, currentFilterQuery)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(meals -> {
-                        cachedFilteredMeals = meals != null ? meals : new ArrayList<>();
-                        lastFilterType = filterType;
-                        lastFilterQuery = currentFilterQuery;
-                        filterLocalList(query);
-                    }, error -> {
-                        view.hideLoading();
-                        view.showError(error.getMessage());
-                    }));
+        if (typeRequests.isEmpty()) {
+            searchMeals(query, null);
+            return;
         }
+
+        compositeDisposable.add(Single.zip(typeRequests, objects -> {
+                    if (objects.length == 0) return new ArrayList<Meal>();
+
+                    List<Meal> result = new ArrayList<>((List<Meal>) objects[0]);
+
+                    for (int i = 1; i < objects.length; i++) {
+                        List<Meal> nextList = (List<Meal>) objects[i];
+                        List<String> nextIds = nextList.stream().map(Meal::getId).collect(Collectors.toList());
+                        result.removeIf(m -> !nextIds.contains(m.getId()));
+                    }
+                    return result;
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(meals -> {
+                    filterLocalList(query, meals);
+                }, error -> {
+                    view.hideLoading();
+                    view.showError(error.getMessage());
+                }));
     }
 
-    private void filterLocalList(String query) {
+    private void filterLocalList(String query, List<Meal> meals) {
         view.hideLoading();
-        if (cachedFilteredMeals.isEmpty()) {
+        if (meals.isEmpty()) {
             view.showEmptyState();
             return;
         }
         if (query == null || query.trim().isEmpty()) {
-            view.showSearchResults(cachedFilteredMeals);
+            view.showSearchResults(meals);
         } else {
-            List<Meal> filtered = cachedFilteredMeals.stream()
+            List<Meal> filtered = meals.stream()
                     .filter(m -> m.strMeal.toLowerCase().contains(query.toLowerCase()))
                     .collect(Collectors.toList());
             view.showSearchResults(filtered);
@@ -147,7 +172,7 @@ public class SearchPresenterImp implements SearchPresenter {
                     for (Category c : categories) {
                         uiModels.add(new FilterUIModel(c.getStrCategory(), c.strCategoryThumb));
                     }
-                    view.showFilterOptions(uiModels, false);
+                    view.showFilterOptions(uiModels, true);
                     view.hideLoading();
                 }, error -> view.showError(error.getMessage())));
     }
@@ -160,18 +185,16 @@ public class SearchPresenterImp implements SearchPresenter {
                 .subscribe(meals -> {
                     List<FilterUIModel> uiModels = new ArrayList<>();
                     for (Meal m : meals) {
-                        // 1. Get the country code for the area name
                         String countryCode = getCountryCode(m.strArea);
                         String flagUrl = null;
 
-                        // 2. Construct the flag URL (using flagcdn)
                         if (countryCode != null) {
                             flagUrl = "https://flagcdn.com/w320/" + countryCode + ".png";
                         }
 
                         uiModels.add(new FilterUIModel(m.strArea, flagUrl));
                     }
-                    view.showFilterOptions(uiModels, false);
+                    view.showFilterOptions(uiModels, true);
                     view.hideLoading();
                 }, error -> view.showError(error.getMessage())));
     }
@@ -197,7 +220,6 @@ public class SearchPresenterImp implements SearchPresenter {
         compositeDisposable.clear();
     }
 
-    // Helper method to map Area names to ISO 2-letter country codes
     private String getCountryCode(String areaName) {
         if (areaName == null) return null;
 

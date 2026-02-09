@@ -28,11 +28,14 @@ import com.example.mealmate.data.meals.models.Meal;
 import com.example.mealmate.ui.meals.view.MealsAdapter;
 import com.example.mealmate.ui.search.presenter.SearchPresenter;
 import com.example.mealmate.ui.search.presenter.SearchPresenterImp;
+import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -51,7 +54,8 @@ public class SearchFragment extends Fragment implements SearchView, MealsAdapter
     private RecyclerView rvFilterValues;
     private FilterAdapter filterAdapter;
     private String currentFilterType = null;
-    private List<String> currentFilterValues = new ArrayList<>();
+    private final Map<String, List<String>> activeFilters = new HashMap<>();
+    private Chip chipCategory, chipArea, chipIngredient;
 
     public SearchFragment() {
         // Required empty public constructor
@@ -78,6 +82,9 @@ public class SearchFragment extends Fragment implements SearchView, MealsAdapter
         ImageButton btnBack = view.findViewById(R.id.btn_back);
         ChipGroup chipGroupFilters = view.findViewById(R.id.chip_group_search_filters);
         rvFilterValues = view.findViewById(R.id.rv_filter_values);
+        chipCategory = view.findViewById(R.id.chip_category);
+        chipArea = view.findViewById(R.id.chip_area);
+        chipIngredient = view.findViewById(R.id.chip_ingredient);
 
         adapter = new MealsAdapter(searchResults, this);
         rvMeals.setLayoutManager(new GridLayoutManager(getContext(), 2));
@@ -85,21 +92,22 @@ public class SearchFragment extends Fragment implements SearchView, MealsAdapter
 
         btnBack.setOnClickListener(v -> Navigation.findNavController(v).navigateUp());
 
-        // Initialize filter adapter BEFORE chip listener
         filterAdapter = new FilterAdapter(selectedItems -> {
-            currentFilterValues = selectedItems;
-            triggerSearch(); // Fetch meals for the selected filter
+            if (currentFilterType != null) {
+                if (selectedItems.isEmpty()) {
+                    activeFilters.remove(currentFilterType);
+                } else {
+                    activeFilters.put(currentFilterType, selectedItems);
+                }
+                updateFilterChipsVisuals();
+                triggerSearch();
+            }
         });
 
         rvFilterValues.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         rvFilterValues.setAdapter(filterAdapter);
 
         chipGroupFilters.setOnCheckedChangeListener((group, checkedId) -> {
-            // Clear current filter values
-            currentFilterValues.clear();
-
-            // Clear the search bar text when switching filter types
-            searchBar.setText("");
 
             if (checkedId == R.id.chip_category) {
                 currentFilterType = "Category";
@@ -114,27 +122,51 @@ public class SearchFragment extends Fragment implements SearchView, MealsAdapter
                 rvFilterValues.setVisibility(View.VISIBLE);
                 presenter.loadIngredients();
             } else {
-                // No chip selected - show all meals
                 currentFilterType = null;
                 rvFilterValues.setVisibility(View.GONE);
+                activeFilters.clear();
+                updateFilterChipsVisuals();
                 presenter.getAllMeals();
             }
         });
 
         setupSearchObserver(searchBar);
-
-        // Load initial meals
         presenter.getAllMeals();
+    }
+
+    private void updateFilterChipsVisuals() {
+        updateChipLabel(chipCategory, "Category");
+        updateChipLabel(chipArea, "Area");
+        updateChipLabel(chipIngredient, "Ingredient");
+    }
+
+    private void updateChipLabel(Chip chip, String type) {
+        if (chip == null) return;
+
+        if (activeFilters.containsKey(type) && !activeFilters.get(type).isEmpty()) {
+            int count = activeFilters.get(type).size();
+            chip.setText(type + " (" + count + ")");
+        } else {
+            chip.setText(type);
+        }
     }
 
     private void triggerSearch() {
         String query = searchBar.getText().toString();
-        // This will use the Presenter's cache if the filter hasn't changed
-        presenter.searchMeals(query, currentFilterType, currentFilterValues);
+        presenter.searchMeals(query, activeFilters);
     }
 
     @Override
     public void showFilterOptions(List<FilterUIModel> options, boolean allowMultiSelect) {
+        if (activeFilters.containsKey(currentFilterType)) {
+            List<String> activeValues = activeFilters.get(currentFilterType);
+            for (FilterUIModel option : options) {
+                if (activeValues != null && activeValues.contains(option.getName())) {
+                    option.setSelected(true);
+                }
+            }
+        }
+
         filterAdapter.setItems(options);
         filterAdapter.setMultiSelect(allowMultiSelect);
         rvFilterValues.setVisibility(View.VISIBLE);
@@ -194,11 +226,7 @@ public class SearchFragment extends Fragment implements SearchView, MealsAdapter
 
     @Override
     public void showConnectionError() {
-        // Prevent showing the dialog if it's already visible
-        if (errorDialog != null && errorDialog.isShowing()) {
-            return;
-        }
-
+        if (errorDialog != null && errorDialog.isShowing()) return;
         errorDialog = new Dialog(requireContext());
         errorDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         errorDialog.setContentView(R.layout.dialog_no_connection);
@@ -215,9 +243,7 @@ public class SearchFragment extends Fragment implements SearchView, MealsAdapter
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        if (errorDialog != null && errorDialog.isShowing()) {
-            errorDialog.dismiss();
-        }
+        if (errorDialog != null && errorDialog.isShowing()) errorDialog.dismiss();
         presenter.onDestroy();
         disposable.clear();
     }

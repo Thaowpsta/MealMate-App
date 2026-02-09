@@ -73,7 +73,6 @@ public class PlannerPresenterImp implements PlannerPresenter {
             }
         }
 
-        // Always show the 3 slots for a single day view
         addMealOrButton(result, typeMap, "BREAKFAST", MealType.BREAKFAST);
         addMealOrButton(result, typeMap, "LUNCH", MealType.LUNCH);
         addMealOrButton(result, typeMap, "DINNER", MealType.DINNER);
@@ -88,10 +87,9 @@ public class PlannerPresenterImp implements PlannerPresenter {
             meal.idMeal = plan.mealId;
             meal.strMeal = plan.mealName;
             meal.strMealThumb = plan.mealThumb;
-            meal.strInstructions = "Planned for " + plan.date; // Minimal info
+            meal.strInstructions = "Planned for " + plan.date;
             result.add(new MealPlannerItem.MealItem(type, meal));
         } else {
-             // Only add 'Add' button if desired. Mock data showed it.
              result.add(new MealPlannerItem.AddMealButton(type, "Add " + type.name().toLowerCase()));
         }
     }

@@ -93,7 +93,6 @@ public class PlannerAdapter extends ListAdapter<MealPlannerItem, RecyclerView.Vi
         }
 
         public void bind(MealPlannerItem.AddMealButton item, OnPlannerActionClickListener listener) {
-            // FIX: Get localized string based on MealType
             int typeResId;
             switch (item.getMealType()) {
                 case BREAKFAST: typeResId = R.string.breakfast; break;
@@ -107,7 +106,6 @@ public class PlannerAdapter extends ListAdapter<MealPlannerItem, RecyclerView.Vi
             if (formattedText.contains("{0}")) {
                 formattedText = formattedText.replace("{0}", mealTypeName);
             } else {
-                // This handles "Add to %s" format
                 formattedText = itemView.getContext().getString(R.string.add_to_meal_type, mealTypeName);
             }
 

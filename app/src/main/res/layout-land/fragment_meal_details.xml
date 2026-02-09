@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/splash_subtitle_color"
+    tools:context=".ui.meal_details.view.MealDetailsFragment">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:paddingTop="@dimen/padding_margin_38">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="@dimen/padding_margin_16">
+
+            <!-- Left Column: Image and Basic Info -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:paddingEnd="@dimen/padding_margin_8">
+
+                <ImageView
+                    android:id="@+id/meal_bg_img"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:contentDescription="@string/mod"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/medium" />
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/padding_margin_16"
+                    android:alpha="0.9"
+                    app:cardCornerRadius="@dimen/padding_margin_16"
+                    app:cardElevation="@dimen/padding_margin_8">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="@dimen/padding_margin_16">
+
+                        <TextView
+                            android:id="@+id/meal_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="@dimen/padding_margin_8"
+                            android:fontFamily="@font/fredoka_bold"
+                            android:text="@string/meal_title"
+                            android:textColor="@color/txt_dark"
+                            android:textSize="@dimen/txt_size_25" />
+
+                        <com.google.android.material.chip.ChipGroup
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/meal_country"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:alpha="0.8"
+                                android:backgroundTint="@color/stroke_txt_field"
+                                android:clickable="false"
+                                android:text="@string/area"
+                                android:textColor="@color/txt_light"
+                                app:chipCornerRadius="@dimen/padding_margin_16"
+                                app:chipStrokeColor="@color/secondary_color_end" />
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/meal_category"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:alpha="0.8"
+                                android:backgroundTint="@color/stroke_txt_field"
+                                android:clickable="false"
+                                android:text="@string/category"
+                                android:textColor="@color/txt_light"
+                                app:chipCornerRadius="@dimen/padding_margin_16"
+                                app:chipStrokeColor="@color/secondary_color_end" />
+                        </com.google.android.material.chip.ChipGroup>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- Video Section -->
+                <TextView
+                    android:id="@+id/tv_video_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/padding_margin_16"
+                    android:fontFamily="@font/fredoka_bold"
+                    android:text="@string/video_tutorial"
+                    android:textColor="@color/txt_dark"
+                    android:textSize="@dimen/txt_size_16" />
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/video_card"
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:layout_marginTop="@dimen/padding_margin_8"
+                    app:cardCornerRadius="@dimen/padding_margin_16"
+                    app:cardElevation="@dimen/padding_margin_3">
+
+                    <com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
+                        android:id="@+id/youtube_player_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:autoPlay="false"
+                        app:videoId="S0Q4gqBUs7c" />
+
+                </androidx.cardview.widget.CardView>
+
+            </LinearLayout>
+
+            <!-- Right Column: Ingredients and Instructions -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:paddingStart="@dimen/padding_margin_8">
+
+                <!-- Ingredients Section -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/textView"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/fredoka_bold"
+                        android:text="@string/ingredients"
+                        android:textColor="@color/txt_dark"
+                        android:textSize="@dimen/txt_size_16" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/item_num"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:clickable="false"
+                        android:padding="@dimen/padding_margin_3"
+                        android:text="@string/item_num"
+                        android:textColor="@color/splash_subtitle_color"
+                        app:chipBackgroundColor="@color/secondary_color_end"
+                        app:chipCornerRadius="@dimen/padding_margin_16"
+                        app:chipStrokeColor="@color/splash_subtitle_color" />
+                </LinearLayout>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/ingredients_card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/padding_margin_8"
+                    app:cardCornerRadius="@dimen/padding_margin_16"
+                    app:cardElevation="@dimen/padding_margin_3">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rv_ingredients"
+                        android:layout_width="match_parent"
+                        android:layout_height="150dp"
+                        android:nestedScrollingEnabled="true"
+                        android:padding="@dimen/padding_margin_8"
+                        tools:listitem="@layout/item_ingredient" />
+                </androidx.cardview.widget.CardView>
+
+                <!-- Instructions Section -->
+                <TextView
+                    android:id="@+id/textView2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/padding_margin_16"
+                    android:fontFamily="@font/fredoka_bold"
+                    android:text="@string/instructions"
+                    android:textColor="@color/txt_dark"
+                    android:textSize="@dimen/txt_size_16" />
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/instructions_card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/padding_margin_8"
+                    app:cardCornerRadius="@dimen/padding_margin_16"
+                    app:cardElevation="@dimen/padding_margin_3">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="@dimen/padding_margin_16">
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rv_instructions"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:nestedScrollingEnabled="false"
+                            tools:itemCount="3" />
+
+                        <TextView
+                            android:id="@+id/see_more_steps"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginTop="@dimen/padding_margin_3"
+                            android:fontFamily="@font/fredoka_bold"
+                            android:padding="@dimen/padding_margin_8"
+                            android:text="@string/see_all"
+                            android:textColor="@color/primary_button_start" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- Action Button -->
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_add_to_plan"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/padding_margin_38"
+                    android:layout_marginTop="@dimen/padding_margin_16"
+                    android:background="@drawable/primary_button_filled"
+                    android:padding="@dimen/padding_margin_8"
+                    android:text="@string/add_to_plan"
+                    android:textAllCaps="false"
+                    android:textColor="@color/splash_subtitle_color"
+                    android:textSize="@dimen/txt_size_16"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <ImageButton
+        android:id="@+id/btn_favorite"
+        android:layout_width="@dimen/padding_margin_38"
+        android:layout_height="@dimen/padding_margin_38"
+        android:layout_margin="@dimen/padding_margin_16"
+        android:background="@drawable/transparent_rounded_btn"
+        android:contentDescription="@string/add_to_favorites"
+        android:elevation="@dimen/padding_margin_8"
+        android:src="@drawable/favorite"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/primary_button_end" />
+
+    <ImageButton
+        android:id="@+id/btn_back"
+        android:layout_width="@dimen/padding_margin_38"
+        android:layout_height="@dimen/padding_margin_38"
+        android:layout_margin="@dimen/padding_margin_16"
+        android:background="@drawable/transparent_rounded_btn"
+        android:contentDescription="@string/back"
+        android:elevation="@dimen/padding_margin_8"
+        android:src="@drawable/outline_arrow_back_24"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/primary_button_start" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

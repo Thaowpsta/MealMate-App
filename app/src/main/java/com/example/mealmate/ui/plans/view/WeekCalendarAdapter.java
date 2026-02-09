@@ -39,14 +39,12 @@ public class WeekCalendarAdapter extends RecyclerView.Adapter<WeekCalendarAdapte
         holder.tvDayNumber.setText(day.getDayNumber());
 
         if (selectedPosition == position) {
-            // SELECTED: Use Gradient Drawable & White Text
             holder.container.setBackgroundResource(R.drawable.primary_button_filled);
-            holder.container.setBackgroundTintList(null); // Important: Clear tint to show gradient
+            holder.container.setBackgroundTintList(null);
 
             holder.tvDayName.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.splash_subtitle_color));
             holder.tvDayNumber.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.splash_subtitle_color));
         } else {
-            // UNSELECTED: Use Shape Drawable & Tint & Dark/Gray Text
             holder.container.setBackgroundResource(R.drawable.rounded_txt_field);
             holder.container.setBackgroundTintList(ContextCompat.getColorStateList(holder.itemView.getContext(), R.color.splash_subtitle_color));
 
@@ -81,9 +79,9 @@ public class WeekCalendarAdapter extends RecyclerView.Adapter<WeekCalendarAdapte
     }
 
     public static class DayModel {
-        private String dayName;
-        private String dayNumber;
-        private String fullDate;
+        private final String dayName;
+        private final String dayNumber;
+        private final String fullDate;
 
         public DayModel(String dayName, String dayNumber, String fullDate) {
             this.dayName = dayName;

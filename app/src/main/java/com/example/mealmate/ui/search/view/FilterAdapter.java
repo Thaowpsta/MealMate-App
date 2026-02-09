@@ -3,7 +3,6 @@ package com.example.mealmate.ui.search.view;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -37,9 +36,6 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.FilterView
 
     public void setMultiSelect(boolean multiSelect) {
         isMultiSelect = multiSelect;
-        for (FilterUIModel item : items) {
-            item.setSelected(false);
-        }
         notifyDataSetChanged();
     }
 
@@ -56,6 +52,34 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.FilterView
         holder.chip.setText(item.getName());
         holder.chip.setChecked(item.isSelected());
 
+        loadChipIcon(holder, item);
+
+        holder.itemView.setOnClickListener(v -> {
+            if (!isMultiSelect) {
+                boolean wasSelected = item.isSelected();
+
+                for (FilterUIModel m : items) {
+                    m.setSelected(false);
+                }
+                if (!wasSelected) {
+                    item.setSelected(true);
+                }
+            } else {
+                item.setSelected(!item.isSelected());
+            }
+            notifyDataSetChanged();
+
+            List<String> selectedNames = new ArrayList<>();
+            for (FilterUIModel m : items) {
+                if (m.isSelected()) {
+                    selectedNames.add(m.getName());
+                }
+            }
+            listener.onFilterClick(selectedNames);
+        });
+    }
+
+    private void loadChipIcon(FilterViewHolder holder, FilterUIModel item) {
         if (item.getImageUrl() != null && !item.getImageUrl().isEmpty()) {
             Glide.with(holder.itemView.getContext())
                     .load(item.getImageUrl())
@@ -76,28 +100,6 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.FilterView
             holder.chip.setChipIcon(null);
             holder.chip.setChipIconVisible(false);
         }
-
-        holder.itemView.setOnClickListener(v -> {
-            android.util.Log.d("FilterAdapter", "Item clicked: " + item.getName());
-
-            if (!isMultiSelect) {
-                for (FilterUIModel m : items) {
-                    m.setSelected(false);
-                }
-                item.setSelected(true);
-            } else {
-                item.setSelected(!item.isSelected());
-            }
-            notifyDataSetChanged();
-
-            List<String> selectedNames = new ArrayList<>();
-            for (FilterUIModel m : items) {
-                if (m.isSelected()) {
-                    selectedNames.add(m.getName());
-                }
-            }
-            listener.onFilterClick(selectedNames);
-        });
     }
 
     @Override
@@ -111,6 +113,7 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.FilterView
         public FilterViewHolder(@NonNull View itemView) {
             super(itemView);
             chip = itemView.findViewById(R.id.category_chip);
+            chip.setClickable(false);
         }
     }
 }

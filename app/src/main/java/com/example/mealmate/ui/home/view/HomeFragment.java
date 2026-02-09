@@ -64,7 +64,6 @@ public class HomeFragment extends Fragment implements HomeView {
     private Meal currentMeal;
     private RecyclerView rvCategories;
 
-    private String displayDate;
     private String cacheDateKey;
 
     private Date selectedDateForPlan;
@@ -121,7 +120,7 @@ public class HomeFragment extends Fragment implements HomeView {
 
         // 1. Format for UI
         SimpleDateFormat displayFormat = new SimpleDateFormat("EEEE, MMM. d", Locale.getDefault());
-        displayDate = displayFormat.format(today);
+        String displayDate = displayFormat.format(today);
         date.setText(displayDate);
 
         // 2. Format for Cache
