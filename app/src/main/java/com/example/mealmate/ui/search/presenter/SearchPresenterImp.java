@@ -42,6 +42,7 @@ public class SearchPresenterImp implements SearchPresenter {
 
         view.showLoading();
         compositeDisposable.add(repository.searchMeals("a")
+                .flatMap(this::mapFavorites) // Check favorites
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         meals -> {
@@ -67,6 +68,7 @@ public class SearchPresenterImp implements SearchPresenter {
                     }
                     return Single.just(new ArrayList<Meal>());
                 })
+                .flatMap(this::mapFavorites) // Check favorites
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         meals -> view.showSearchResults(meals),
@@ -91,6 +93,7 @@ public class SearchPresenterImp implements SearchPresenter {
             view.showConnectionError();
         }
     }
+
     @Override
     public void searchMeals(String query, Map<String, List<String>> filters) {
         if (filters == null || filters.isEmpty()) {
@@ -100,6 +103,7 @@ public class SearchPresenterImp implements SearchPresenter {
             }
             view.showLoading();
             compositeDisposable.add(repository.searchMeals(query)
+                    .flatMap(this::mapFavorites)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
                             meals -> {
@@ -156,6 +160,7 @@ public class SearchPresenterImp implements SearchPresenter {
                     }
                     return result;
                 })
+                .flatMap(this::mapFavorites)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(meals -> {
@@ -244,10 +249,10 @@ public class SearchPresenterImp implements SearchPresenter {
         if (areaName == null) return null;
 
         switch (areaName) {
-            case "Algerian": return "dz";      // Added
+            case "Algerian": return "dz";
             case "American": return "us";
-            case "Argentinian": return "ar";   // Added
-            case "Australian": return "au";    // Added
+            case "Argentinian": return "ar";
+            case "Australian": return "au";
             case "British": return "gb";
             case "Canadian": return "ca";
             case "Chinese": return "cn";
@@ -270,18 +275,34 @@ public class SearchPresenterImp implements SearchPresenter {
             case "Polish": return "pl";
             case "Portuguese": return "pt";
             case "Russian": return "ru";
-            case "Saudi Arabian": return "sa"; // Added
-            case "Slovakian": return "sk";     // Added
+            case "Saudi Arabian": return "sa";
+            case "Slovakian": return "sk";
             case "Spanish": return "es";
-            case "Syrian": return "sy";        // Added
+            case "Syrian": return "sy";
             case "Thai": return "th";
             case "Tunisian": return "tn";
             case "Turkish": return "tr";
             case "Ukrainian": return "ua";
-            case "Uruguayan": return "uy";     // Added
+            case "Uruguayan": return "uy";
             case "Vietnamese": return "vn";
-            case "Venezulan": return "ve";    // Added
+            case "Venezulan": return "ve";
             default: return null;
         }
+    }
+
+    private Single<List<Meal>> mapFavorites(List<Meal> meals) {
+        return repository.getFavorites()
+                .first(new ArrayList<>())
+                .map(favMeals -> {
+                    List<String> favIds = new ArrayList<>();
+                    for(Meal m : favMeals) {
+                        favIds.add(m.getId());
+                    }
+
+                    for (Meal meal : meals) {
+                        meal.isFavorite = favIds.contains(meal.getId());
+                    }
+                    return meals;
+                });
     }
 }
