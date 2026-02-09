@@ -53,4 +53,7 @@ public interface MealDAO {
 
     @Query("SELECT * FROM meal_plans WHERE date = :date AND mealType = :type AND userId = :userId")
     PlannedMealDTO getPlanByDateAndTypeSync(String date, String type, String userId);
+
+    @Query("DELETE FROM meal_plans WHERE date = :date AND mealType = :type AND userId = :userId")
+    Completable deletePlan(String date, String type, String userId);
 }

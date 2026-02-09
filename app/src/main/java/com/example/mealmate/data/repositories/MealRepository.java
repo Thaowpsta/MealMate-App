@@ -267,6 +267,22 @@ public class MealRepository {
         }).subscribeOn(Schedulers.io());
     }
 
+    public Completable deletePlan(String date, String type, String mealId) {
+        String uid = auth.getUid();
+        if (uid == null) return Completable.error(new Exception("User not logged in"));
+
+        String docId = date + "_" + type + "_" + mealId;
+
+        Completable firestoreDelete = Completable.create(emitter -> {
+            firestore.collection("users").document(uid).collection("plans").document(docId).delete()
+                    .addOnSuccessListener(aVoid -> emitter.onComplete())
+                    .addOnFailureListener(emitter::onError);
+        });
+
+        return firestoreDelete.mergeWith(localDataSource.deletePlan(date, type, uid))
+                .subscribeOn(Schedulers.io());
+    }
+
     private void deleteFirestorePlanSync(PlannedMealDTO plan) {
         String uid = auth.getUid();
         if (uid == null) return;

@@ -17,6 +17,7 @@ import androidx.annotation.Nullable;
 import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -240,6 +241,41 @@ public class PlannerFragment extends Fragment implements PlannerView {
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
+
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = viewHolder.getAdapterPosition();
+                if (position >= 0 && position < adapter.getCurrentList().size()) {
+                    MealPlannerItem item = adapter.getCurrentList().get(position);
+
+                    if (item instanceof MealPlannerItem.MealItem) {
+                        presenter.deletePlan((MealPlannerItem.MealItem) item, currentViewDate);
+                    } else {
+                        adapter.notifyItemChanged(position);
+                    }
+                }
+            }
+
+            @Override
+            public int getSwipeDirs(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
+                int position = viewHolder.getAdapterPosition();
+                if (position >= 0 && position < adapter.getCurrentList().size()) {
+                    MealPlannerItem item = adapter.getCurrentList().get(position);
+                    if (item instanceof MealPlannerItem.AddMealButton) {
+                        return 0;
+                    }
+                }
+                return super.getSwipeDirs(recyclerView, viewHolder);
+            }
+        };
+
+        new ItemTouchHelper(simpleItemTouchCallback).attachToRecyclerView(recyclerView);
     }
 
     private void showWeekCalendarDialog() {

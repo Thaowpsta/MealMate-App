@@ -62,10 +62,33 @@ public class PlannerPresenterImp implements PlannerPresenter {
         );
     }
 
+    @Override
+    public void deletePlan(MealPlannerItem.MealItem item, Date date) {
+        SimpleDateFormat dbFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        String dateStr = dbFormat.format(date);
+
+        compositeDisposable.add(repository.deletePlan(dateStr, item.getMealType().name(), item.getMeal().getId())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        () -> {
+                            if (view != null) {
+                                view.showError("Meal removed");
+                                getMealsByDate(date);
+                            }
+                        },
+                        error -> {
+                            if (view != null) {
+                                view.showError("Failed to remove meal: " + error.getMessage());
+                            }
+                        }
+                )
+        );
+    }
+
     private List<MealPlannerItem> processPlansForDay(List<PlannedMealDTO> dayPlans) {
         List<MealPlannerItem> result = new ArrayList<>();
 
-        // Map to check existing types efficiently
         Map<String, PlannedMealDTO> typeMap = new HashMap<>();
         if (dayPlans != null) {
             for (PlannedMealDTO p : dayPlans) {
