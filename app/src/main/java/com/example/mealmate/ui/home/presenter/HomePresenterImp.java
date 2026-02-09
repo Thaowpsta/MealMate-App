@@ -105,11 +105,11 @@ public class HomePresenterImp implements HomePresenter {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        meals -> {
+                        meal -> {
                             if (view != null) {
                                 view.hideLoading();
-                                if (meals != null && !meals.isEmpty()) {
-                                    view.showMeal(meals.get(0));
+                                if (meal != null ) {
+                                    view.showMeal(meal);
                                 }
                             }
                         },

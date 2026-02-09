@@ -102,9 +102,25 @@ public class PlannerFragment extends Fragment implements PlannerView {
 
         gestureDetector = new GestureDetector(getContext(), new SwipeGestureListener());
 
-        View.OnTouchListener touchListener = (v, event) -> gestureDetector.onTouchEvent(event);
-        recyclerView.setOnTouchListener(touchListener);
-        view.setOnTouchListener(touchListener);
+        recyclerView.setOnTouchListener(new View.OnTouchListener() {
+            private boolean isItemTouch = false;
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
+                    View child = recyclerView.findChildViewUnder(event.getX(), event.getY());
+                    isItemTouch = (child != null);
+                }
+
+                if (isItemTouch) {
+                    return false;
+                } else {
+                    return gestureDetector.onTouchEvent(event);
+                }
+            }
+        });
+
+        view.setOnTouchListener((v, event) -> gestureDetector.onTouchEvent(event));
 
         backBtn.setOnClickListener(v -> Navigation.findNavController(v).navigateUp());
 

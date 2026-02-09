@@ -71,7 +71,7 @@ public class SearchPresenterImp implements SearchPresenter {
                 .flatMap(this::mapFavorites) // Check favorites
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        meals -> view.showSearchResults(meals),
+                        view::showSearchResults,
                         error -> view.showError(error.getMessage())
                 ));
     }

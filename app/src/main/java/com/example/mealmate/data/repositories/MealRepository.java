@@ -53,7 +53,7 @@ public class MealRepository {
         this.sharedPrefsManager = SharedPreferencesManager.getInstance(context);
     }
 
-    public Single<List<Meal>> getRandomMeal() {
+    public Single<Meal> getRandomMeal() {
         return remoteMealDataSource.getRandomMealService();
     }
 
@@ -64,13 +64,11 @@ public class MealRepository {
         }
 
         return remoteMealDataSource.getMealByIdService(id)
-                .doOnSuccess(sharedPrefsManager::cacheMealDetails)
-                .subscribeOn(Schedulers.io());
+                .doOnSuccess(sharedPrefsManager::cacheMealDetails).subscribeOn(Schedulers.io());
     }
 
     public Single<List<Meal>> searchMeals(String query) {
-        return remoteMealDataSource.searchMeals(query)
-                .subscribeOn(Schedulers.io());
+        return remoteMealDataSource.searchMeals(query).subscribeOn(Schedulers.io());
     }
 
     public Single<List<Category>> getCategories() {
@@ -186,7 +184,8 @@ public class MealRepository {
     public Flowable<List<Meal>> getFavorites() {
         String uid = auth.getUid();
         if (uid == null) return Flowable.error(new Exception("User not logged in"));
-        return localDataSource.getFavoriteMeals(uid).map(entities -> entities.stream().map(MealDTO::toMeal).collect(Collectors.toList())).subscribeOn(Schedulers.io());
+        return localDataSource.getFavoriteMeals(uid).map(entities -> entities.stream().map(MealDTO::toMeal)
+                .collect(Collectors.toList())).subscribeOn(Schedulers.io());
     }
 
     public Single<Boolean> isFavorite(String id) {

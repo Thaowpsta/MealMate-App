@@ -14,15 +14,12 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable;
 public class MealRemoteDataSource {
 
     private final MealService mealService;
-    private final CompositeDisposable compositeDisposable = new CompositeDisposable();
-
     public MealRemoteDataSource() {
         mealService = RetrofitClient.getInstance().getMealService();
     }
 
-    public Single<List<Meal>> getRandomMealService() {
-        return mealService.getRandomMeal()
-                .map(response -> response.meals);
+    public Single<Meal> getRandomMealService() {
+        return mealService.getRandomMeal().map(response -> response.meals.get(0));
     }
 
     public Single<Meal> getMealByIdService(String id) {
@@ -37,8 +34,7 @@ public class MealRemoteDataSource {
     }
 
     public Single<List<Meal>> searchMeals(String query) {
-        return mealService.searchMeals(query)
-                .map(response -> response.meals);
+        return mealService.searchMeals(query).map(response -> response.meals);
     }
 
     public Single<MealResponse> filterByCategory(String category) {
@@ -54,12 +50,10 @@ public class MealRemoteDataSource {
     }
 
     public Single<List<Meal>> getAreas() {
-        return mealService.getAreas()
-                .map(response -> response.meals);
+        return mealService.getAreas().map(response -> response.meals);
     }
 
     public Single<List<Ingredient>> getIngredients() {
-        return mealService.getIngredients()
-                .map(response -> response.meals);
+        return mealService.getIngredients().map(response -> response.meals);
     }
 }
