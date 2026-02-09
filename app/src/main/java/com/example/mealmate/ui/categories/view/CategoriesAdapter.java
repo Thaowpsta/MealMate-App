@@ -93,7 +93,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
             Glide.with(cardHolder.itemView.getContext())
                     .load(category.strCategoryThumb)
-                    .placeholder(R.drawable.medium)
+                    .placeholder(R.drawable.plate)
                     .into(cardHolder.image);
         }
     }

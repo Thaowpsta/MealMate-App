@@ -23,7 +23,7 @@
             android:layout_gravity="center"
             android:contentDescription="@string/meal_title"
             android:scaleType="centerCrop"
-            android:src="@drawable/medium" />
+            android:src="@drawable/plate" />
 
         <TextView
             android:id="@+id/mealTitle1"

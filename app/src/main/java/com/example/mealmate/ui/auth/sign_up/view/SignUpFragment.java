@@ -21,6 +21,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.example.mealmate.R;
 import com.example.mealmate.data.repositories.UserRepository;
 import com.example.mealmate.ui.auth.sign_up.presenter.SignUpPresenterImp;
@@ -41,9 +42,8 @@ public class SignUpFragment extends Fragment implements SignUpView{
     private EditText passwordInput;
     private EditText confirmPasswordInput;
     private Button signUpButton;
-    private ProgressBar progressBar;
+    private LottieAnimationView loadingAnimation;
     private Button guestButton;
-
     private SignUpPresenterImp presenter;
     private CallbackManager callbackManager; // Facebook
     private ActivityResultLauncher<Intent> googleSignInLauncher;
@@ -88,7 +88,7 @@ public class SignUpFragment extends Fragment implements SignUpView{
         guestButton = view.findViewById(R.id.guest);
         signUpButton = view.findViewById(R.id.sign_up);
         TextView loginText = view.findViewById(R.id.login);
-//        progressBar = view.findViewById(R.id.progress_bar);
+        loadingAnimation = view.findViewById(R.id.animation_view);
         ImageView googleBtn = view.findViewById(R.id.ic_google);
         ImageView facebookBtn = view.findViewById(R.id.ic_facebook);
 
@@ -143,13 +143,17 @@ public class SignUpFragment extends Fragment implements SignUpView{
 
     @Override
     public void showProgress() {
-//        progressBar.setVisibility(View.VISIBLE);
+        if (loadingAnimation != null) {
+            loadingAnimation.setVisibility(View.VISIBLE);
+        }
         signUpButton.setEnabled(false);
     }
 
     @Override
     public void hideProgress() {
-//        progressBar.setVisibility(View.GONE);
+        if (loadingAnimation != null) {
+            loadingAnimation.setVisibility(View.VISIBLE);
+        }
         signUpButton.setEnabled(true);
     }
 

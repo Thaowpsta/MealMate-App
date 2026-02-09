@@ -22,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.example.mealmate.R;
 import com.example.mealmate.ui.auth.login.presenter.LoginPresenter;
 import com.example.mealmate.ui.auth.login.presenter.LoginPresenterImp;
@@ -41,7 +42,7 @@ public class LoginFragment extends Fragment implements LoginView {
     private EditText passwordInput;
     private Button loginButton;
     private Button guestButton;
-//    private ProgressBar progressBar;
+    private LottieAnimationView loadingAnimation;
     private CallbackManager callbackManager; // Facebook
     private ActivityResultLauncher<Intent> googleSignInLauncher;
 
@@ -84,7 +85,7 @@ public class LoginFragment extends Fragment implements LoginView {
         loginButton = view.findViewById(R.id.login);
         guestButton = view.findViewById(R.id.guest);
         TextView signUpText = view.findViewById(R.id.sign_up);
-//        progressBar = view.findViewById(R.id.progress_bar);
+        loadingAnimation = view.findViewById(R.id.animation_view);
         ImageView googleBtn = view.findViewById(R.id.btn_google);
         ImageView facebookBtn = view.findViewById(R.id.btn_facebook);
 
@@ -141,14 +142,14 @@ public class LoginFragment extends Fragment implements LoginView {
 
     @Override
     public void showProgress() {
-//        if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
+        if (loadingAnimation != null) loadingAnimation.setVisibility(View.VISIBLE);
         if (loginButton != null) loginButton.setEnabled(false);
         if (guestButton != null) guestButton.setEnabled(false);
     }
 
     @Override
     public void hideProgress() {
-//        if (progressBar != null) progressBar.setVisibility(View.GONE);
+        if (loadingAnimation != null) loadingAnimation.setVisibility(View.GONE);
         if (loginButton != null) loginButton.setEnabled(true);
         if (guestButton != null) guestButton.setEnabled(true);
     }

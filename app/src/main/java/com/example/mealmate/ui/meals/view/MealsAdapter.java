@@ -64,7 +64,7 @@ public class MealsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
             Glide.with(cardHolder.itemView.getContext())
                     .load(meal.strMealThumb)
-                    .placeholder(R.drawable.medium)
+                    .placeholder(R.drawable.plate)
                     .into(cardHolder.image);
 
         holder.itemView.setOnClickListener(v -> {

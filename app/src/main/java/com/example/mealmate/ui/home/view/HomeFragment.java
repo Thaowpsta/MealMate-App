@@ -1,8 +1,6 @@
 package com.example.mealmate.ui.home.view;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -28,6 +26,7 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.bumptech.glide.Glide;
 import com.example.mealmate.R;
 import com.example.mealmate.data.categories.model.Category;
@@ -55,7 +54,6 @@ import java.util.Locale;
 public class HomeFragment extends Fragment implements HomeView {
 
     private HomePresenter presenter;
-
     private TextView mealTitle, favNum, plannedNum, planTitle, planType;
     private ImageView mealImage, planImage;
     private Chip areaChip, categoryChip;
@@ -63,7 +61,7 @@ public class HomeFragment extends Fragment implements HomeView {
     private UserRepository userRepository;
     private Meal currentMeal;
     private RecyclerView rvCategories;
-
+    private LottieAnimationView loadingAnimation;
     private String cacheDateKey;
 
     private Date selectedDateForPlan;
@@ -92,6 +90,7 @@ public class HomeFragment extends Fragment implements HomeView {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        loadingAnimation = view.findViewById(R.id.animation_view);
         mealTitle = view.findViewById(R.id.meal_title);
         mealImage = view.findViewById(R.id.meal_bg_img);
         refreshButton = view.findViewById(R.id.mod_refresh);
@@ -290,10 +289,16 @@ public class HomeFragment extends Fragment implements HomeView {
     public void showLoading() {
         refreshButton.setEnabled(false);
         mealTitle.setText(R.string.loading);
+        if (loadingAnimation != null) {
+            loadingAnimation.setVisibility(View.VISIBLE);
+        }
     }
     @Override
     public void hideLoading() {
         refreshButton.setEnabled(true);
+        if (loadingAnimation != null) {
+            loadingAnimation.setVisibility(View.GONE);
+        }
     }
     @Override
     public void showMeal(Meal meal) {
@@ -305,7 +310,7 @@ public class HomeFragment extends Fragment implements HomeView {
         String mealJson = new Gson().toJson(meal);
         userRepository.saveCachedMeal(mealJson, cacheDateKey);
 
-        Glide.with(this).load(meal.strMealThumb).error(R.drawable.medium).into(mealImage);
+        Glide.with(this).load(meal.strMealThumb).error(R.drawable.plate).into(mealImage);
     }
 
     @Override
@@ -324,7 +329,7 @@ public class HomeFragment extends Fragment implements HomeView {
             if (planImage != null) {
                 Glide.with(this)
                         .load(plan.mealThumb)
-                        .error(R.drawable.medium)
+                        .error(R.drawable.plate)
                         .centerCrop()
                         .into(planImage);
             }

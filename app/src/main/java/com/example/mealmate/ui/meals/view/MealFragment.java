@@ -16,6 +16,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.example.mealmate.R;
 import com.example.mealmate.data.meals.models.Meal;
 import com.example.mealmate.ui.meals.presenter.MealsPresenter;
@@ -31,6 +32,7 @@ public class MealFragment extends Fragment implements MealsView, MealsAdapter.On
     private MealsPresenter presenter;
     private final List<Meal> mealsList = new ArrayList<>();
     private TextView subtitle;
+    private LottieAnimationView loadingAnimation;
 
     public MealFragment() {
         // Required empty public constructor
@@ -55,6 +57,7 @@ public class MealFragment extends Fragment implements MealsView, MealsAdapter.On
         RecyclerView recyclerView = view.findViewById(R.id.rv_meals);
         ImageButton btnBack = view.findViewById(R.id.btn_back);
         subtitle = view.findViewById(R.id.meals_subtitle);
+        loadingAnimation = view.findViewById(R.id.animation_view);
 
         btnBack.setOnClickListener(v -> Navigation.findNavController(v).popBackStack());
 
@@ -77,12 +80,16 @@ public class MealFragment extends Fragment implements MealsView, MealsAdapter.On
 
     @Override
     public void showLoading() {
-
+        if (loadingAnimation != null) {
+            loadingAnimation.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
     public void hideLoading() {
-
+        if (loadingAnimation != null) {
+            loadingAnimation.setVisibility(View.GONE);
+        }
     }
 
     @Override

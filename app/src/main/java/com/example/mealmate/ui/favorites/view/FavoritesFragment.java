@@ -16,6 +16,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.example.mealmate.R;
 import com.example.mealmate.data.meals.models.Meal;
 import com.example.mealmate.ui.favorites.presenter.FavoritesPresenterImp;
@@ -28,6 +29,8 @@ public class FavoritesFragment extends Fragment implements FavoriteView, OnFavor
     private RecyclerView recyclerView;
     private FavoritesPresenterImp presenter;
     private TextView favorites;
+    private LottieAnimationView loadingAnimation;
+
 
     public FavoritesFragment() {
         // Required empty public constructor
@@ -53,6 +56,7 @@ public class FavoritesFragment extends Fragment implements FavoriteView, OnFavor
         recyclerView = view.findViewById(R.id.rv_favorites);
         favorites = view.findViewById(R.id.fav_num);
         ImageButton btnBack = view.findViewById(R.id.btn_back);
+        loadingAnimation = view.findViewById(R.id.animation_view);
 
         presenter.getFavorites();
 
@@ -61,10 +65,16 @@ public class FavoritesFragment extends Fragment implements FavoriteView, OnFavor
 
     @Override
     public void showLoading() {
+        if (loadingAnimation != null) {
+            loadingAnimation.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
     public void hideLoading() {
+        if (loadingAnimation != null) {
+            loadingAnimation.setVisibility(View.GONE);
+        }
     }
 
     @Override

@@ -30,6 +30,7 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.bumptech.glide.Glide;
 import com.example.mealmate.R;
 import com.example.mealmate.data.meals.models.Meal;
@@ -67,6 +68,7 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
     private Meal currentMeal;
     private Date selectedDateForPlan;
     private CardView videoCard;
+    private LottieAnimationView loadingAnimation;
 
     public MealDetailsFragment() {
         // Required empty public constructor
@@ -102,6 +104,7 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
         AppCompatButton btnAddToPlan = view.findViewById(R.id.btn_add_to_plan);
         videoCard = view.findViewById(R.id.video_card);
         videoLabel = view.findViewById(R.id.tv_video_label);
+        loadingAnimation = view.findViewById(R.id.animation_view);
 
         getLifecycle().addObserver(youTubePlayerView);
 
@@ -249,8 +252,8 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
 
         Glide.with(this)
                 .load(meal.strMealThumb)
-                .placeholder(R.drawable.medium)
-                .error(R.drawable.medium)
+                .placeholder(R.drawable.plate)
+                .error(R.drawable.plate)
                 .into(mealImage);
 
         List<Pair<String, String>> ingredientList = meal.getIngredientsAndMeasures();
@@ -429,10 +432,16 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
 
     @Override
     public void showLoading() {
+        if (loadingAnimation != null) {
+            loadingAnimation.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
     public void hideLoading() {
+        if (loadingAnimation != null) {
+            loadingAnimation.setVisibility(View.GONE);
+        }
     }
 
     @Override

@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.example.mealmate.R;
 import com.example.mealmate.data.repositories.UserRepository;
 import com.example.mealmate.ui.main.MainActivity;

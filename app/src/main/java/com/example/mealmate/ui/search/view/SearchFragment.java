@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.example.mealmate.R;
 import com.example.mealmate.data.meals.models.FilterUIModel;
 import com.example.mealmate.data.meals.models.Meal;
@@ -56,6 +57,7 @@ public class SearchFragment extends Fragment implements SearchView, MealsAdapter
     private String currentFilterType = null;
     private final Map<String, List<String>> activeFilters = new HashMap<>();
     private Chip chipCategory, chipArea, chipIngredient;
+    private LottieAnimationView loadingAnimation;
 
     public SearchFragment() {
         // Required empty public constructor
@@ -85,6 +87,7 @@ public class SearchFragment extends Fragment implements SearchView, MealsAdapter
         chipCategory = view.findViewById(R.id.chip_category);
         chipArea = view.findViewById(R.id.chip_area);
         chipIngredient = view.findViewById(R.id.chip_ingredient);
+        loadingAnimation = view.findViewById(R.id.animation_view);
 
         adapter = new MealsAdapter(searchResults, this);
         rvMeals.setLayoutManager(new GridLayoutManager(getContext(), 2));
@@ -197,10 +200,18 @@ public class SearchFragment extends Fragment implements SearchView, MealsAdapter
     }
 
     @Override
-    public void showLoading() { }
+    public void showLoading() {
+        if (loadingAnimation != null) {
+            loadingAnimation.setVisibility(View.VISIBLE);
+        }
+    }
 
     @Override
-    public void hideLoading() { }
+    public void hideLoading() {
+        if (loadingAnimation != null) {
+            loadingAnimation.setVisibility(View.GONE);
+        }
+    }
 
     @Override
     public void showSearchResults(List<Meal> meals) {

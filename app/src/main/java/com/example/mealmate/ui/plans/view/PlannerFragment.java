@@ -20,6 +20,7 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.example.mealmate.R;
 import com.example.mealmate.data.meals.models.MealPlannerItem;
 import com.example.mealmate.data.meals.models.MealType;
@@ -48,6 +49,7 @@ public class PlannerFragment extends Fragment implements PlannerView {
     private ImageView prevDayBtn, nextDayBtn;
     private GestureDetector gestureDetector;
     private boolean isAnimating = false;
+    private LottieAnimationView loadingAnimation;
 
     public PlannerFragment() {
         // Required empty public constructor
@@ -86,6 +88,7 @@ public class PlannerFragment extends Fragment implements PlannerView {
         prevDayBtn = view.findViewById(R.id.imageView);
         nextDayBtn = view.findViewById(R.id.imageView1);
         mealsCount = view.findViewById(R.id.day_meal_count);
+        loadingAnimation = view.findViewById(R.id.animation_view);
 
         presenter = new PlannerPresenterImp(this, requireContext());
 
@@ -140,24 +143,14 @@ public class PlannerFragment extends Fragment implements PlannerView {
     private void animateDateChange(int direction) {
         isAnimating = true;
 
-        // Check layout direction
         boolean isRtl = ViewCompat.getLayoutDirection(recyclerView) == ViewCompat.LAYOUT_DIRECTION_RTL;
-
-        // Direction > 0 (Next Day):
-        // LTR: Slide out to Left (-Width), Enter from Right (+Width)
-        // RTL: Slide out to Right (+Width), Enter from Left (-Width) [INVERTED]
-
-        // Direction < 0 (Prev Day):
-        // LTR: Slide out to Right (+Width), Enter from Left (-Width)
-        // RTL: Slide out to Left (-Width), Enter from Right (+Width) [INVERTED]
-
         float slideOutTo;
         float enterFrom;
 
-        if (direction > 0) { // Next Day
+        if (direction > 0) {
             slideOutTo = isRtl ? recyclerView.getWidth() : -recyclerView.getWidth();
             enterFrom = isRtl ? -recyclerView.getWidth() : recyclerView.getWidth();
-        } else { // Prev Day
+        } else {
             slideOutTo = isRtl ? -recyclerView.getWidth() : recyclerView.getWidth();
             enterFrom = isRtl ? recyclerView.getWidth() : -recyclerView.getWidth();
         }
@@ -171,7 +164,6 @@ public class PlannerFragment extends Fragment implements PlannerView {
 
                     recyclerView.setTranslationX(enterFrom);
 
-                    // Slide Back In
                     recyclerView.animate()
                             .translationX(0f)
                             .alpha(1f)
@@ -233,15 +225,12 @@ public class PlannerFragment extends Fragment implements PlannerView {
 
             @Override
             public void onAddMealClick(MealType mealType) {
-                // When adding a meal, use the current page's date and the button's type.
-                // Navigate directly to Search (or relevant screen) to pick the meal.
                 Bundle bundle = new Bundle();
                 bundle.putBoolean("is_planning_mode", true);
                 bundle.putLong("planned_date", currentViewDate.getTime());
                 bundle.putString("planned_type", mealType.name());
 
                 try {
-                    // Assuming 'searchFragment' is the ID in your navigation graph
                     Navigation.findNavController(requireView()).navigate(R.id.searchFragment, bundle);
                 } catch (Exception e) {
                     showError("Navigation to Search failed: " + e.getMessage());
@@ -311,10 +300,18 @@ public class PlannerFragment extends Fragment implements PlannerView {
     }
 
     @Override
-    public void showLoading() {}
+    public void showLoading() {
+        if (loadingAnimation != null) {
+            loadingAnimation.setVisibility(View.VISIBLE);
+        }
+    }
 
     @Override
-    public void hideLoading() {}
+    public void hideLoading() {
+        if (loadingAnimation != null) {
+            loadingAnimation.setVisibility(View.GONE);
+        }
+    }
 
     @Override
     public void showError(String message) {

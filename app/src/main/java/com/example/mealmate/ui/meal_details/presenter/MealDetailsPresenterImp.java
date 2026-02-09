@@ -61,8 +61,6 @@ public class MealDetailsPresenterImp implements MealDetailsPresenter {
                             fullMeal -> {
                                 if (view != null) {
                                     view.hideLoading();
-
-                                    // Ensure video is hidden if loaded from cache while offline
                                     if (!isNetworkAvailable()) {
                                         fullMeal.strYoutube = null;
                                     }

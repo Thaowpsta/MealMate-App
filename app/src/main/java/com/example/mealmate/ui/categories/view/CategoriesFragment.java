@@ -14,6 +14,7 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.example.mealmate.R;
 import com.example.mealmate.data.categories.model.Category;
 import com.example.mealmate.ui.categories.presenter.CategoriesPresenterImp;
@@ -25,6 +26,7 @@ public class CategoriesFragment extends Fragment implements CategoriesView {
 
     private RecyclerView rvAllCategories;
     private CategoriesPresenterImp presenter;
+    private LottieAnimationView loadingAnimation;
 
     public CategoriesFragment() {
         // Required empty public constructor
@@ -49,6 +51,7 @@ public class CategoriesFragment extends Fragment implements CategoriesView {
 
         rvAllCategories = view.findViewById(R.id.rv_all_categories);
         ImageButton btnBack = view.findViewById(R.id.btn_back);
+        loadingAnimation = view.findViewById(R.id.animation_view);
 
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,11 +67,17 @@ public class CategoriesFragment extends Fragment implements CategoriesView {
     @Override
     public void showLoading() {
         rvAllCategories.setVisibility(View.GONE);
+        if (loadingAnimation != null) {
+            loadingAnimation.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
     public void hideLoading() {
         rvAllCategories.setVisibility(View.VISIBLE);
+        if (loadingAnimation != null) {
+            loadingAnimation.setVisibility(View.GONE);
+        }
     }
 
     @Override
