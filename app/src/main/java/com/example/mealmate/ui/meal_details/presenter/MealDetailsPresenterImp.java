@@ -189,6 +189,14 @@ public class MealDetailsPresenterImp implements MealDetailsPresenter {
     }
 
     @Override
+    public void logout() {
+        userRepository.logout();
+        if (view != null) {
+            view.navigateToLogin();
+        }
+    }
+
+    @Override
     public void onDestroy() {
         view = null;
         disposable.clear();

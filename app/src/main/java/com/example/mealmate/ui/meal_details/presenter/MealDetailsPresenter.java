@@ -11,6 +11,6 @@ public interface MealDetailsPresenter {
     void addToFavorites(Meal meal);
     void addToPlan(Meal meal, Date date, String mealType);
     void removeFromFavorites(Meal meal);
-
+    void logout();
     void onDestroy();
 }

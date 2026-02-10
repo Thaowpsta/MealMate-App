@@ -207,6 +207,7 @@ public class HomeFragment extends Fragment implements HomeView {
 
         dialog.findViewById(R.id.btn_login).setOnClickListener(v -> {
             dialog.dismiss();
+            presenter.logout();
             navigateToLogin();
         });
 
@@ -484,7 +485,6 @@ public class HomeFragment extends Fragment implements HomeView {
 
     @Override
     public void navigateToLogin() {
-        userRepository.logout();
 
         Intent intent = new Intent(requireContext(), SplashActivity.class);
         intent.putExtra("IS_LOGOUT", true);

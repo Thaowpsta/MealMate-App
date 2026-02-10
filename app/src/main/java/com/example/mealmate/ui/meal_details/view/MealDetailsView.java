@@ -12,4 +12,5 @@ public interface MealDetailsView {
     void showConnectionError();
     void showGuestLoginDialog();
     void showWeekCalendarDialog();
+    void navigateToLogin();
 }

@@ -150,6 +150,7 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
 
         dialog.findViewById(R.id.btn_login).setOnClickListener(v -> {
             dialog.dismiss();
+            presenter.logout();
             navigateToLogin();
         });
 
@@ -459,6 +460,7 @@ public class MealDetailsFragment extends Fragment implements MealDetailsView {
         presenter.onDestroy();
     }
 
+    @Override
     public void navigateToLogin() {
         Intent intent = new Intent(requireContext(), SplashActivity.class);
         intent.putExtra("IS_LOGOUT", true);
