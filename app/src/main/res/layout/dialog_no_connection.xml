@@ -15,13 +15,6 @@
         android:padding="@dimen/primary_button_corners"
         android:gravity="center_horizontal">
 
-        <ImageView
-            android:layout_width="@dimen/txt_field_h"
-            android:layout_height="@dimen/txt_field_h"
-            android:src="@drawable/user"
-            android:layout_marginBottom="@dimen/padding_margin_16"
-            app:tint="?attr/colorPrimary" />
-
         <TextView
             android:id="@+id/tv_title"
             android:layout_width="wrap_content"
