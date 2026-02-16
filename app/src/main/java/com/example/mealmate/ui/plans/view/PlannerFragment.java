@@ -1,5 +1,7 @@
 package com.example.mealmate.ui.plans.view;
 
+import static com.google.android.material.snackbar.BaseTransientBottomBar.BaseCallback.DISMISS_EVENT_ACTION;
+
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.graphics.Color;
@@ -31,6 +33,7 @@ import com.example.mealmate.data.meals.models.MealPlannerItem;
 import com.example.mealmate.data.meals.models.MealType;
 import com.example.mealmate.ui.plans.presenter.PlannerPresenterImp;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.text.SimpleDateFormat;
@@ -266,7 +269,8 @@ public class PlannerFragment extends Fragment implements PlannerView {
                     MealPlannerItem item = adapter.getCurrentList().get(position);
 
                     if (item instanceof MealPlannerItem.MealItem) {
-                        presenter.deletePlan((MealPlannerItem.MealItem) item, currentViewDate);
+                        final Date swipeDate = currentViewDate;
+                        deleteItemWithUndo((MealPlannerItem.MealItem) item, position, swipeDate);
                     } else {
                         adapter.notifyItemChanged(position);
                     }
@@ -289,6 +293,30 @@ public class PlannerFragment extends Fragment implements PlannerView {
         new ItemTouchHelper(simpleItemTouchCallback).attachToRecyclerView(recyclerView);
     }
 
+    private void deleteItemWithUndo(MealPlannerItem.MealItem item, int position, Date dateOfPlan) {
+        List<MealPlannerItem> currentList = new ArrayList<>(adapter.getCurrentList());
+
+        currentList.remove(position);
+        adapter.submitList(currentList);
+
+        Snackbar snackbar = Snackbar.make(recyclerView, "Meal removed from plan", 5000);
+        snackbar.setAction("UNDO", v -> {
+            List<MealPlannerItem> restoredList = new ArrayList<>(adapter.getCurrentList());
+            restoredList.add(position, item);
+            adapter.submitList(restoredList);
+        });
+
+        snackbar.addCallback(new BaseTransientBottomBar.BaseCallback<Snackbar>() {
+            @Override
+            public void onDismissed(Snackbar transientBottomBar, int event) {
+                if (event != DISMISS_EVENT_ACTION) {
+                    presenter.deletePlan(item, dateOfPlan);
+                }
+            }
+        });
+
+        snackbar.show();
+    }
     @Override
     public void navigateToAddMeal(MealType mealType) {
         Bundle bundle = new Bundle();

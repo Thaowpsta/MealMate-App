@@ -1,5 +1,6 @@
 package com.example.mealmate.ui.home.view;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -7,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +16,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -160,7 +163,14 @@ public class HomeFragment extends Fragment implements HomeView {
         seeAll.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG);
         seeAll.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_categoriesFragment));
 
-        btnCookNow.setOnClickListener(v -> presenter.onCookNowClicked(currentMeal));
+        btnCookNow.setOnClickListener(v -> {
+            if(userRepository.isGuest()) {
+                showGuestLoginDialog();
+            } else if (currentMeal != null) {
+                showCookNowConfirmation(currentMeal);
+            }
+        });
+
         btnCookLater.setOnClickListener(v -> presenter.onCookLaterClicked(currentMeal));
 
         favoritesCard.setOnClickListener(v -> {
@@ -177,6 +187,61 @@ public class HomeFragment extends Fragment implements HomeView {
             if(userRepository.isGuest()) showGuestLoginDialog();
             else Navigation.findNavController(v).navigate(R.id.action_homeFragment_to_profileFragment);
         });
+    }
+
+    private void showCookNowConfirmation(Meal meal) {
+        Calendar cal = Calendar.getInstance();
+        int hour = cal.get(Calendar.HOUR_OF_DAY);
+        String type;
+        if (hour >= 5 && hour < 11) {
+            type = getString(R.string.breakfast);
+        } else if (hour >= 11 && hour < 16) {
+            type = getString(R.string.lunch);
+        } else {
+            type = getString(R.string.dinner);
+        }
+
+        SimpleDateFormat displayFormat = new SimpleDateFormat("EEE, MMM d", Locale.getDefault());
+        String displayDate = displayFormat.format(cal.getTime());
+
+        Dialog dialog = new Dialog(requireContext());
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_cook_now_confirmation);
+
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
+
+        ImageView ivMealPreview = dialog.findViewById(R.id.iv_meal_preview);
+        TextView tvMealName = dialog.findViewById(R.id.tv_meal_name);
+        TextView tvMealTypePreview = dialog.findViewById(R.id.tv_meal_type_preview);
+        TextView tvScheduleDate = dialog.findViewById(R.id.tv_schedule_date);
+        TextView tvScheduleMealType = dialog.findViewById(R.id.tv_schedule_meal_type);
+        Button btnConfirm = dialog.findViewById(R.id.btn_confirm);
+        Button btnCancel = dialog.findViewById(R.id.btn_cancel);
+
+        tvMealName.setText(meal.strMeal);
+        tvMealTypePreview.setText(type);
+        tvScheduleDate.setText(String.format("Today, %s", displayDate));
+        tvScheduleMealType.setText(type);
+
+        if (meal.strMealThumb != null && !meal.strMealThumb.isEmpty()) {
+            Glide.with(this)
+                    .load(meal.strMealThumb)
+                    .error(R.drawable.plate)
+                    .centerCrop()
+                    .into(ivMealPreview);
+        }
+
+        btnConfirm.setOnClickListener(v -> {
+            presenter.onCookNowClicked(meal);
+            dialog.dismiss();
+        });
+
+        btnCancel.setOnClickListener(v -> dialog.dismiss());
+
+        dialog.show();
     }
 
     @Override
